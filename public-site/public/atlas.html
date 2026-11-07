@@ -4,10 +4,11 @@
 <body>
 <main class="map-surface"><canvas id="map" tabindex="0" aria-label="Revenant map. Drag to pan, scroll to zoom. Press 1 for native pixels or F to fit."></canvas><p id="notice" role="status">Opening the maps…</p></main>
 <header class="masthead">
-  <div class="identity"><h1 class="wordmark">Revenant</h1><button id="credits-open" class="text-button" aria-haspopup="dialog" aria-controls="credits">Credits</button></div>
+  <div class="identity"><h1 class="wordmark">Revenant</h1></div>
   <div class="map-choices"><div class="edition-switch" role="group" aria-label="Game version"><button type="button" data-edition="july" aria-pressed="true">July 1999</button><button type="button" data-edition="retail" aria-pressed="false">Retail 1.22L</button></div>
-  <label class="location"><span class="sr-only">Location</span><select id="levels" aria-label="Choose a map level"><option>Loading the maps…</option></select></label><p id="edition-note" class="edition-note">Earlier build · original atlas</p></div>
-  <div id="lighting-controls" class="lighting-controls" role="group" aria-label="Game lighting clock" hidden>
+  <p id="recovery-note" class="recovery-note" role="note" hidden></p><div id="levels" class="level-list" role="listbox" aria-label="Map location"></div></div>
+</header>
+<div id="lighting-controls" class="lighting-controls" role="group" aria-label="Game lighting clock" hidden>
     <div id="clock-dial" class="clock-dial" role="slider" tabindex="0" aria-label="Game hour" aria-description="Drag the hour hand around the 24-hour face. Arrow keys adjust one hour." aria-valuemin="0" aria-valuemax="23" aria-valuenow="12" aria-valuetext="12:00"><svg viewBox="0 0 120 120" aria-hidden="true">
       <title id="clock-title">12:00 — drag the hour hand to set the time</title>
       <defs><radialGradient id="dial-face"><stop stop-color="#3d3541"/><stop offset="1" stop-color="#17131d"/></radialGradient><linearGradient id="dial-metal" x2="1" y2="1"><stop stop-color="#c0a577"/><stop offset=".48" stop-color="#4e3e35"/><stop offset="1" stop-color="#ab8755"/></linearGradient></defs>
@@ -18,12 +19,12 @@
     </svg></div>
     <output id="clock-value" class="clock-value" aria-hidden="true">12:00</output>
   </div>
-</header>
 <div class="zoom-controls" role="group" aria-label="Map zoom"><button id="minus" class="metal-button square" title="Zoom out" aria-label="Zoom out">−</button><output id="zoom-value" aria-label="Zoom percentage">—</output><button id="plus" class="metal-button square" title="Zoom in" aria-label="Zoom in">+</button><span class="control-divider"></span><button id="actual" class="metal-button" title="Show native pixels (1)">1:1</button><button id="fit" class="metal-button" title="Fit the whole map (F)">Fit map</button></div>
 <aside class="downloads" aria-label="Download this map">
   <p id="dimensions" class="dimensions"></p>
   <div class="download-links"><a id="download" class="metal-button download" aria-disabled="true"><span>PNG</span><span id="png-size" class="file-size">—</span></a><a id="download-tiff" class="metal-button download" aria-disabled="true"><span>TIFF</span><span id="tiff-size" class="file-size">—</span></a></div>
 </aside>
+<button id="credits-open" class="text-button credits-open" aria-haspopup="dialog" aria-controls="credits">Credits</button>
 <dialog id="credits" class="credits-dialog" aria-labelledby="credits-title" aria-describedby="credits-intro">
   <div class="credits-heading"><h2 id="credits-title">Credits</h2><form method="dialog"><button class="metal-button square" aria-label="Close credits" autofocus>×</button></form></div>
   <div class="credits-scroll">
@@ -38,7 +39,7 @@
       <div><dt><a href="https://www.accursedfarms.com/index.php?members/pvtjokerr.33944/" target="_blank" rel="noopener noreferrer">pvtjokerr</a></dt><dd>Early Kaitai and Python research, palette observations, reference renders, and investigations of chunks and partial edges.</dd></div>
       <div><dt><a href="https://www.accursedfarms.com/index.php?members/vinylon.28779/" target="_blank" rel="noopener noreferrer">Vinylon</a>, <a href="https://www.accursedfarms.com/index.php?members/ross-scott.4/" target="_blank" rel="noopener noreferrer">Ross Scott</a> &amp; the <a href="https://www.accursedfarms.com/index.php?threads/revenant-maps.3265/" target="_blank" rel="noopener noreferrer">Accursed Farms community</a></dt><dd>The original map extraction discussion and the call for a complete artwork map.</dd></div>
     </dl>
-    <p class="edition-explanation">July 1999 is the earlier build used for the original atlas, with brighter authored daylight. Retail 1.22L uses the GOG release and its own lighting. Its map collection is still a preview. The clock appears only where hourly lighting captures are available.</p>
+    <p class="edition-explanation">July 1999 is the earlier build used for the original atlas, with brighter authored daylight. Retail 1.22L uses the GOG release and its own lighting. Retail levels 41–43 are labeled recovery maps: 10, 4, and 2 placements with unavailable object definitions have been omitted. The clock appears only where hourly lighting captures are available.</p>
     <p class="credits-note"><a href="https://github.com/nuxdie/revenant-native-atlas" target="_blank" rel="noopener noreferrer">Atlas source &amp; reproduction instructions</a><br>Game artwork belongs to its respective rights holders.</p>
   </div>
 </dialog>

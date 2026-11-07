@@ -62,3 +62,12 @@ test('switching edition crops keeps the same world point at the same screen pixe
  assert.equal(Math.round(next.y+(world[1]-retail[1])*scale),Math.round(view.y+(world[1]-july[1])*scale));
  assert.deepEqual(offsetForBounds(next.x,next.y,scale,retail,july),view);
 });
+
+test('edition switching chooses only a location present in the selected edition',async()=>{
+ const {levelForEdition}=await import('../public/atlas-model.js');
+ const july=[{level:0},{level:31},{level:40}];
+ assert.equal(levelForEdition(july,31,40),31);
+ assert.equal(levelForEdition(july,5,40),40);
+ assert.equal(levelForEdition(july,5),0);
+ assert.equal(levelForEdition([{level:5}],40,0),5);
+});

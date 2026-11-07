@@ -11,7 +11,7 @@ from .publish_pack import digest
 from .publish_upload import Publisher
 
 
-def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
+def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication'),labeled_recovery=False):
     dataset=json.loads((root/'dataset.json').read_text())
     expected={(m['level'],variant)for m in dataset['levels']for variant in m['variants']}
     profiles={(m['level'],variant):profile for m in dataset['levels']for variant,profile in m.get('lighting_profiles',{}).items()}
@@ -20,9 +20,24 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
         uploads.append(dict(key=key,path=str(path.resolve()),size=path.stat().st_size,sha256=sha or digest(path)))
     for level,variant in sorted(expected):
         directory=root/variant/f'level-{level}'
+        recovery=None
         if dataset.get('recovery')or(root/'recovery.json').exists()or(directory/'recovery.json').exists():
-            held.append(dict(level=level,variant=variant,reason='Recovery changes authored placements; not eligible for the exact edition'))
-            continue
+            if not labeled_recovery:
+                held.append(dict(level=level,variant=variant,reason='Recovery changes authored placements; not eligible for the exact edition'))
+                continue
+            proof=dataset.get('recovery')
+            if not proof:
+                marker=directory/'recovery.json'if(directory/'recovery.json').exists()else root/'recovery.json'
+                proof=json.loads(marker.read_text())
+            rows=[r for r in proof.get('sectors',[])if Path(r['sector']).stem.startswith(f'{level}_')]
+            omissions=[o for r in rows for o in r['omitted']]
+            if not omissions or not proof.get('source_pack_sha256')or not proof.get('recovery_pack_sha256'):
+                raise ValueError('Labeled recovery requires an audited omission manifest')
+            recovery=dict(status='recovered',omitted_placements=len(omissions),
+                omitted_type_ids=sorted({o['uid']for o in omissions}),
+                source_module_sha256=proof['source_pack_sha256'],
+                recovery_module_sha256=proof['recovery_pack_sha256'],
+                method='Unmapped legacy tile slots omitted; all surviving record bytes retained')
         paths=[directory/name for name in ['manifest.json','validation.json','tiff-validation.json','full-resolution.png','full-resolution.tif']]
         if not all(p.exists()for p in paths):continue
         meta,validation,tiff=(json.loads(p.read_text())for p in paths[:3])
@@ -38,7 +53,7 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
         sha=validation['full_png_sha256']
         if tiff['source_png_sha256']!=sha or digest(paths[3])!=sha or digest(paths[4])!=tiff['sha256']:
             raise ValueError(f'Stale retail download: level {level} {variant}')
-        revision=f'r-{level}-{variant}-{sha[:20]}'
+        revision=f'r-{level}-'+('recovered-'if recovery else'')+f'{variant}-{sha[:20]}'
         target=out/variant/f'level-{level}';target.mkdir(parents=True,exist_ok=True)
         index_path=target/'tiles.json';pack=target/'tiles.pack'
         old=json.loads(index_path.read_text())if index_path.exists()else{}
@@ -59,15 +74,18 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
         maps.append(dict(level=level,module=meta['module'],variant=variant,game_time=meta['game_time'],
             names=meta['names'],width=meta['width'],height=meta['height'],bounds=meta['bounds'],
             tile_size=meta['tile_size'],tiles=meta['tiles'],statistics=meta['statistics'],
-            provider=meta['provider'],revision=revision,content_revision=sha[:16],
-            png_bytes=paths[3].stat().st_size,sha256=sha,tiff_bytes=paths[4].stat().st_size,tiff_sha256=tiff['sha256']))
+            provider='original_retail_renderer_recovered_assets'if recovery else meta['provider'],revision=revision,content_revision=sha[:16],
+            png_bytes=paths[3].stat().st_size,sha256=sha,tiff_bytes=paths[4].stat().st_size,tiff_sha256=tiff['sha256'],
+            **(dict(recovery=recovery)if recovery else{})))
     by_level=defaultdict(list)
     for m in maps:by_level[m['level']].append(m)
     levels=[]
     for level,variants in sorted(by_level.items()):
         primary=next((v for v in variants if v['variant']=='day'),variants[0])
         levels.append(dict(primary,variants=variants)if len(variants)>1 else primary)
-    complete=len(maps)==len(expected)
+    available_complete=len(maps)==len(expected)
+    recovered_maps=sum(bool(m.get('recovery'))for m in maps)
+    complete=available_complete and not recovered_maps
     missing=[dict(level=level,variant=variant)for level,variant in sorted(expected-{(m['level'],m['variant'])for m in maps})]
     catalog=out/'catalog.json'
     dump(catalog,dict(revision='retail-1-22l',dataset='GOG 1.22L',levels=levels,
@@ -75,7 +93,7 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
         missing_maps=missing,cycling_levels=sorted({m['level']for m in dataset['levels']if 'night'in m['variants']})))
     # The July catalog is a separate edition. Only clock_preview publishes the
     # composed retail catalog, after all referenced files have been verified.
-    result=dict(complete=complete,held=held,missing_maps=missing,maps=len(maps),expected_maps=len(expected),levels=len(levels),uploads=uploads)
+    result=dict(complete=complete,available_complete=available_complete,recovered_maps=recovered_maps,held=held,missing_maps=missing,maps=len(maps),expected_maps=len(expected),levels=len(levels),uploads=uploads)
     dump(out/'upload-manifest.json',result)
     return result
 
@@ -111,10 +129,11 @@ if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root',type=Path,default=Path('retail-output'))
     p.add_argument('--out',type=Path,default=Path('runtime/retail-publication'))
+    p.add_argument('--include-labeled-recovery',action='store_true',help='Explicitly include recovery renders with audited omissions and permanent labels')
     p.add_argument('--publish',help='Atlas URL; leave unset to stage locally')
     p.add_argument('--resume-staged',action='store_true',help='Resume the existing staged upload manifest')
     p.add_argument('--passes',type=int,default=3,help='Retry failed files in up to this many passes (1–10)')
-    a=p.parse_args();manifest=json.loads((a.out/'upload-manifest.json').read_text())if a.resume_staged else prepare(a.root,a.out)
+    a=p.parse_args();manifest=json.loads((a.out/'upload-manifest.json').read_text())if a.resume_staged else prepare(a.root,a.out,labeled_recovery=a.include_labeled_recovery)
     print(f"Retail maps ready: {manifest['maps']}/{manifest['expected_maps']}; catalog complete: {manifest['complete']}",flush=True)
     if a.publish:
         key=getpass.getpass('Atlas upload key (hidden): ')

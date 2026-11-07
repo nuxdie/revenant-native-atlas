@@ -32,5 +32,7 @@
       "tiff_sha256": "3c7ea433832cca3824fcc6239c584206f204bf15bed94174a6181984c105457c",
       "png_bytes": 5163794
     }
-  ]
+  ],
+  "published_as_labeled_recovery": true,
+  "missing_source_assets_recovered": false
 }

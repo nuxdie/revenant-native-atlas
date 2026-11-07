@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-11-07T22:53:12.618932+00:00",
+  "checked_at": "2026-11-07T23:43:35.097011+00:00",
   "dataset": "English GOG 1.22L",
-  "verified_images": 38,
+  "verified_images": 41,
   "expected_images": 41,
   "verified_maps": [
     {
@@ -462,6 +462,48 @@
       "png_sha256": "6c7306d323399e35713c07be36aace727a9c7e8136cf060cf4e5f9007e6030c1",
       "tiff_sha256": "b6317581b426897a7cdd8faabc736b41f1157f977d8b8e5323b0b1f1f0c51359",
       "unexplained_static_edges": 0
+    },
+    {
+      "level": 41,
+      "variant": "fixed",
+      "png_sha256": "d7f1a9298779a0bac9c2f2b32c5cd28db284d2ce7a6d141669348774eab70efc",
+      "tiff_sha256": "74d54212cc2858fce0c194ed74c444d5dfa04d8e79cdeaf511044f8975e2ac81",
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 10,
+      "names": [
+        "The City of The Children"
+      ],
+      "width": 23552,
+      "height": 19200,
+      "recovery": true
+    },
+    {
+      "level": 42,
+      "variant": "fixed",
+      "png_sha256": "f449c8907b813af18e005e67257699d9b4cb2cccddcf0cbfab4d912d1486466a",
+      "tiff_sha256": "8ee32b0fbf9c31b04cd123c749390ea3aca321104a434645d65a064f6c0c0fd1",
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 4,
+      "names": [
+        "The Chamber of Horrors"
+      ],
+      "width": 20992,
+      "height": 9728,
+      "recovery": true
+    },
+    {
+      "level": 43,
+      "variant": "fixed",
+      "png_sha256": "f4357ab33de619ccfcdc2395d525ffa487f8f292133fd327f083ae3d86f5a047",
+      "tiff_sha256": "3c7ea433832cca3824fcc6239c584206f204bf15bed94174a6181984c105457c",
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 2,
+      "names": [
+        "Interiors of The City of the Children"
+      ],
+      "width": 24576,
+      "height": 9216,
+      "recovery": true
     }
   ],
   "held_captures": [],
@@ -477,8 +519,13 @@
     "note": "Earlier acceptance of three revisions was invalid because remapping could capture unrelated compositor contents. Their 15 objects were removed. All three have since been recaptured and published under new verified revisions; the withdrawn revisions remain absent.",
     "replacements_published": true
   },
-  "public_catalog": "July edition: latest 33 maps. Separate retail edition: 34 locations / 38 images, including both twilight states.",
+  "public_catalog": "July: 33 maps. Retail: 37 locations / 41 images, including three explicitly labeled recovery maps.",
   "animation_limit": "Successive native snapshots; animation and quest state are not synchronized across the island.",
-  "verified_baseline_images": 36,
-  "expected_baseline_images": 39
+  "verified_baseline_images": 39,
+  "expected_baseline_images": 39,
+  "exact_source_images": 38,
+  "recovery_images": 3,
+  "available_complete": true,
+  "publication_complete": false,
+  "omitted_source_placements": 16
 }

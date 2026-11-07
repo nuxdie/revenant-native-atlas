@@ -1,6 +1,6 @@
 # Mirror and host the atlas
 
-The source is independent of the ChatGPT Sites URL. The retail dataset release is currently a draft while community announcements are on hold. Until it is published, use the live atlas for image downloads: the GitHub download helper cannot fetch an anonymous draft. A published dataset includes PNGs, BigTIFFs, tile packs, indexes and overview images without redundant ZIP wrappers.
+The source is independent of the ChatGPT Sites URL. The GitHub dataset release remains an unpublished staging draft. Until it is published, use the live atlas for image downloads: the GitHub download helper cannot fetch an anonymous draft. A published dataset includes PNGs, BigTIFFs, tile packs, indexes and overview images without redundant ZIP wrappers.
 
 ## Local mirror, without game files or cloud accounts
 
@@ -46,7 +46,7 @@ The HTTP interface is deliberately small:
 
 The unchanged viewer is in `public-site/public/`. It can be served by another backend implementing those routes.
 
-The complete retail catalog is planned to contain 37 distinct locations and 39 images; the live catalog remains on the earlier dataset until the retail build clears its holds. Levels 0 and 5 contain separate day/night entries under `variants`; their immutable revisions and file sizes differ. The viewer preserves position and zoom when switching. Other levels have one fixed-lighting entry. The API continues to identify the actual image by `revision` and `level`; `variant=day`, `night` or `fixed` optionally labels the download filename.
+The live viewer offers 33 July maps and 37 retail locations / 41 lighting images. Retail levels 0 and 5 contain separate day, twilight and night entries under `variants`; other locations have fixed lighting. Levels 41–43 carry permanent recovery labels and omission counts of 10, 4 and 2. Switching editions preserves position and zoom on shared locations. The API identifies each actual image by `revision` and `level`; `variant` labels lighting in download filenames.
 
 ## Original Worker/R2 application
 
@@ -88,7 +88,7 @@ The hourly retail edition uses a separate catalog. Preparing or uploading even a
 python3 -m native.clock_preview --watch --publish https://YOUR-HOST
 ```
 
-Open `/?dataset=retail&level=5&time=06:00`. The publisher includes only accepted native images, verifies their remote bytes before updating `retail-preview-catalog.json`, and can pick up completed twilight captures during its bounded six-hour watch. A missing hour state is visibly pending and has no download link. The clock supports whole hours; indoor locations retain their fixed lighting. The viewer exposes both editions through the July 1999 / Retail 1.22L switch. July remains the default and uses `catalog.json`; `?dataset=july` selects it explicitly. Switching preserves the chosen level, world position, zoom, and preferred hour. A location missing from the selected edition remains selected with an unavailable message and no downloads. PNG and TIFF filenames identify the edition. The 24-hour dial appears only for locations with hourly capture metadata. For a local mirror, place the optional retail catalog at `retail-preview-catalog.json` alongside the original `catalog.json`, and include both catalogs’ immutable revisions under `releases/`.
+Open `/?dataset=retail&level=5&time=06:00`. The publisher includes only accepted native images, verifies their remote bytes before updating `retail-preview-catalog.json`, and can pick up completed twilight captures during its bounded six-hour watch. A missing hour state is visibly pending and has no download link. The clock supports whole hours; indoor locations retain their fixed lighting. The viewer exposes both editions through the July 1999 / Retail 1.22L switch. July remains the default and uses `catalog.json`; `?dataset=july` selects it explicitly. The scrollable location column under the logo lists only maps available in the selected edition. Switching preserves location and view where shared; otherwise it restores the last valid location in that edition, or its first location. Credits opens from the bottom left. PNG and TIFF filenames identify the edition. The 24-hour dial appears only for locations with hourly capture metadata. For a local mirror, place the optional retail catalog at `retail-preview-catalog.json` alongside the original `catalog.json`, and include both catalogs’ immutable revisions under `releases/`.
 
 ## Prepare a GitHub dataset release
 
@@ -101,3 +101,26 @@ python3 tools/stage_retail_release.py --out release-assets
 This refuses an incomplete dataset. It links each accepted image, overview and native tile pack under names that include both level and lighting state, then writes `release-manifest.json` with portable object paths, byte counts and SHA-256 digests. The mirror helper consumes that manifest; no game files, local paths, credentials or private validation reports are included.
 
 Upload those files to a **draft** GitHub release with `gh release upload TAG release-assets/*`. Keep the release a draft while announcements or dataset publication are on hold. Publishing the draft is a separate deliberate action, not a step performed by the staging helper.
+
+
+## Publish explicitly labeled recovery renders
+
+The complete available retail collection has 37 locations / 41 lighting images.
+Levels 41, 42 and 43 are recoveries with 10, 4 and 2 omitted placements. They do
+not qualify as exact restorations. After explicitly choosing to include these
+recoveries, publish the audited output root with:
+
+```sh
+python3 -m native.clock_preview --publish https://YOUR-HOST \
+  --recovery-root /path/to/audited/recovery/output
+```
+
+This opt-in verifies PNG/TIFF digests and raster acceptance, requires the audited
+omission manifest, includes a `recovery` object on each affected map, and uses
+`-recovered-` immutable revision keys. The viewer labels each affected selection
+and its missing-object count. HTTP downloads retain `recovered` in their filename
+even if the edition query is omitted. The merged catalog reports
+`available_complete: true` but `publication_complete: false` while source
+placements remain unrecovered. Ordinary preparation still withholds these maps.
+The July catalog remains independent. Unnecessary edition-summary captions have
+been removed from the viewer.

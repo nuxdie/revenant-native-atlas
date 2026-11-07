@@ -2,17 +2,17 @@
 
 Tools for full-resolution artwork maps captured from the **English retail game (GOG 1.22L)** using its original executable and level editor.
 
-**Retail rebuild status:** native capture and review are in progress. The public viewer keeps the preceding July-data catalog until the replacement is complete. In particular, legacy sectors in retail levels 41–43 reference missing object types and crash the original game; that area is held for investigation.
+**Live:** 33 July 1999 maps and 37 retail locations / 41 lighting images. Retail levels 41–43 are explicitly labeled recovery maps, omitting 10, 4 and 2 placements whose definitions are absent from the available assets. All other available source placements are retained; animation and quest states remain snapshots.
 
 **[Explore and download](https://revenant-native-atlas-2026.lithepond4.chatgpt.site/) · [Credits](CREDITS.md) · [Reproduce the captures](docs/reproducing.md)**
 
-The retail dataset contains **31 drawable campaign levels and six deathmatch levels**. The forest and ruins have separately rendered **day and night** versions: **37 locations, 39 images**. Each image has a PNG and a lossless tiled BigTIFF download. The viewer keeps the same position and zoom when changing time, and shows dimensions and file sizes beside the download links.
+The retail dataset contains **31 drawable campaign levels and six deathmatch levels**. The forest and ruins have separately rendered **day, twilight and night** versions: **37 locations, 41 images**. Each image has a PNG and a lossless tiled BigTIFF download. The viewer keeps the same position and zoom when changing time, and shows dimensions and file sizes beside the download links.
 
 ## Why the retail data matters
 
 The earlier atlas used a July 1999 installation. That data puts the ruins on level 0 and gives Misthaven daytime ambient intensity 80; the retail module puts the ruins on level 5 and uses intensity 30. Changing brightness or replacing the renderer cannot correct that world-data difference.
 
-The current capture tools pin the retail executable and inventory the installed archives, including the areas that actually have a day/night cycle. Day is captured at **12:00**, night at **01:00**. Fixed-lighting interiors retain their authored lighting.
+The current capture tools pin the retail executable and inventory the installed archives, including the areas that actually have a day/night cycle. Day is captured at **12:00**, twilight at **06:00**, night at **01:00**. The draggable 24-hour dial selects the corresponding authored lighting state. Fixed-lighting interiors retain their authored lighting.
 
 ## Rendering and verification
 
@@ -20,7 +20,7 @@ The current capture tools pin the retail executable and inventory the installed 
 - Output pixels come directly from registered original-game viewports. Stitching selects existing source pixels; it does not average colours, recolour a daytime image, inpaint gaps or upscale artwork.
 - Camera/scroll registration, frame progress, source hashes, pixel ownership and actual neighbouring pixel pairs at stitching boundaries are checked. Moving regions are measured from native frames, rather than inferred from image disagreements.
 - PNGs are streamed. BigTIFF uses 64-bit offsets, 1024-pixel tiles and lossless Deflate; every decoded TIFF tile is compared against its source RGB pixels.
-- The publisher uploads immutable revisions and replaces the catalog only when **all 39** images and TIFFs pass. An incomplete rebuild cannot replace the existing viewer with a partial catalog.
+- The publisher verifies immutable image revisions before updating either edition catalog. Ordinary publication excludes recovery data; explicit opt-in requires audited omissions, permanent labels and distinct recovered download filenames.
 
 RevenantRevisited is included as a comparison backend, with its upstream revision and small capture patches recorded. Both Classic and modern modes were tested against retail views. Its extra features are useful, but it has not been accepted as a pixel-identical substitute for this retail configuration. See [rendering evidence and limits](docs/rendering.md).
 
@@ -46,7 +46,7 @@ Supply your own compatible game installation. The source repository contains no 
 
 The [live atlas](https://revenant-native-atlas-2026.lithepond4.chatgpt.site/) provides direct individual PNG/TIFF downloads, without redundant ZIP wrappers. [Hosting instructions](docs/hosting.md) cover the Sites Worker/R2 source and an independent local mirror.
 
-A GitHub dataset release is prepared as a **draft** while community announcements are on hold. Until it is published, anonymous downloads should use the live atlas; `tools/fetch_release.py` requires a published release. Source code and reproduction instructions are public independently of that release.
+The GitHub dataset release remains an unpublished staging draft. Download the current images from the live atlas; `tools/fetch_release.py` requires a published release. Source code and reproduction instructions are public independently of that release.
 
 ## Repository guide
 

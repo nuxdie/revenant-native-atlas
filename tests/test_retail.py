@@ -76,6 +76,17 @@ END
             self.assertEqual(held['missing_maps'],[dict(level=0,variant='day')])
             (root/'recovery.json').write_text('{}')
             self.assertEqual(prepare(root,out)['maps'],0)
+            with self.assertRaises(ValueError):prepare(root,out,labeled_recovery=True)
+            dataset=json.loads((root/'dataset.json').read_text())
+            dataset['recovery']=dict(source_pack_sha256='a'*64,recovery_pack_sha256='b'*64,
+                sectors=[dict(sector='Map/0_2_3.dat',omitted=[dict(uid='0x1234')])])
+            (root/'dataset.json').write_text(json.dumps(dataset))
+            recovered=prepare(root,out,labeled_recovery=True)
+            self.assertTrue(recovered['available_complete']);self.assertFalse(recovered['complete'])
+            catalog=json.loads((out/'catalog.json').read_text());entry=catalog['levels'][0]
+            self.assertEqual(entry['recovery']['omitted_placements'],1)
+            self.assertIn('-recovered-',entry['revision'])
+
 
 
 if __name__=='__main__':unittest.main()

@@ -50,3 +50,9 @@ export function offsetForBounds(x,y,scale,previous,next) {
 }
 
 export function editionFromQuery(value) { return value==='retail'?'retail':'july'; }
+
+/** Switch editions without exposing locations that the chosen edition lacks. */
+export function levelForEdition(maps,current,remembered) {
+  const levels=new Set(maps.map(m=>m.level));
+  return levels.has(current)?current:levels.has(remembered)?remembered:maps[0]?.level;
+}

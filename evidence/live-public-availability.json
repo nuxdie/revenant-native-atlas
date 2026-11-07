@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-07T23:07:13.664Z",
+  "checked_at": "2026-11-07T23:42:13.835Z",
   "counts": {
     "july": {
       "locations": 33,
@@ -7,16 +7,12 @@
       "missing": []
     },
     "retail": {
-      "locations": 34,
-      "images": 38,
-      "missing": [
-        41,
-        42,
-        43
-      ]
+      "locations": 37,
+      "images": 41,
+      "missing": []
     }
   },
-  "checked": 284,
+  "checked": 296,
   "failed": [],
   "passed": true
 }

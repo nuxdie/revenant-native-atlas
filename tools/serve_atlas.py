@@ -40,7 +40,7 @@ class Handler(SimpleHTTPRequestHandler):
                 if variant not in('','day','night','twilight','fixed'):return self.send_error(400)
                 if name not in('overview.jpg','full-resolution.png','full-resolution.tif'):return self.send_error(404)
                 mime='image/png'if name.endswith('.png')else'image/tiff'if name.endswith('.tif')else'image/jpeg'
-                edition={'retail':'retail-1.22l-','july':'july-1999-'}.get(query.get('dataset',[''])[0],'')
+                edition='retail-1.22l-recovered-'if '-recovered-'in revision else{'retail':'retail-1.22l-','july':'july-1999-'}.get(query.get('dataset',[''])[0],'')
                 attachment=f'revenant-{edition}{root.name}'+(f'-{variant}'if variant else'')+Path(name).suffix if name!='overview.jpg'else None
                 return self.file(root/name,mime,head,attachment)
             if url.path=='/api/tile':

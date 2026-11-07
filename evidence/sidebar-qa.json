@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "url": "https://revenant-native-atlas-2026.lithepond4.chatgpt.site",
+  "editionSpecificLists": [
+    33,
+    37
+  ],
+  "noDropdown": true,
+  "leftColumn": true,
+  "rememberedLocationFallback": true,
+  "sharedZoomPreserved": true,
+  "keyboard": true,
+  "creditsPopup": true,
+  "recoveryDisclosures": [
+    10,
+    4,
+    2
+  ],
+  "fullViewport": true,
+  "widths": [
+    390,
+    650,
+    820,
+    1050,
+    1279
+  ]
+}

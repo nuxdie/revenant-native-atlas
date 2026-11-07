@@ -161,3 +161,5 @@ writes `recovery.json`. Preserve that marker with any diagnostic captures.
 or a map with `recovery.json`; successful raster/seam checks cannot override missing
 source content. Exact completion needs authoritative definitions/assets for
 those IDs. Do not invent aliases or silently omit them from a normal release.
+An explicit opt-in can instead publish the rendered recoveries with permanent
+labels and omission counts; see `docs/hosting.md`.
