@@ -58,6 +58,7 @@ class Publisher:
         count = 0
         for offset in range(0,item['size'],VERIFY_PART):
             length=min(VERIFY_PART,item['size']-offset)
+            print(f'Verifying remote bytes {offset}-{offset+length-1}: {key}',flush=True)
             request=urllib.request.Request(self.url('read',key),headers={
                 'Authorization':'Bearer '+self.secret,'User-Agent':USER_AGENT,
                 'Range':f'bytes={offset}-{offset+length-1}'})
@@ -70,7 +71,7 @@ class Publisher:
                             raise ValueError(f'Remote verification range differs: {key}')
                         while remaining:
                             if time.monotonic()>deadline:raise TimeoutError('Remote range verification stalled')
-                            block=response.read(min(64*1024,remaining))
+                            block=response.read1(min(64*1024,remaining))
                             if not block:raise OSError('Remote range ended before its recorded length')
                             chunks.append(block);remaining-=len(block)
                     data=b''.join(chunks);break
