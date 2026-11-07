@@ -16,7 +16,7 @@ from .finalize import finalize
 from .game import NativeGame,RUNTIME
 
 
-def bridge(root,camera=None,reference=None,point=None,partial=False):
+def bridge(root,camera=None,reference=None,point=None,partial=False,offset=(0,0)):
     prior={name:(root/name).read_bytes()for name in ('manifest.json','ownership-sources.json','overview.jpg','validation.json','edge-validation.json')if(root/name).exists()}
     meta=json.loads((root/'manifest.json').read_text());report=verify_edges(root,meta)
     points=[s['world_pixel']for s in report['static_samples']]
@@ -27,7 +27,8 @@ def bridge(root,camera=None,reference=None,point=None,partial=False):
     x0,y0=np.min(points,axis=0);x1,y1=np.max(points,axis=0)
     centre_x=int(round((x0+x1)/4)*2);centre_y=int(round((y0+y1)/2))
     if x1-x0>300 or y1-y0>200:raise ValueError('Review clusters separately before bridging')
-    coord=[(centre_x-256)/512,(centre_y-128)/256]
+    if camera is not None and any(offset):raise ValueError('Choose either an explicit camera or a projected camera offset')
+    coord=[(centre_x+offset[0]-256)/512,(centre_y+offset[1]-128)/256]
     retail=meta.get('provider')=='original_retail_1.22L'
     if retail:
         from .retail import RetailGame
@@ -112,10 +113,10 @@ def bridge(root,camera=None,reference=None,point=None,partial=False):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('directory',type=Path)
     parser.add_argument('--camera',nargs=3,type=int);parser.add_argument('--reference')
-    parser.add_argument('--point',nargs=2,type=int);parser.add_argument('--partial',action='store_true');args=parser.parse_args()
+    parser.add_argument('--point',nargs=2,type=int);parser.add_argument('--partial',action='store_true');parser.add_argument('--offset',nargs=2,type=int,default=[0,0]);args=parser.parse_args()
     if args.camera and not args.reference:parser.error('A nonzero-Z bridge requires a native registration reference')
     runtime=RUNTIME
     if json.loads((args.directory/'manifest.json').read_text()).get('provider')=='original_retail_1.22L':
         from .retail import RUNTIME as runtime
     with (runtime/'export.lock').open('a')as lock:
-        fcntl.flock(lock,fcntl.LOCK_EX);print(json.dumps(bridge(args.directory,args.camera,args.reference,args.point,args.partial),indent=2))
+        fcntl.flock(lock,fcntl.LOCK_EX);print(json.dumps(bridge(args.directory,args.camera,args.reference,args.point,args.partial,args.offset),indent=2))

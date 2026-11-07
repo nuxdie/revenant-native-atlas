@@ -144,6 +144,8 @@ def quilt(root,full=True):
             'source_owned_pixels':writer.pixels,'temporal_scope':'successive animation frames, not one synchronized island tick'}
     dump(root/'quilting.json',report)
     meta=json.loads((root/'manifest.json').read_text())
+    meta.pop('native_viewport_bridges',None)
+    if 'statistics'in meta:meta['statistics']['captures']=len(source_index)
     meta.update(tile_count=len(writer.tiles),tiles=writer.tiles,ownership='ownership-sources.json',
                 quilted_seams_requiring_review=report['cuts_requiring_review'],
                 stitching=report['method'])

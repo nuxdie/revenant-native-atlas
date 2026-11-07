@@ -75,6 +75,15 @@ The outdoor plans record the authored light intensity and colour. After each cam
 
 Day is 12:00 and night is 01:00. Interiors without a day/night area definition have one `fixed` state. These are original-engine renders at the selected clock, not colour transforms of one image.
 
+For the hourly clock, capture the additional native twilight state into a separate output root with enough storage, using one idle isolated instance per command:
+
+```sh
+python3 -m native.retail_clock --level 0 --out retail-clock-output
+python3 -m native.retail_clock --level 5 --out retail-clock-output
+```
+
+The helper prepares `retail-clock-output/dataset.json` automatically from the installed cycling locations and uses the `twilight` variant. Each source records its exact minute and goes through the same native validation and PNG/BigTIFF pipeline. The clock changes authored lighting at whole hours; additional minute settings would require further native renders.
+
 ## Review and export
 
 Use an idle isolated renderer for review; its `export.lock` serializes camera use. Retail review must use the retail controller, matching module and matching clock:

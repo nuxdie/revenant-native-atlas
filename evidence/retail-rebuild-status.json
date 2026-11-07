@@ -1,7 +1,7 @@
 {
-  "checked_at": "2026-11-07T19:48:30.194244+00:00",
+  "checked_at": "2026-11-07T21:17:35.804829+00:00",
   "dataset": "English GOG 1.22L",
-  "verified_images": 36,
+  "verified_images": 34,
   "expected_images": 39,
   "verified_maps": [
     {
@@ -157,8 +157,8 @@
       ],
       "width": 14848,
       "height": 8192,
-      "png_sha256": "f298d163a1b8868233e8940f3dd2c7435f8c414c380bc4a1cdbdfb5e2fe57f55",
-      "tiff_sha256": "55420fb25d3b88180cdde2d42562a8d5f65f01ace0ab36604ccc196c95749111",
+      "png_sha256": "0970c6698815f57adc19b5016bbf8e4d476044a7f6f42952a172fcedf4c80d0b",
+      "tiff_sha256": "5b0466f997fc9c2670863e3254c6b0bdf28aa18996e74a2e76590d8b92fda843",
       "unexplained_static_edges": 0
     },
     {
@@ -171,18 +171,6 @@
       "height": 2816,
       "png_sha256": "5dbcbeb33c34c43a6dffde2896868393cdba7418e839bb116a29134f32067453",
       "tiff_sha256": "740a31096d547d3ecc6efaa58cfbab638e48ab6732298a6c99a9dc7c4aba1f16",
-      "unexplained_static_edges": 0
-    },
-    {
-      "level": 39,
-      "variant": "fixed",
-      "names": [
-        "The Infested Swamp"
-      ],
-      "width": 8704,
-      "height": 16896,
-      "png_sha256": "a541d256c78127df0142e4b87b733ac56a52fd8a29c7074cdd1a508d710663fb",
-      "tiff_sha256": "8306e22199cbcc6b0aeb70bc939f7a34c3f6bef68638d77a23d112555cfd6dae",
       "unexplained_static_edges": 0
     },
     {
@@ -414,19 +402,6 @@
       "unexplained_static_edges": 0
     },
     {
-      "level": 0,
-      "variant": "night",
-      "names": [
-        "The Forest",
-        "Misthaven"
-      ],
-      "width": 31744,
-      "height": 18432,
-      "png_sha256": "0264f699feb3ae203bab93a27f4e144172d115c54e438c88fbd5b77e65205a7c",
-      "tiff_sha256": "28d957076f8289e7dcc1e730d6569e813bc76a85ccad03de5a8e3a6c2a09128b",
-      "unexplained_static_edges": 0
-    },
-    {
       "level": 5,
       "variant": "night",
       "names": [
@@ -439,12 +414,27 @@
       "unexplained_static_edges": 0
     }
   ],
-  "held_levels": [
+  "held_captures": [
+    {
+      "level": 39,
+      "variant": "fixed"
+    },
+    {
+      "level": 0,
+      "variant": "night"
+    }
+  ],
+  "missing_asset_levels": [
     41,
     42,
     43
   ],
-  "hold": "Legacy records reference absent object IDs; the original retail engine crashes in those sectors.",
-  "public_catalog": "Previous July dataset retained until retail build is complete.",
-  "animation_limit": "Stitched views have different native animation phases; checks do not prove one simultaneous island tick or a universal artifact-free result."
+  "withdrawal": {
+    "affected_images": 3,
+    "remote_objects": 15,
+    "confirmed_absent": true,
+    "note": "Earlier acceptance of these revisions was invalid; remapping could capture unrelated compositor contents. A post-mapping native-redraw barrier and recapture are required."
+  },
+  "public_catalog": "Previous July dataset retained; retail hourly preview is opt-in.",
+  "animation_limit": "Successive native snapshots; animation and quest state are not synchronized across the island."
 }

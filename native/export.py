@@ -62,6 +62,7 @@ def capture_core(game, capture, coord, settle, temporal_samples=3, temporal_inte
     if (expected is not None and state['scroll']!=expected)or state['camera']!=[x,y,z]:raise RuntimeError(f'Native scroll differs from requested crop after renderer completion: {state}, expected {expected}')
     time.sleep(settle)
     first=capture.frame().crop((0,0,640,340));array=np.array(first);mask=np.zeros((340,640),bool)
+    if getattr(capture,'window_barrier',None):state['capture_window_barrier']=capture.window_barrier
     for _ in range(temporal_samples-1):
         time.sleep(temporal_interval)
         mask|=np.any(np.array(capture.frame().crop((0,0,640,340)))!=array,axis=2)

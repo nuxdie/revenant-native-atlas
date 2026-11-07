@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {catalogMaps, mapFor, lightingStates} from '../public/atlas-model.js';
+import {catalogMaps, mapFor, lightingStates,hourFromTime,hourLabel,mapAtHour,clockFor} from '../public/atlas-model.js';
 
 test('day/night selects distinct immutable image revisions on the same level', () => {
   const maps=catalogMaps({levels:[{level:0,revision:'day-pixels',variant:'day'},
@@ -24,4 +24,18 @@ test('grouped variants inherit shared geometry and resolve their own files', () 
     {variant:'day',revision:'r5day'}, {variant:'night',revision:'r5night'}]}]});
   assert.equal(mapFor(maps,5,'night').width,4000);
   assert.equal(mapFor(maps,5,'night').revision,'r5night');
+});
+
+test('hour clock reuses matching native lighting and never substitutes an unavailable twilight render',()=>{
+ const clock={step_minutes:60,hours:Array.from({length:24},(_,hour)=>({hour,variant:hour===6||hour===18?'twilight':hour<6||hour>18?'night':'day'}))};
+ const maps=catalogMaps({levels:[{level:0,clock,variants:[{variant:'day',revision:'day'},{variant:'night',revision:'night'}]},{level:30,variant:'fixed',revision:'cave'}]});
+ assert.equal(mapAtHour(maps,0,15).revision,'day');assert.equal(mapAtHour(maps,0,23).revision,'night');
+ assert.equal(mapAtHour(maps,0,6),undefined);assert.equal(mapAtHour(maps,30,6).revision,'cave');assert.equal(clockFor(maps,30),undefined);
+ maps.push({...maps[0],variant:'twilight',revision:'native-twilight'});
+ assert.equal(mapAtHour(maps,0,6).revision,'native-twilight');assert.equal(mapAtHour(maps,0,18).revision,'native-twilight');
+});
+
+test('clock labels preserve old links and reject unsupported minute precision',()=>{
+ assert.equal(hourFromTime('day'),12);assert.equal(hourFromTime('night'),1);assert.equal(hourFromTime('23:00'),23);
+ assert.equal(hourFromTime('06:30'),null);assert.equal(hourFromTime('24:00'),null);assert.equal(hourLabel(6),'06:00');
 });

@@ -22,6 +22,8 @@ from .retail import RetailGame,ROOT,RUNTIME,EXE_SHA256
 
 def capture(plan,variant,out,samples=8,rebuild_held=False):
     root=out/variant/f'level-{plan["level"]}'
+    minute=plan.get('time_of_day_minutes',60 if variant=='night'else 720)
+    if not isinstance(minute,int)or not 0<=minute<1440:raise ValueError('Invalid native capture clock')
     profile=plan.get('lighting_profiles',{}).get(variant)
     def ambient_matches(state):
         return not profile or(state.get('ambient')==profile['expected_native_ambient']and state.get('ambient_rgb')==profile['ambient_rgb']and not state.get('ambient_fade_frames',0))
@@ -29,6 +31,8 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
         return plan['module']=='Ahkuilon'or state.get('native_module','').casefold()==plan['module'].casefold()
     prior_ambient_valid=not profile or all(
         (p:=root/'captures'/f'{x}_{y}.json').exists()and ambient_matches(json.loads(p.read_text()))for x,y in plan['cores'])
+    prior_ambient_valid=prior_ambient_valid and all(
+        (p:=root/'captures'/f'{x}_{y}.json').exists()and json.loads(p.read_text()).get('time_of_day_minutes')==minute for x,y in plan['cores'])
     prior_ambient_valid=prior_ambient_valid and(plan['module']=='Ahkuilon'or all(
         (p:=root/'captures'/f'{x}_{y}.json').exists()and module_matches(json.loads(p.read_text()))for x,y in plan['cores']))
     validation=root/'validation.json';tiff=root/'tiff-validation.json'
@@ -54,8 +58,7 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
             print(f'HELD FOR SEPARATE REVIEW {root}',flush=True)
             return False
     for name in ['captures','temporal']: (root/name).mkdir(parents=True,exist_ok=True)
-    minute=60 if variant=='night' else 720
-    plan=dict(plan,variant=variant,time_of_day_minutes=minute,game_time='01:00'if variant=='night'else'12:00')
+    plan=dict(plan,variant=variant,time_of_day_minutes=minute,game_time=f'{minute//60:02d}:{minute%60:02d}')
     if profile:plan['lighting_profile']=profile
     dump(root/'plan.json',plan)
     game=RetailGame();game.export_level=plan['level'];game.capture_lighting=profile

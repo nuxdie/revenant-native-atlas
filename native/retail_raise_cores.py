@@ -102,7 +102,12 @@ def pin_existing_references(root):
         p=root/'captures'/f'{source["capture"]}.json';state=json.loads(p.read_text())
         if state.get('source_registration')=='native_raised_core_v1':
             if not state.get('registration_reference_key'):state['registration_reference_key']=pin_reference(root,state['registration_reference'])
-            if not state.get('original_grid_reference_key'):state['original_grid_reference_key']=pin_reference(root,source['capture'])
+            if not state.get('original_grid_reference_key'):
+                # Older sources can retain a valid immutable registration
+                # anchor without retaining their own retired culled viewport.
+                # That optional recovery archive is not an audit requirement.
+                try:state['original_grid_reference_key']=pin_reference(root,source['capture'])
+                except ValueError:pass
             dump(p,state)
 
 
@@ -118,7 +123,7 @@ def raise_cores(root):
         state=json.loads((root/'captures'/f'{name}.json').read_text())
         if state.get('source_registration')=='native_raised_core_v1':continue
         x,y,z=state['camera']
-        if min(x,y)<=512 and z==0:candidates.append(name)
+        if (min(x,y)<=512 or max(x,y)>=32256)and z==0:candidates.append(name)
     print(f'{root}: {len(candidates)} out-of-world core cameras need registered replacements',flush=True)
     if not candidates:
         if not report['unmeasured_edges_requiring_review']and not report['edges_outside_both_source_viewports']:
@@ -134,7 +139,10 @@ def raise_cores(root):
         for name in candidates:
             cx,cy=map(int,name.split('_'));original=list(camera_for_core(cx,cy));negative=max(-original[0],-original[1],0)
             reference=None
-            heights=list(dict.fromkeys([192*math.ceil((negative*1000/867+1)/192),209*math.ceil((negative*1000/867+1)/209)]))
+            if max(original[:2])>=32256 and min(original[:2])>512:
+                overflow=max(max(original[:2])-32768,0)
+                heights=[-192*math.ceil((overflow*1000/867+1)/192),-209*math.ceil((overflow*1000/867+1)/209)]
+            else:heights=list(dict.fromkeys([192*math.ceil((negative*1000/867+1)/192),209*math.ceil((negative*1000/867+1)/209)]))
             for height in heights:
                 first,rgb,motion,state,camera=capture_raised(game,capture,cx,cy,height)
                 reference,count,window=matching_reference(root,by_name,cx,cy,rgb,motion,state)

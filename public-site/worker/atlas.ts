@@ -3,7 +3,7 @@ type Tile = { offset: number; length: number; sha256: string };
 type TileIndex = { pack: string; tiles: Record<string, Tile> };
 const indexes = new Map<string, TileIndex>();
 const MAX_PART = 20 * 1024 * 1024;
-const keyPattern = /^(catalog\.json|releases\/[a-z0-9-]{1,48}\/level-\d+\/(tiles\.(pack|json)|overview\.jpg|full-resolution\.(png|zip|tif)|validation\.json))$/;
+const keyPattern = /^(catalog\.json|retail-preview-catalog\.json|releases\/[a-z0-9-]{1,48}\/level-\d+\/(tiles\.(pack|json)|overview\.jpg|full-resolution\.(png|zip|tif)|validation\.json))$/;
 const immutable = "public, max-age=31536000, immutable";
 
 function json(value: unknown, status = 200) {
@@ -28,6 +28,11 @@ async function upload(request: Request, env: AtlasEnv, url: URL) {
   const key = url.searchParams.get("key") || "";
   if (!keyPattern.test(key)) return json({ error: "Invalid object key" }, 400);
   const action = url.searchParams.get("action");
+  if (action === "delete-object" && request.method === "POST") {
+    if (!key.startsWith("releases/")) return json({ error: "Only immutable release objects can be removed" }, 400);
+    await env.BUCKET.delete(key);
+    return json({ deleted: key });
+  }
   if (action === "delete-zip" && request.method === "POST") {
     if (!key.endsWith("/full-resolution.zip")) return json({ error: "Only obsolete map ZIPs can be removed" }, 400);
     await env.BUCKET.delete(key);
@@ -81,7 +86,7 @@ export function parseRange(value: string | null, size: number): {offset:number;l
 async function file(request: Request, env: AtlasEnv, key: string, attachment: boolean | string = false) {
   const head = await env.BUCKET.head(key);
   if (!head) return json({ error: "Map file not found" }, 404);
-  const headers = new Headers({ "Content-Type": mime(key), "Cache-Control": key === "catalog.json" ? "public, max-age=30" : immutable, "ETag": head.httpEtag, "Accept-Ranges": "bytes", "X-Content-Type-Options": "nosniff" });
+  const headers = new Headers({ "Content-Type": mime(key), "Cache-Control": key === "catalog.json" || key === "retail-preview-catalog.json" ? "public, max-age=30" : immutable, "ETag": head.httpEtag, "Accept-Ranges": "bytes", "X-Content-Type-Options": "nosniff" });
   if (head.customMetadata?.sha256) headers.set("X-Content-SHA256", head.customMetadata.sha256);
   if (request.headers.get("If-None-Match") === head.httpEtag) return new Response(null, { status: 304, headers });
   if (attachment) headers.set("Content-Disposition", `attachment; filename="${typeof attachment === 'string' ? attachment : `revenant-${key.split("/").slice(-2).join("-")}`}"`);
@@ -100,7 +105,7 @@ export async function handleAtlas(request: Request, env: AtlasEnv): Promise<Resp
   try {
     if (url.pathname === "/api/upload") return await upload(request, env, url);
     if (!["GET", "HEAD"].includes(request.method)) return json({ error: "Read-only endpoint" }, 405);
-    if (url.pathname === "/api/catalog") return await file(request, env, "catalog.json");
+    if (url.pathname === "/api/catalog") return await file(request, env, url.searchParams.get('dataset')==='retail'?'retail-preview-catalog.json':'catalog.json');
     const revision = url.searchParams.get("revision") || "";const level = url.searchParams.get("level") || "";
     if (!/^[a-z0-9-]{1,48}$/.test(revision) || !/^\d{1,3}$/.test(level)) return json({ error: "Invalid map" }, 400);
     const prefix = `releases/${revision}/level-${level}/`;
@@ -108,7 +113,7 @@ export async function handleAtlas(request: Request, env: AtlasEnv): Promise<Resp
       const name = url.searchParams.get("name") || "";
       if (!/^(overview\.jpg|full-resolution\.(png|tif))$/.test(name)) return json({ error: "Invalid map file" }, 404);
       const variant = url.searchParams.get("variant") || "";
-      if (variant && !/^(day|night|fixed)$/.test(variant)) return json({error:"Invalid lighting state"},400);
+      if (variant && !/^(day|night|twilight|fixed)$/.test(variant)) return json({error:"Invalid lighting state"},400);
       const attachment = name === "overview.jpg" ? false : `revenant-level-${level}${variant ? `-${variant}` : ''}.${name.endsWith('.tif') ? 'tif' : 'png'}`;
       return await file(request, env, prefix + name, attachment);
     }

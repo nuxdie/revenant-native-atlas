@@ -59,3 +59,17 @@ Retail `SetAmbientLight` adds the GammaLevel ambient offset; `FadeAmbient` omits
 Outdoor capture chooses the authored ambient through the original editor's `amb` and `ambcolor` commands after camera changes. The native setter retains the selected GammaLevel 3 offset: daytime 30 becomes native 40, night 35 becomes native 45. No raster arithmetic or output RGB values are patched. Actual ambient, colour, fade completion and clock are checked, including the end of each capture. Earlier frames with the history-dependent brightness are retained privately for comparison and recaptured rather than recoloured.
 
 A shore → town → shore repeatability check under this policy reproduced all 217,600 static viewport pixels exactly. This defines a reproducible lighting configuration; it does not reproduce every erroneous fading state in a played save or establish Ross's unknown graphics settings.
+
+## Hourly lighting clock
+
+The existing day image is captured at 12:00 and night at 01:00. Retail `rules.def` sets `TWILIGHT 60, 8`; the real-time grid uses the continuous integer ramp from the original `Daylight` function at `0x0047ea00`. Dawn spans 05:30–06:29 and dusk 17:30–18:29. At whole hours, 07:00–17:00 share full daylight, 00:00–05:00 and 19:00–23:00 share night, and 06:00/18:00 share the intermediate light state. Thus the hourly viewer needs three native image states per cycling location, rather than 24 colour-filtered images. It does not claim minute precision, synchronized animation, or time-dependent quest simulation.
+
+`native.retail_clock` captures the new twilight image at 06:00. Integer interpolation of the authored light values gives raw intensity 31 and colour (161,174,252), becoming native intensity 41 at GammaLevel 3. A fresh dawn/dusk comparison reproduced all 203,455 observed static pixels exactly. The viewer preserves the map position and zoom across lighting changes, hides the clock for fixed-lighting locations, and holds downloads when a requested native state is not available. The opt-in retail preview is separate from the unchanged complete-atlas catalog.
+
+The older July world's daytime ambient is 80 with colour (250,245,240), while retail authors 30 with colour (250,250,250). Recorded native intensities at the same gamma setting are 90 and 40. This explains why retail daylight is darker; noon already selects its maximum daylight value. The comparison in `evidence/retail-lighting-comparison/` uses the same camera in both versions.
+
+## Wine desktop remapping
+
+A later audit found three source frames containing unrelated compositor contents immediately after a Wine desktop was mapped. Their exports and all 15 corresponding remote objects were withdrawn. The older public catalog did not reference those revisions. A pass over 16,373 sources found three matches to the observed browser signature; authored full-screen animated backgrounds were reviewed separately. This targeted signature check is not a universal application-origin detector.
+
+Capture now requests the original game's redraw and waits for native frames **after** mapping and naming the XComposite pixmap, before reading it. A regression check covers that ordering. The affected sources are recaptured and must pass the full provenance and static-edge checks again before publication. Pixel ownership alone did not prove the pixels belonged to the intended application, and an almost-full temporal mask concealed the erroneous joins; that earlier acceptance was invalid.

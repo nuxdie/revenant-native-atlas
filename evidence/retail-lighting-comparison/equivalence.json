@@ -1,0 +1,13 @@
+{
+  "dawn": 360,
+  "dusk": 1080,
+  "ambient": 41,
+  "ambient_rgb": [
+    161,
+    174,
+    252
+  ],
+  "static_pixels": 203455,
+  "exact_static_pixels": 203455,
+  "unexplained_pixels": 0
+}

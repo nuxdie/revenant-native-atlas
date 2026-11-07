@@ -34,11 +34,17 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
     changed={};records=[]
     try:
         with game.backing_capture()as capture:
-            for name in sorted(selected,key=lambda s:tuple(reversed(tuple(map(int,s.split('_')))))):
+            for name in sorted(selected):
                 old=root/'captures'/f'{name}.png';previous=json.loads(old.with_suffix('.json').read_text())
                 raised=retail and previous.get('source_registration')=='native_raised_core_v1'
-                first,array,dynamic,state=capture_core(game,capture,list(map(int,name.split('_'))),.1,temporal_samples,temporal_interval,
-                    camera=previous['camera']if raised else None)
+                bridge=previous.get('source_registration')in('native_camera_bridge_v1','native_camera_z_bridge_v1')
+                coord=previous['core']if bridge else list(map(int,name.split('_')))
+                first,array,dynamic,state=capture_core(game,capture,coord,.1,temporal_samples,temporal_interval,
+                    camera=previous['camera']if raised or bridge else None)
+                if bridge:
+                    if state['scroll']!=previous['scroll']:raise ValueError('Bridge refresh lost native registration')
+                    state['source_registration']=previous['source_registration']
+                    if previous.get('bridge_reference'):state['bridge_reference']=previous['bridge_reference']
                 if raised:
                     if state['scroll']!=previous['scroll']:raise ValueError('Raised core refresh lost native registration')
                     for key in ['source_registration','registration_reference','original_grid_camera','camera_policy']:
@@ -53,7 +59,7 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
                     if not target.exists():shutil.copy2(source,target)
                 if retail and (state['time_of_day_minutes']!=meta['time_of_day_minutes'] or state['visibility_profile']!='gameplay_2d_and_3d'):
                     raise RuntimeError('Retail refresh changed lighting or helper visibility')
-                state.update(core=list(map(int,name.split('_'))),captured_at=time.time(),crop=[64,42,576,298],
+                state.update(core=coord,captured_at=time.time(),crop=[64,42,576,298],
                              capture_recipe='retail_redraw_bg_barrier_v2'if retail else'console_redraw_bg_barrier_v3',
                              provider='original_retail_1.22L'if retail else'original_game',
                              temporal_samples=temporal_samples,temporal_sample_interval_seconds=temporal_interval,temporal_margin_pixels=8,

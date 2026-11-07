@@ -1,0 +1,29 @@
+{
+  "july_authored_ambient": 80,
+  "july_native_ambient": 90,
+  "retail_authored_ambient": 30,
+  "retail_native_ambient": 40,
+  "gamma_level": 3,
+  "clock": "Retail 12:00 versus July full daylight; both are on their daylight plateaus",
+  "comparison": {
+    "reference_sha256": "b6ea14d0f536f95c3dcc4513999bace4a04786c29086e3d72bb2811323592aa1",
+    "candidate_sha256": "5c7a66cbba323acc245b0229d97d242bb1934b46a749c2698d22aedd4f8f372e",
+    "size": [
+      640,
+      340
+    ],
+    "tolerance_per_channel": 0,
+    "compared_pixels": 194011,
+    "exact_pixel_fraction": 0.9987217219642185,
+    "within_tolerance_fraction": 0.9987217219642185,
+    "mean_absolute_channel_error": 0.006429188722976188,
+    "maximum_channel_error": 82,
+    "mismatch_bounds": [
+      0,
+      0,
+      216,
+      196
+    ],
+    "resampled": false
+  }
+}

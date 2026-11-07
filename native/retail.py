@@ -208,6 +208,12 @@ class RetailCapture:
                     subprocess.run(['xdotool','windowmap',str(window)],env=self.game.env,
                         check=True,capture_output=True,timeout=3)
                     self.capture=WindowCapture(window,self.game.env['DISPLAY'],composite=True)
+                    # Mapping a Wine desktop can briefly expose the previous
+                    # compositor contents. Redraw after mapping, before reading
+                    # the first pixmap, rather than trusting a pre-map barrier.
+                    self.game.command('mono 0')
+                    self.game.command('@wait')
+                    self.window_barrier='native_redraw_after_map_v1'
                 return self.capture.frame()
             except (RuntimeError,subprocess.SubprocessError):
                 self.close()
