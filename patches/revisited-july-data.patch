@@ -1,0 +1,20 @@
+diff --git a/src/spell.cpp b/src/spell.cpp
+index 44b61b5..64cfac8 100644
+--- a/src/spell.cpp
++++ b/src/spell.cpp
+@@ -141,6 +141,15 @@ bool SSpellData::Load(char *aname, TToken &t)
+             }
+             variants.Add(var);
+         }
++        // The July 1999 loose-data installation places STATLINE after the
++        // variant's CONTROLDATA END. Preserve it on that variant rather than
++        // deleting authored data to satisfy the later retail grammar.
++        else if (t.Is("STATLINE") && variants.NumItems() > 0)
++        {
++            SSpellControlData reader;
++            reader.Load(t, variants[variants.NumItems() - 1]);
++            t.SkipBlanks();
++        }
+         else if (t.Is("LIGHT"))
+         {
+             if (!Parse(t, "LIGHT <COLOR %b,%b,%b> <INT %i> <MULT %i> <POS %i,%i,%i> <FADEIN %i> <FADEOUT %i>\n",

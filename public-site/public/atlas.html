@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#25222b"><title>Revenant — Ahkuilon atlas</title><link rel="icon" href="/favicon.svg"><link rel="preload" href="/fonts/CinzelDecorative-Regular.ttf" as="font" type="font/ttf" crossorigin><link rel="stylesheet" href="/atlas.css"><script src="/atlas.js" defer></script></head>
+<body>
+<main class="map-surface"><canvas id="map" tabindex="0" aria-label="Revenant map. Drag to pan, scroll to zoom. Press 1 for native pixels or F to fit."></canvas><p id="notice" role="status">Opening the maps…</p></main>
+<header class="masthead">
+  <div class="identity"><h1 class="wordmark">Revenant</h1><button id="credits-open" class="text-button" aria-haspopup="dialog" aria-controls="credits">Credits</button></div>
+  <label class="location"><span class="sr-only">Location</span><select id="levels" aria-label="Choose a map level"><option>Loading the maps…</option></select></label>
+</header>
+<div class="zoom-controls" role="group" aria-label="Map zoom"><button id="minus" class="metal-button square" title="Zoom out" aria-label="Zoom out">−</button><output id="zoom-value" aria-label="Zoom percentage">—</output><button id="plus" class="metal-button square" title="Zoom in" aria-label="Zoom in">+</button><span class="control-divider"></span><button id="actual" class="metal-button" title="Show native pixels (1)">1:1</button><button id="fit" class="metal-button" title="Fit the whole map (F)">Fit map</button></div>
+<aside class="downloads" aria-label="Download this map">
+  <p id="dimensions" class="dimensions"></p>
+  <div class="download-links"><a id="download" class="metal-button download" aria-disabled="true"><span>PNG</span><span id="png-size" class="file-size">—</span></a><a id="download-tiff" class="metal-button download" aria-disabled="true"><span>TIFF</span><span id="tiff-size" class="file-size">—</span></a></div>
+</aside>
+<dialog id="credits" class="credits-dialog" aria-labelledby="credits-title" aria-describedby="credits-intro">
+  <div class="credits-heading"><h2 id="credits-title">Credits</h2><form method="dialog"><button class="metal-button square" aria-label="Close credits" autofocus>×</button></form></div>
+  <div class="credits-scroll">
+    <p id="credits-intro">The world of Revenant, and the people who helped bring its maps to light.</p>
+    <dl class="credits-list">
+      <div><dt><a href="https://github.com/benjcooley/Revenant" target="_blank" rel="noopener noreferrer">Cinematix &amp; Ben Cooley</a></dt><dd>The original game, its artwork, engine, and published source.</dd></div>
+      <div><dt><a href="https://github.com/benjcooley/RevenantRevisited" target="_blank" rel="noopener noreferrer">Ben Cooley &amp; the RevenantRevisited contributors</a></dt><dd>The modern port, lighting research, engine documentation, and reference tools.</dd></div>
+      <div><dt><a href="https://github.com/WinterSnowfall/d7vk" target="_blank" rel="noopener noreferrer">WinterSnowfall &amp; the D7VK contributors</a></dt><dd>The DirectDraw and Direct3D bridge that runs the original renderer with Wine.</dd></div>
+      <div><dt><a href="https://github.com/nuxdie/revenant-map-builder" target="_blank" rel="noopener noreferrer">nuxdie · WiegerWolf · kpcg</a></dt><dd>Revenant Map Builder, map and resource formats, and the forum and Discord collaboration connecting these efforts.</dd></div>
+      <div><dt><a href="https://github.com/depy/RevenantRE" target="_blank" rel="noopener noreferrer">MathJazz · depy</a></dt><dd>RevenantRE, graphics and compression decoding, and the shared Go implementation.</dd></div>
+      <div><dt><a href="https://github.com/chrisdev1187/Revenant-Asset-Studio" target="_blank" rel="noopener noreferrer">Slender47 · chrisdev1187</a></dt><dd>Revenant Asset Studio, asset decoding, format research, and comparison tools.</dd></div>
+      <div><dt><a href="https://www.accursedfarms.com/index.php?members/pvtjokerr.33944/" target="_blank" rel="noopener noreferrer">pvtjokerr</a></dt><dd>Early Kaitai and Python research, palette observations, reference renders, and investigations of chunks and partial edges.</dd></div>
+      <div><dt><a href="https://www.accursedfarms.com/index.php?members/vinylon.28779/" target="_blank" rel="noopener noreferrer">Vinylon</a>, <a href="https://www.accursedfarms.com/index.php?members/ross-scott.4/" target="_blank" rel="noopener noreferrer">Ross Scott</a> &amp; the <a href="https://www.accursedfarms.com/index.php?threads/revenant-maps.3265/" target="_blank" rel="noopener noreferrer">Accursed Farms community</a></dt><dd>The original map extraction discussion and the call for a complete artwork map.</dd></div>
+    </dl>
+    <p class="credits-note">Game artwork belongs to its respective rights holders.</p>
+  </div>
+</dialog>
+</body></html>

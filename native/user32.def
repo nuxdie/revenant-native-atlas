@@ -1,0 +1,7 @@
+LIBRARY user32.dll
+EXPORTS
+FindWindowA@8
+GetWindowThreadProcessId@8
+GetWindowLongA@8
+SetForegroundWindow@4
+SendMessageA@16

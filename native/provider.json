@@ -1,0 +1,37 @@
+{
+  "executable_sha256": "853347afc89ef3ea94349e3d6619f303c98bbbc544ecd939b07b31c9023e1eda",
+  "version": "0.30, July 7 1999",
+  "viewport": [
+    640,
+    340
+  ],
+  "console_thread_signature_address": "0x43aeab",
+  "helper_visibility_branches": [
+    "0x44f32d",
+    "0x44f3ce",
+    "0x44f5cb"
+  ],
+  "three_dimensional_visibility_guard": "0x4125ad",
+  "three_dimensional_visibility_filter": "OF_INVISIBLE | OF_EDITOR; original imagery-kind branch preserved",
+  "shadow_format_correction": {
+    "dispatcher": "0x48edd0",
+    "source": "RGB565 black bitmap with 5-bit alpha",
+    "destination": "ARGB1555 light-grid background texture",
+    "profile": "rgb565_black_alpha_to_argb1555_v1",
+    "preserves": "destination coverage bit; native 15-bit channel rounding; clipping and mirroring",
+    "code_sha256": "f61fc7b0c6d80efcf13b7bc3db8c8d6f0e06d3e018ef2dd5f4d752d7edd2b24f",
+    "scope": "in-memory correction only; disk executable unchanged; all other draws retain native dispatch"
+  },
+  "geyser_blend_correction": {
+    "entry": "0x40dd20",
+    "profile": "loose_geyser_mesh_litadd_v2",
+    "scope": "Default animator, pinned fgeyser five-object and sgeyser three-object meshes. Apply native litadd16 and OBJ3D_BLEND to default or already-litadd surfaces before every render, including templates restored by PartSys cleanup. Preserve explicit other blend policies, hidden flags, particles, geometry, keyframes and lighting.",
+    "resource_sha256": {
+      "CavFGeyser.i3d": "48a4f889b755b7c6c8d383eba1660bb2724580efdffc363cf5e975e4f6bad3e6",
+      "CavSGeyser.I3D": "34082b08a2e2dc5a895c3f10467b6ed0c68f2b9cca0a6f0f3840eb3675ea042a"
+    },
+    "limitation": "Compatibility correction to missing base blending in installed loose resources, not identity to the uncorrected defective framebuffer.",
+    "code_sha256": "815b1e5e80de1ca3272f4eefe8de4202da750fcaa5be7df422cdfb9608987117"
+  },
+  "presentation_input": "Original editor mouse-edge stores zeroed at 0x448cfe, 0x448d0e, 0x448d1e, 0x448d2e; scripted cameras only; rendering unchanged."
+}

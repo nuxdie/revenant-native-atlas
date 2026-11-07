@@ -1,0 +1,23 @@
+LIBRARY kernel32.dll
+EXPORTS
+GetCommandLineA@0
+Sleep@4
+ExitProcess@4
+OpenProcess@12
+ReadProcessMemory@20
+WriteProcessMemory@20
+VirtualAllocEx@20
+VirtualFreeEx@16
+GetCurrentProcess@0
+DuplicateHandle@28
+SetEvent@4
+CreateFileA@28
+WriteFile@20
+CloseHandle@4
+VirtualProtectEx@20
+FlushInstructionCache@12
+GetModuleFileNameA@12
+ReadFile@20
+OpenThread@12
+SuspendThread@4
+ResumeThread@4

@@ -1,0 +1,23 @@
+{
+  "map-builder": {
+    "repository": "https://github.com/nuxdie/revenant-map-builder",
+    "commit": "71d65397afccffe181085bbbdb87e59da6ed0261"
+  },
+  "revenant-go": {
+    "repository": "https://github.com/depy/RevenantRE",
+    "commit": "68283d5234ea73a3af384547b24f0fc46faa81ab"
+  },
+  "asset-studio": {
+    "repository": "https://github.com/chrisdev1187/Revenant-Asset-Studio",
+    "commit": "669f2e6aa7e79497c87979ce93d0adc9d828bb9f"
+  },
+  "engine-source": {
+    "repository": "https://github.com/benjcooley/Revenant",
+    "commit": "57bc6b105ee71701e54aa1fd4b8137d2b52563cf"
+  },
+  "revisited": {
+    "repository": "https://github.com/benjcooley/RevenantRevisited",
+    "commit": "0d97bcbef29e192035b4b1c463465389f9ccd2ea",
+    "local_patch": "patches/revisited-capture.patch"
+  }
+}
