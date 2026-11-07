@@ -18,6 +18,7 @@
   "revisited": {
     "repository": "https://github.com/benjcooley/RevenantRevisited",
     "commit": "0d97bcbef29e192035b4b1c463465389f9ccd2ea",
-    "local_patch": "patches/revisited-capture.patch"
+    "local_patch": "patches/revisited-capture.patch",
+    "scene_comparison_patch": "patches/revisited-scene-clock.patch"
   }
 }

@@ -18,6 +18,23 @@ def world(rect):
 
 
 class QuiltTests(unittest.TestCase):
+    def test_review_source_ids_include_boundaries_beyond_sample_limit(self):
+        with tempfile.TemporaryDirectory()as td:
+            root=Path(td)
+            for folder in ('captures','temporal','tiles','ownership'):(root/folder).mkdir()
+            sources=[];result=np.zeros((340,640,3),np.uint8);owners=np.zeros((340,640),np.uint16)
+            for ident,color,l,r in [(1,(240,0,0),0,200),(2,(0,240,0),200,400),(3,(0,0,240),400,640)]:
+                frame=np.full((340,640,3),color,np.uint8)
+                Image.fromarray(frame).save(root/f'captures/{ident}.png')
+                Image.new('L',(640,340)).save(root/f'temporal/{ident}.png')
+                result[:,l:r]=frame[:,l:r];owners[:,l:r]=ident
+                sources.append(dict(id=ident,capture=str(ident),scroll=[0,0]))
+            Image.fromarray(result).save(root/'tiles/0_0.png');Image.fromarray(owners).save(root/'ownership/0_0.png')
+            (root/'ownership-sources.json').write_text(json.dumps(sources))
+            report=verify_edges(root,dict(bounds=[0,0,640,340],tiles=[[0,0]]))
+            self.assertEqual(len(report['static_samples']),40)
+            self.assertEqual(report['static_owner_ids'],[1,2,3])
+
     def test_animation_at_either_kept_edge_endpoint_is_reported(self):
         with tempfile.TemporaryDirectory()as td:
             root=Path(td)

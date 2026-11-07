@@ -1,0 +1,94 @@
+{
+  "dataset": "GOG 1.22L",
+  "executable_sha256": "28bec27387bf53a553da320dd4883d00ff5bcc5a5f3d2658cca8e8ed586372b5",
+  "port_revision": "0d97bcbef29e192035b4b1c463465389f9ccd2ea",
+  "port_binary_sha256": "f4ad921c8d04a714692e08d573553343946b6966582a34a2b8856ad7e53808a0",
+  "port_capture_patches": [
+    "OpenGL/readback and July-parser compatibility changes already recorded in patches/",
+    "scene-time clock and explicit mode application in scene harness"
+  ],
+  "decision": "Original retail light grid for production. Revisited remains a tested candidate, not accepted as a pixel-identical replacement.",
+  "renderer_equivalence_claim": false,
+  "comparisons": [
+    {
+      "scene": "town-day",
+      "reference": "retail-dls",
+      "candidate": "revisited-classic",
+      "all_foreground_pixels": 216739,
+      "exact_fraction": 0.4371709752282699,
+      "within_3_fraction": 0.8505160584850904,
+      "mean_absolute_channel_error": 1.640876814971002,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    },
+    {
+      "scene": "town-day",
+      "reference": "retail-grid",
+      "candidate": "revisited-modern",
+      "all_foreground_pixels": 216737,
+      "exact_fraction": 7.38221900275449e-05,
+      "within_3_fraction": 0.012522088983422304,
+      "mean_absolute_channel_error": 27.412063161035416,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    },
+    {
+      "scene": "town-night",
+      "reference": "retail-dls",
+      "candidate": "revisited-classic",
+      "all_foreground_pixels": 216474,
+      "exact_fraction": 0.4448109241756516,
+      "within_3_fraction": 0.8457459094394708,
+      "mean_absolute_channel_error": 1.850511685775967,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    },
+    {
+      "scene": "town-night",
+      "reference": "retail-grid",
+      "candidate": "revisited-modern",
+      "all_foreground_pixels": 216737,
+      "exact_fraction": 3.691109501377245e-05,
+      "within_3_fraction": 0.0362143980953875,
+      "mean_absolute_channel_error": 9.748449349518848,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    },
+    {
+      "scene": "caverns",
+      "reference": "retail-dls",
+      "candidate": "revisited-classic",
+      "all_foreground_pixels": 129414,
+      "exact_fraction": 0.14918015052467276,
+      "within_3_fraction": 0.32961657934999306,
+      "mean_absolute_channel_error": 20.422113011987367,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    },
+    {
+      "scene": "caverns",
+      "reference": "retail-grid",
+      "candidate": "revisited-modern",
+      "all_foreground_pixels": 129821,
+      "exact_fraction": 3.85145700618544e-05,
+      "within_3_fraction": 0.0190184946965437,
+      "mean_absolute_channel_error": 25.257955184446278,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    },
+    {
+      "scene": "keep",
+      "reference": "retail-dls",
+      "candidate": "revisited-classic",
+      "all_foreground_pixels": 183218,
+      "exact_fraction": 0.12780949470030237,
+      "within_3_fraction": 0.30384023403814037,
+      "mean_absolute_channel_error": 16.652555971574845,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    },
+    {
+      "scene": "keep",
+      "reference": "retail-grid",
+      "candidate": "revisited-modern",
+      "all_foreground_pixels": 184898,
+      "exact_fraction": 0.00040022066220294435,
+      "within_3_fraction": 0.04623089487176714,
+      "mean_absolute_channel_error": 23.4429523304741,
+      "scope": "Unmasked whole viewport, includes different animation phases; diagnostic, not static-surface certification"
+    }
+  ]
+}

@@ -1,0 +1,230 @@
+{
+  "executable_sha256": "28bec27387bf53a553da320dd4883d00ff5bcc5a5f3d2658cca8e8ed586372b5",
+  "module_pack_sha256": "557e0307e0c619846b29d783d044e92994fdcaa9297171fdd7f3ff55ad5a4b2c",
+  "placements": [
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/42_23_8.dat",
+      "level": 42,
+      "uid": "0x845c0484",
+      "object_class": 9,
+      "position": [
+        24480,
+        8944,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/42_23_9.dat",
+      "level": 42,
+      "uid": "0xbb07048b",
+      "object_class": 9,
+      "position": [
+        24480,
+        9520,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/42_24_8.dat",
+      "level": 42,
+      "uid": "0xd6210487",
+      "object_class": 9,
+      "position": [
+        24864,
+        8944,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/42_24_9.dat",
+      "level": 42,
+      "uid": "0x3e1b0491",
+      "object_class": 9,
+      "position": [
+        24864,
+        9520,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/43_22_6.dat",
+      "level": 43,
+      "uid": "0xd6d3049c",
+      "object_class": 9,
+      "position": [
+        23072,
+        6832,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/43_22_6.dat",
+      "level": 43,
+      "uid": "0xd6ce04a2",
+      "object_class": 9,
+      "position": [
+        23408,
+        6960,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_22_10.dat",
+      "level": 41,
+      "uid": "0xe12504f0",
+      "object_class": 9,
+      "position": [
+        23504,
+        10448,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_10.dat",
+      "level": 41,
+      "uid": "0x90fa04e7",
+      "object_class": 9,
+      "position": [
+        24096,
+        10272,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_10.dat",
+      "level": 41,
+      "uid": "0x849704ef",
+      "object_class": 9,
+      "position": [
+        24208,
+        10672,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_10.dat",
+      "level": 41,
+      "uid": "0xe12504f0",
+      "object_class": 9,
+      "position": [
+        23600,
+        10832,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_11.dat",
+      "level": 41,
+      "uid": "0x842d04e8",
+      "object_class": 9,
+      "position": [
+        23728,
+        11344,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_11.dat",
+      "level": 41,
+      "uid": "0x842d04e8",
+      "object_class": 9,
+      "position": [
+        23920,
+        11344,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_9.dat",
+      "level": 41,
+      "uid": "0x6cfc047a",
+      "object_class": 9,
+      "position": [
+        24192,
+        9728,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_9.dat",
+      "level": 41,
+      "uid": "0x842d04e8",
+      "object_class": 9,
+      "position": [
+        23632,
+        9536,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_9.dat",
+      "level": 41,
+      "uid": "0x842d04e8",
+      "object_class": 9,
+      "position": [
+        23824,
+        9536,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    },
+    {
+      "module": "Ahkuilon",
+      "sector": "Map/41_23_9.dat",
+      "level": 41,
+      "uid": "0xe12504f0",
+      "object_class": 9,
+      "position": [
+        23600,
+        9968,
+        0
+      ],
+      "map_version": 1,
+      "native_load": "fatal_missing_type_without_block_size"
+    }
+  ]
+}

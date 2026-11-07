@@ -1,96 +1,109 @@
-# Reproduce the native maps
+# Reproduce the retail maps
 
-## Choose a compatible source installation
+## Source data and tools
 
-Work on a separate extracted installation under `runtime/game/`, not your only copy. You should have `Revenant.exe`, `Resources/class.def`, `Resources/Imagery/`, and `Modules/Ahkuilon/Map/` containing loose resources. Some releases package resources in archives that must first be extracted.
+Use the English GOG 1.22L installation. The controller accepts only this SHA-256 for `Revenant.exe`:
 
-The original executable's accepted SHA-256 is pinned in `native/provider.json`. This release uses the July 7, 1999 version 0.30 executable. Runtime addresses and resource guards deliberately reject other binaries/assets; do not disable them to make an unrelated release run. No game executable, raw resource archive or proprietary DLL is supplied in GitHub releases.
+```text
+28bec27387bf53a553da320dd4883d00ff5bcc5a5f3d2658cca8e8ed586372b5
+```
 
-## Linux prerequisites
+It reports version 1.22, built May 8, 2000. Supply your own game files. For an offline GOG installer, `innoextract` can extract them without running setup. Keep the extracted installation separate from each capture instance. The inventory reads `imagery.rvi`, `resources.rvr` and the `Modules/*.rvm` ZIP archives directly.
 
-Use an X11 session with XComposite and a Vulkan driver that supports D7VK. Python 3.10+, Pillow, NumPy, g++, libtiff, Clang 18, i686 MinGW binutils, xdotool and xwininfo are required. Install a Wine runner with 32-bit support. The published maps used GE-Proton 11-7 and D7VK commit `d6faa06439eb097783dee27fb2b5d1cf3bb1b335`; other versions need their own visual validation.
-
-On Debian/Ubuntu the tool packages include:
+Use Linux/X11, XComposite, a Vulkan driver, Python 3.10+, Pillow, NumPy, g++, libtiff, Clang 18, i686 MinGW binutils, xdotool and xwininfo. Capture was tested with GE-Proton 11-7 and 32-bit D7VK at commit `d6faa06439eb097783dee27fb2b5d1cf3bb1b335`.
 
 ```sh
 sudo apt-get install g++ libtiff6 libx11-6 libxcomposite1 xdotool x11-utils clang-18 binutils-mingw-w64-i686
 python3 -m venv .venv
 . .venv/bin/activate
 python3 -m pip install -r requirements.txt
-```
-
-Configure `REVENANT_WINE` to your runner's `wine` executable. Set `DISPLAY` to the X11 display used for game capture. Run commands from this repository's root.
-
-```sh
+export DISPLAY=:0
 export REVENANT_WINE=/absolute/path/to/runner/files/bin/wine
-export WINEPREFIX="$PWD/runtime/prefix"
-mkdir -p runtime
-"$REVENANT_WINE" wineboot -u
-"$REVENANT_WINE" reg add 'HKCU\Software\Wine\Explorer' /v Desktop /t REG_SZ /d RevenantAtlas /f
-"$REVENANT_WINE" reg add 'HKCU\Software\Wine\Explorer\Desktops' /v RevenantAtlas /t REG_SZ /d 640x480 /f
 ```
 
-Place the matching 32-bit D7VK `ddraw.dll` beside the copied executable. Configure the copied game's `revenant.ini` for hardware 3D (`Software3D=No`), real-time lighting and GammaLevel 3. The controller selects the original real-time grid in memory. Do not confuse the alternative software DLS path with the tested configuration.
+An X11 desktop must remain available throughout capture. The original renderer and its hardware support affect the result; another Wine/D7VK/GPU configuration needs its own visual checks.
 
-The original game has legacy path-length problems. For deeply nested installs, map the private game directory to a short drive in this private Wine prefix:
+## Inventory and prepare an isolated copy
+
+From the repository root:
 
 ```sh
-ln -s "$PWD/runtime/game" "$WINEPREFIX/dosdevices/g:"
-export REVENANT_EXE='G:\Revenant.exe'
+python3 -m native.retail_dataset --help
+python3 -m native.retail_dataset --data /absolute/path/to/extracted-game --out runtime/retail-index
+python3 -m native.retail_instance \
+  --data /absolute/path/to/extracted-game \
+  --runtime runtime/retail \
+  --desktop RevenantRetail \
+  --wine "$REVENANT_WINE" \
+  --ddraw /absolute/path/to/32-bit/DDraw.dll \
+  --launch
 ```
 
-Do not replace an existing drive mapping without inspecting it.
+The inventory records pack hashes, module/area names, geometry and the areas with authored night lighting. It plans 31 drawable campaign levels and six deathmatch levels, with two states each for levels 0 and 5: 39 images in total. Invalid off-world object placements are reported rather than allowed to enlarge the map by billions of pixels.
 
-## Build the static coverage baseline
+The instance helper gives the capture copy its own INI, Curmap, Save, Wine prefix and desktop. It links read-only stock assets to the source directory. It chooses hardware rendering, GammaLevel 3, the original real-time light grid and silent audio through a dedicated muted PulseAudio sink when available. `--ini` selects an INI explicitly; `--prefix-template` can clone an existing compatible prefix. Wait for the helper to finish before opening the controller. Do not run two games against one writable capture directory or Wine prefix.
+
+The Wine runner must support 32-bit Windows applications. The private `G:` drive mapping avoids the original engine's path-length problems. Existing unexpected mappings cause an error rather than being overwritten.
+
+## Capture and resume
+
+The controller defaults to the instance above. For another instance, set all three variables before invoking any capture or controller command:
 
 ```sh
-python3 atlas.py --game runtime/game --levels all --no-full-png
+export REVENANT_RETAIL_RUNTIME="$PWD/runtime/retail"
+export REVENANT_RETAIL_DATA="$PWD/runtime/retail/game"
+export REVENANT_RETAIL_DESKTOP=RevenantRetail
+export REVENANT_AUDIO_SINK=revenant_atlas_silent
+python3 -m native.retail @info
+python3 -m native.retail_batch --levels 0,1,2,3,4,5,6,30,31,32,36,37,39,41,42,43,44,45,46,47,48,49,51,52,53,54,55,56,57,58,66,73,83,100,101,102,205
 ```
 
-This is the independent static decoder. It determines coverage and provides plans; its unlit images are not the final native fidelity exports.
+The resumable batch wrapper restarts only its own Wine prefix after a capture failure and retains good sources. It holds levels whose unbounded legacy records reference absent object IDs (currently 41–43), instead of retrying an unrecoverable native loader error indefinitely. Those holds prevent a complete catalog from publishing.
 
-## Launch and capture
+The exporter mounts each module in the original editor, hides editor helpers while retaining gameplay visibility, fixes the scene clock, registers each camera, requests the engine's own redraw and waits for native frames and background update queues. Viewports are 640 × 340 pixels, with overlapping 512 × 256 cores. It records the frame, executable identity, clock, camera, source hash and measured temporal changes beside each capture.
+
+For a limited investigation:
 
 ```sh
-python3 -m native.launch
-python3 -m native.build_all
+python3 -m native.retail_export --levels 30,31
+python3 -m native.retail_export --levels 0 --variant night
 ```
 
-The launcher builds the guarded helper, starts the isolated original editor, and initializes a new game. Initial menu automation assumes the tested 640 × 480 presentation. Capture viewports are 640 × 340. A dedicated Wine prefix/desktop is essential because the controller locates the original game window by title. The controller's input/presentation configuration prevents mouse-edge panning from stealing a scripted camera.
+Re-running resumes recorded captures after validating their identity and hashes. Keep `retail-output/` and its source frames; final PNGs alone cannot reproduce the ownership audit. A process reports `REVIEW` and continues to another map when unexplained joins remain. That map is held, not accepted.
 
-For a single level or resumable limited investigation:
+Day is 12:00 and night is 01:00. Interiors without a day/night area definition have one `fixed` state. These are original-engine renders at the selected clock, not colour transforms of one image.
+
+## Review and export
+
+Use an idle isolated renderer for review; its `export.lock` serializes camera use. Retail review must use the retail controller, matching module and matching clock:
 
 ```sh
-python3 -m native.export --level 30 --out native-output
-python3 -m native.quilt native-output/level-30 --no-full
-python3 -m native.audit native-output/level-30 --no-full
-python3 -m native.finalize native-output/level-30
-python3 -m native.bigtiff --levels 30
+python3 -m native.retail_review retail-output/fixed/level-30 retail-output/fixed/level-31
 ```
 
-Consult each command's `--help` for supported flags. Native exports retain source frames, ownership indexes and measured motion, and can be resumed. Never publish a partial or `review_required` map.
+This recaptures the affected registered sources with longer native animation observation and tries alternate source ownership. It never manufactures a motion mask from overlap differences or changes RGB values. A persistent problem stays `review_required` and needs investigation; do not relax acceptance to publish it.
 
-## Investigate joins and effect issues
-
-Use `native.repair_reviews --levels 30,31` to recapture held joins with longer observation; `native.recut` tries alternate source ownership while retaining original colours. A source defect requires correcting and freshly capturing the original renderer; stitching alone does not fix black-backed effect surfaces.
-
-`native.repair_effects` can recapture an entire level with the guarded current effect profile:
+Individual offline checks and output generation are also available:
 
 ```sh
-python3 -m native.repair_effects --levels 30,31 --all-captures
+python3 -m native.quilt retail-output/fixed/level-30 --no-full
+python3 -m native.audit retail-output/fixed/level-30 --no-full
+python3 -m native.finalize retail-output/fixed/level-30
+python3 - <<'PY'
+from pathlib import Path
+from native.bigtiff import build
+build(Path("retail-output/fixed/level-30"))
+PY
 ```
 
-Its scoped mode uses a runtime JSON list of capture names. Level 39 has an additional registered Z=192 viewport; preserve that source and ownership when repairing it. See `native.bridge`, the saved metadata and the release's rendering evidence.
+The exporter and review command build the tiled BigTIFF after an accepted PNG. TIFF uses 64-bit offsets, Deflate compression and decoded-tile equality checks. Both formats retain native resolution. Overview previews alone are resized.
 
-## Preview and compare
+Review known shoreline, shadow, light and geyser scenes against fresh original-game viewports. A stitch can preserve a rendering defect perfectly: source-pixel identity does not by itself establish visual fidelity. See [rendering.md](rendering.md) for configuration, comparison evidence and limits.
 
-```sh
-python3 viewer.py native-output
-python3 -m native.live --port 8766
-python3 -m native.check_scene --camera 30 10536 10736 0 --out comparisons/cavern
-python3 -m native.clip --camera 30 10536 10736 0 --seconds 10 --out comparisons/cavern-cycle
-```
+## Parallel instances and older research
 
-`native.live` is loopback-only and suspends camera requests while capture/comparison tools own the camera. A moving effect needs a full-cycle observation; a few quiet frames cannot establish its blend behaviour throughout controller initialization, emission and cleanup.
+Parallel work requires a different runtime, desktop, private game directory and Wine prefix per instance. Assign disjoint level lists. Never change the camera of an instance whose export lock is held. If the original game stalls, restart only that instance and resume its registered captures; never fill missing frames with another renderer.
 
-Use [rendering.md](rendering.md) for acceptance criteria and limitations. For reference-port experiments, `sources.json` pins the community repositories and `patches/` keeps the local Revisited patches; those experiments do not establish original-executable fidelity.
+The older `native.launch`, `native.export`, `native.repair_effects`, `native.live` and `native/provider.json` belong to the July 1999 installation. Their runtime addresses, lighting clock and effect patches are deliberately separate. Do not apply them to retail. `atlas.py` remains an independent static decoder; its output is not the production native render.
+
+Revisited comparison patches and upstream revisions are in `patches/` and `sources.json`. The scene comparison harness accepts an explicit scene clock, but its extra rendering features do not establish parity with the original retail executable.

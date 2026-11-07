@@ -1,7 +1,7 @@
-# Release evidence
+# Rendering evidence
 
-These records describe the native exports and their stated acceptance scope. Per-level reports verify camera/source registration, source hashes, every owned RGB pixel and actual ownership neighbours. Temporal differences are measured from native frames, not hidden by broad tolerance. A zero unexplained-static-edge result does not imply synchronized animations or universal GPU equivalence.
+[Retail renderer profile](retail-renderer-profile.json) pins the current executable and capture configuration. [Backend comparison](retail-backends/backend-decision.json) records the tested Revisited revision, explicit scene clock and lighting modes. The four contact sheets beside it show native retail grid/DLS and Revisited Classic/modern views. Unmasked viewport errors include different animation phases and are diagnostic, not a static-surface certification.
 
-The PNG/TIFF release manifest records exact file sizes and SHA-256 digests. TIFF records count every decoded RGB pixel checked against the native tiles. The original executable/resources and private Wine runtime are not distributed.
+The complete retail output is still undergoing native join/effect review. A retail profile does not certify an unfinished map. Missing legacy object IDs in levels 41–43 also prevent a complete native render of that area.
 
-Source regression results are available in GitHub Actions. Selected before/after images and effect-cycle observations document the compatibility fixes. The release is published only after fresh sources, artifact reviews and public-download readback pass.
+[Earlier July-installation evidence](legacy-july/) records that installation’s compatibility fixes and geyser review. Those hashes, effect patches and counts must not be treated as retail acceptance evidence. See [rendering and limitations](../docs/rendering.md).

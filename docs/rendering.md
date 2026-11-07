@@ -1,25 +1,45 @@
 # Rendering and validation
 
-The fidelity renderer is the original Revenant executable identified by `native/provider.json`, running through Wine/D7VK. The older static renderer is a coverage baseline, not a substitute for original-engine lighting and animated 3D imagery.
+## Dataset and renderer selection
+
+The production capture profile is the English GOG 1.22L `Revenant.exe`, SHA-256 `28bec27387bf53a553da320dd4883d00ff5bcc5a5f3d2658cca8e8ed586372b5` (MD5 `e9a42fe6baef4e7bbf2ac610d7a3e313`). It reports Revenant 1.22, build May 8, 2000. `native/retail_dataset.py` hashes the installed packs, reads their actual map records and inventories the authored lighting cycles.
+
+The earlier July executable and loose data are a different baseline. Their forest/town ambient values, ruins placement and fire-geyser imagery differ from retail. `native/provider.json` and the older compatibility code describe that historical installation; they must not be applied to the retail binary.
+
+The production renderer is the original retail executable through Wine/D7VK, with RealTimeLight enabled and GammaLevel 3. Revisited's Classic and modern modes remain comparison candidates. The recorded scene harness applies the requested mode and clock explicitly; screenshots are not labelled "modern" merely because a settings file exists. No Revisited enhancement assets replace the retail resources in those comparisons.
+
+The comparison scenes cover Misthaven by day and night, the resurrection pit and the cavern geyser area. Whole-viewport differences include unsynchronized animation phases, so their error measurements are diagnostic, not a static-surface certification. The comparison does not establish equivalence for other Revisited configurations or platforms.
+
+## Day and night
+
+The `NIGHTAMBLIGHT`/`NIGHTAMBCOLOR` entries in each module's AREA.DEF determine whether a location has a cycle. The forest/Misthaven and ruins are rendered at noon and 01:00. Fixed-lighting areas have one image; a night preference in the viewer does not invent a darker cave or a second identical download.
+
+Native day/night changes are rendered by the game, including the area ambient colour and light contribution. The night files are not tinted daytime exports. The viewer chooses an immutable image revision for each state and retains its world position and scale.
 
 ## Capture and stitching
 
-The editor provides camera control while pausing gameplay AI. Each 640 × 340 viewport records the requested and observed camera, scroll, native frame progress, area ambience, time, source digest, and sampling configuration. The game performs its own full redraw and background-queue barrier before capture. Changed pixels are measured across actual native frames; masks are not inferred from disagreements between overlapping images.
+The integrated editor provides camera control while pausing gameplay AI. Each 640 × 340 source records its actual camera, scroll, native frame progress, time, ambient values, executable identity, source digest and motion-sampling configuration. The controller requests the original full redraw. The strengthened barrier also observes the retail background-update and rectangle queues and requires quiet native frames before capture.
 
-Quilting chooses unmodified pixels from overlapping source viewports. A 16-bit ownership map identifies the source for each output pixel. The auditor rechecks every owned RGB value, coverage boundaries, viewport registration, source hashes, and actual neighbouring pixel pairs at ownership cuts. Publication requires no missing captures, no nonblack boundaries into uncaptured coverage, and zero unexplained static ownership edges.
+Presentation changes hide mouse overlays and prevent editor edge panning. The editor's 2D and 3D imagery filters are changed to the normal gameplay treatment of `OF_EDITOR`/`OF_INVISIBLE`. These changes do not alter light emission, textures, geometry, particles or raster arithmetic. Every process patch has byte guards; the on-disk executable and packs remain unchanged.
 
-Full PNGs are streamed rather than assembled as a multi-billion-pixel in-memory canvas. TIFFs use a single full-resolution RGB image in tiled BigTIFF format, with Deflate compression and horizontal prediction. Their full decoded tile pixels are checked, including sparse black areas and partial edges.
+Quilting selects unchanged source pixels across overlaps. A 16-bit ownership map identifies each output pixel's source. The auditor rechecks every owned RGB value, source hashes, registration, coverage boundaries and neighbouring pixel pairs at ownership cuts. Acceptance requires no missing sources, no nonblack boundaries into uncaptured coverage and no unexplained static ownership edges. Longer native motion sampling and registered extra views are used where a join needs review; disagreement alone is not a motion mask.
 
-## Corrections
+Four nonsensical off-world placements in the shipped packs are reported in the dataset inventory and excluded from camera planning. Empty campaign levels 33 and 90 have no drawable map. Test geometry that is genuinely visible in the base module is not repainted as invented terrain.
 
-- **Barrel/crate shadow colour bands:** the old dispatcher treated ARGB1555 destination coverage as RGB565 colour. The guarded black-shadow correction preserves coverage and native channel rounding, clipping and mirroring. Other draw paths retain the original dispatcher.
-- **Shoreline bands:** stale original-game source frames were retired and replaced with fresh, registered captures. The earlier session's low-level cause is not established. Source digests and frame-advancement checks prevent those frames from silently returning.
-- **Geyser diamonds:** June 1999 loose resources omit base-quad blend configuration found in later fire-geyser data. The full mesh correction covers fire/spark templates restored to defaults when PartSys controllers close, as well as the base glow. Compatibility work is restricted to default/additive surfaces in the pinned geyser meshes; authored geometry, particle controllers, textures, placements and lighting remain in the original engine. The release evidence identifies the exact accepted correction and recapture scope.
+Full PNGs are streamed. TIFFs contain one full-resolution RGB image in tiled BigTIFF format, with lossless Deflate and horizontal prediction. Every tile is decoded and checked against the source tiles, including sparse black areas and partial edges. The publisher switches the public catalog only after the complete retail set is verified.
 
-The executable and resource files on disk remain unchanged. Compatibility changes exist only in the isolated process and are guarded by binary/resource signatures.
+## Earlier compatibility work
+
+The July pipeline's barrel/crate colour-band correction, shoreline recaptures and missing geyser blend-controller correction are retained for that installation. They are guarded by its executable/resource hashes. The retail fire-geyser resource already contains the authored blend controller: SHA-256 `64102fd39d039f0ca24af8b1b39eff4529ea988a69471fe49728b8932984c77b`. The July mesh patch is not installed in the retail process.
 
 ## Limits
 
-A stitched PNG/TIFF freezes successive local animation phases; it is not one simultaneous island frame. AI is paused in the editor, and hidden or spawned objects depend on game state. Separate levels retain their own coordinate systems rather than being laid out as invented physical geography. Gamma handling and old graphics APIs differ across hardware; this is a reproducible Wine/D7VK configuration, not universal historical-GPU equivalence.
+A stitched PNG/TIFF contains successive local animation phases, not one simultaneous island frame. Base-module editor state differs from quest progress and spawned objects in a save. Separate levels retain their own coordinate systems.
 
-A pixel-provenance pass does not prove that the source renderer is artifact-free. Visual checks and fresh game comparisons remain necessary. The current release's evidence and known limitations must be read together; do not interpret a local exact match as a universal pixel-perfect claim.
+D7VK ignores the application's display gamma-ramp request; the game's ambient gamma adjustment still applies. Old graphics hardware and other wrappers can produce different pixels. Matching this original-game configuration does not prove identity to every setting in Ross's video, whose compressed/scaled frames are not a lossless framebuffer reference.
+
+Pixel provenance proves where a pixel came from, not that a renderer has no artifacts. Visual effect reviews and fresh original-game comparisons are required alongside the ownership audit. No report should be read as a universal pixel-perfect claim.
+
+## Current retail rebuild hold
+
+Legacy version-1 sectors remain in retail levels 41–43. Sixteen placements use eleven unique object IDs absent from the installed retail class catalog (ten placements on level 41, four on level 42 and two on level 43). The original executable stops with “Bad object” when loading that part of the map, and a restart reproduces it. Those IDs were not found in the available July class catalog either. The inventory reports these unresolved types, including whether the native loader can skip a bounded object record. No substitute artwork, guessed object alias or blank accepted map is supplied for the crash area. The complete retail catalog remains held while it is investigated.

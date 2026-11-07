@@ -8,7 +8,7 @@ from PIL import Image
 def verify_edges(root,meta,scan_tiles=None):
     sources={s['id']:s for s in json.loads((root/'ownership-sources.json').read_text())}
     cache=OrderedDict();tiles=OrderedDict();keys=set(map(tuple,meta['tiles']))
-    examined=bad=temporal_bad=unverified=0;maximum=0;samples=[];static_samples=[]
+    examined=bad=temporal_bad=unverified=0;maximum=0;samples=[];static_samples=[];static_owners=set()
     left,top=meta['bounds'][:2]
     def frame(ident):
         if ident not in cache:
@@ -56,6 +56,7 @@ def verify_edges(root,meta,scan_tiles=None):
                 valid=(sx>=0)&(sy>=0)&(sx<640)&(sy<340)
                 moving[valid]|=mask[sy[valid],sx[valid]]
             mismatch=error>0;bad+=int(mismatch.sum());temporal_bad+=int((mismatch&moving).sum())
+            if np.any(mismatch&~moving):static_owners.update(i for i in (aa,bb)if i)
             unverified+=int((error==256).sum())
             if mismatch.any():
                 maximum=max(maximum,int(error[mismatch].max()))
@@ -79,4 +80,5 @@ def verify_edges(root,meta,scan_tiles=None):
     return {'checked_foreground_ownership_edges':examined,'edges_not_reproduced_by_either_native_source':bad,
             'measured_animation_edges':temporal_bad,'unmeasured_edges_requiring_review':bad-temporal_bad,
             'edges_outside_both_source_viewports':unverified,'maximum_minimum_channel_error':maximum,
-            'exact_native_neighbor_pair_fraction':1-bad/max(1,examined),'samples':samples,'static_samples':static_samples}
+            'exact_native_neighbor_pair_fraction':1-bad/max(1,examined),'samples':samples,'static_samples':static_samples,
+            'static_owner_ids':sorted(static_owners)}

@@ -92,6 +92,8 @@ class NativeGame:
         if actual != EXPECTED_BINARY:
             raise RuntimeError('Original executable differs; native control addresses must be reverified')
         self.env = dict(os.environ, DISPLAY=display, WINEPREFIX=str(prefix), WINEDEBUG='-all')
+        if os.environ.get('REVENANT_AUDIO_SINK'):
+            self.env['PULSE_SINK'] = os.environ['REVENANT_AUDIO_SINK']
         self.wine = str(wine)
         self.display = display
         self.command_log = []

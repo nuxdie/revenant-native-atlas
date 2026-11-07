@@ -12,8 +12,8 @@ from atlas import project, sector_position,parse_legacy
 CORE_W, CORE_H = 512, 256
 
 
-def positions(path):
-    data = path.read_bytes()
+def positions(path, data=None):
+    data = path.read_bytes() if data is None else data
     magic, version = struct.unpack_from('<4si', data)
     count, = struct.unpack_from('<i', data, 12 if version >= 14 else 8)
     if magic==b'MAP 'and 1<=version<=7:
@@ -22,7 +22,7 @@ def positions(path):
             yield {'class':obj.cls,'uid':obj.uid,'flags':obj.flags,
                    'pos':[obj.x,obj.y,obj.z],'name':obj.name}
         return
-    if magic != b'MAP ' or not 8 <= version <= 14 or not 0 <= count < 100000:
+    if magic != b'MAP ' or not 8 <= version <= 15 or not 0 <= count < 100000:
         raise ValueError(f'Unsupported map header: {path}')
     offset = 16 if version >= 14 else 12
     for _ in range(count):

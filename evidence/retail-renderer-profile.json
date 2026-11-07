@@ -1,0 +1,24 @@
+{
+  "dataset": "English GOG 1.22L",
+  "version": "1.22, May 8 2000",
+  "executable_sha256": "28bec27387bf53a553da320dd4883d00ff5bcc5a5f3d2658cca8e8ed586372b5",
+  "viewport": [
+    640,
+    340
+  ],
+  "clock_minutes": {
+    "day": 720,
+    "night": 60
+  },
+  "rendering": "Original retail executable, real-time light grid, hardware rendering, GammaLevel 3, Wine/D7VK",
+  "raster_patch": null,
+  "presentation": "Hide mouse overlays, disable mouse-edge camera drift and keep owned capture windows active in background",
+  "visibility": "Original gameplay handling of invisible/editor-only imagery; 2D and 3D filters guarded separately",
+  "barrier": "At least eight native frames and two quiet frames of original update/rectangle queues",
+  "limits": [
+    "D7VK ignores application display gamma ramps",
+    "Editor pauses gameplay AI",
+    "Stitched animation phases are local snapshots",
+    "Full retail release remains held until every image passes"
+  ]
+}

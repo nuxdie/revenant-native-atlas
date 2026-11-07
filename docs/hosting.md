@@ -1,6 +1,6 @@
 # Mirror and host the atlas
 
-The release is independent of the ChatGPT Sites URL. Source and individual map images live on GitHub; the release also includes the original tile packs, indexes and overview images used by the web viewer.
+The source is independent of the ChatGPT Sites URL. The retail dataset release is currently a draft while community announcements are on hold. Until it is published, use the live atlas for image downloads: the GitHub download helper cannot fetch an anonymous draft. A published dataset includes PNGs, BigTIFFs, tile packs, indexes and overview images without redundant ZIP wrappers.
 
 ## Local mirror, without game files or cloud accounts
 
@@ -46,6 +46,8 @@ The HTTP interface is deliberately small:
 
 The unchanged viewer is in `public-site/public/`. It can be served by another backend implementing those routes.
 
+The catalog contains 37 distinct locations and 39 images. Levels 0 and 5 contain separate day/night entries under `variants`; their immutable revisions and file sizes differ. The viewer preserves position and zoom when switching. Other levels have one fixed-lighting entry. The API continues to identify the actual image by `revision` and `level`; `variant=day`, `night` or `fixed` optionally labels the download filename.
+
 ## Original Worker/R2 application
 
 `public-site/` contains the complete Vinext/Cloudflare Worker source used for the hosted site, including pinned npm dependencies and the Sites integration. The public snapshot omits the original account's project identifier and all local credentials/state.
@@ -66,10 +68,8 @@ The hosted uploader expects the `ATLAS_UPLOAD_KEY` runtime secret. Generate your
 After reproducing and accepting native maps:
 
 ```sh
-python3 -m native.bigtiff
-python3 -m native.publish_pack
-python3 -m native.publish_upload https://YOUR-HOST
-python3 -m native.verify_public https://YOUR-HOST
+python3 -m native.publish_retail
+python3 -m native.publish_retail --publish https://YOUR-HOST
 ```
 
-The publisher reads its key through hidden stdin, verifies complete remote bytes, and updates the catalog only after the referenced objects are available. It does not silently rebuild the native maps. ZIPs and private validation JSONs are excluded from the public file endpoint.
+The retail publisher reads its key through hidden stdin and verifies complete remote bytes. It stages accepted immutable objects incrementally, but adds the catalog upload only when all 39 PNG/TIFF pairs are ready. Keep the catalog as the last upload. `runtime/retail-publication/upload-manifest.json` records paths, keys, sizes and hashes; do not distribute its local paths as public provenance. Verify the deployed catalog, both lighting states, file sizes, byte ranges and download hashes before announcing it. It does not silently rebuild the native maps. ZIPs and private validation JSONs are excluded from the public file endpoint.

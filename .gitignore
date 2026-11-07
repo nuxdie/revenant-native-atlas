@@ -24,3 +24,7 @@ public-site/.sites-runtime/
 public-site/.vinext/
 public-site/.next/
 *.tsbuildinfo
+
+retail-output/
+retail-output-*/
+*.torrent

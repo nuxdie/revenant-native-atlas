@@ -20,8 +20,16 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
     sources=json.loads((root/'ownership-sources.json').read_text())
     selected={s['capture']:s for s in sources if s['capture']in names}
     if set(names)!=set(selected):raise ValueError('Requested capture is not in the ownership index')
-    game=NativeGame();game.export_level=meta['level'];game.command('@presentation');game.command('@normal')
-    game.command('@grid');game.command('@time 487')
+    retail=meta.get('provider')=='original_retail_1.22L'
+    if retail:
+        from .retail import RetailGame
+        game=RetailGame()
+        game.command('@presentation');game.command('@helpers-off')
+        game.command(f'setcurmodule "{meta["module"]}"');game.command('@wait')
+        game.command(f'@time {meta["time_of_day_minutes"]}')
+    else:
+        game=NativeGame();game.command('@presentation');game.command('@normal');game.command('@time 487')
+    game.export_level=meta['level'];game.command('@grid')
     changed={};records=[]
     try:
         with game.backing_capture()as capture:
@@ -32,11 +40,15 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
                     source=root/folder/(name+suffix);target=archive/folder/source.name
                     target.parent.mkdir(parents=True,exist_ok=True)
                     if not target.exists():shutil.copy2(source,target)
+                if retail and (state['time_of_day_minutes']!=meta['time_of_day_minutes'] or state['visibility_profile']!='gameplay_2d_and_3d'):
+                    raise RuntimeError('Retail refresh changed lighting or helper visibility')
                 state.update(core=list(map(int,name.split('_'))),captured_at=time.time(),crop=[64,42,576,298],
-                             capture_recipe='console_redraw_bg_barrier_v3',provider='original_game',
+                             capture_recipe='retail_redraw_bg_barrier_v2'if retail else'console_redraw_bg_barrier_v3',
+                             provider='original_retail_1.22L'if retail else'original_game',
                              temporal_samples=temporal_samples,temporal_sample_interval_seconds=temporal_interval,temporal_margin_pixels=8,
                              recapture_reason=reason,
                              previous_source_png_sha256=previous['source_png_sha256'])
+                if retail:state.update(module=meta['module'],variant=meta['variant'])
                 temporary=old.with_suffix('.png.tmp');first.save(temporary,format='PNG',compress_level=3);temporary.replace(old)
                 state['source_png_sha256']=hashlib.sha256(old.read_bytes()).hexdigest();dump(old.with_suffix('.json'),state)
                 Image.fromarray(dynamic.astype('uint8')*255).save(root/'temporal'/old.name)
@@ -44,7 +56,7 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
                 records.append(dict(capture=name,before=previous['source_png_sha256'],after=state['source_png_sha256']))
                 if len(records)%20==0:print(f'Recaptured {len(records)}/{len(selected)}',flush=True)
     finally:
-        game.command('@normal')
+        if not retail:game.command('@normal')
     left,top=meta['bounds'][:2];updated=0;modified=[]
     for tx,ty in meta['tiles']:
         path=root/'tiles'/f'{tx}_{ty}.png'

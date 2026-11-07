@@ -1,0 +1,67 @@
+diff --git a/src/maprenderer.cpp b/src/maprenderer.cpp
+index 484d8b1..3b00d5d 100644
+--- a/src/maprenderer.cpp
++++ b/src/maprenderer.cpp
+@@ -2370,6 +2370,7 @@ bool TMapRenderer::InitializeFromStartupArgs(std::function<void(int32_t, int32_t
+         SetCameraWorld(StartupSceneCamera[0], StartupSceneCamera[1],
+                        StartupSceneCamera[2], StartupSceneCamera[3]);
+         SetOutputViewport(StartupSceneViewport[0],StartupSceneViewport[1]);
++        if (StartupSceneTime >= 0) PlayScreen.SetTimeOfDay(StartupSceneTime);
+         if (AreaManager.Initialize())
+         {
+             S3DPoint camera = {StartupSceneCamera[1], StartupSceneCamera[2], StartupSceneCamera[3]};
+@@ -2379,6 +2380,7 @@ bool TMapRenderer::InitializeFromStartupArgs(std::function<void(int32_t, int32_t
+                     if (candidate->In(camera, StartupSceneCamera[0])) area = candidate;
+             int32_t ambient = MapPane.GetAmbientLight();
+             SColor color = MapPane.GetAmbientColor();
++            SetDaylightCycle(area && (area->GetFlags() & AREA_DONIGHT));
+             if (area) area->GetCurrentAmbient(ambient, color);
+             if (StartupSceneAmbientSet)
+             {
+@@ -2394,6 +2396,7 @@ bool TMapRenderer::InitializeFromStartupArgs(std::function<void(int32_t, int32_t
+         }
+     }
+ 
++    if (RevisitedEnabled) ApplyRevisitedSettingsToMapRenderer(this);
+     Initialize();
+     return true;
+ }
+diff --git a/src/revmain.cpp b/src/revmain.cpp
+index e56ae3b..d7bdc6c 100644
+--- a/src/revmain.cpp
++++ b/src/revmain.cpp
+@@ -1996,6 +1996,10 @@ void GetParameters(int argc, char **argv)
+             strncpyz(StartupSceneModule, p.c_str(), sizeof(StartupSceneModule));
+         if (arg_param(cmd, "scene-command-file", p))
+             strncpyz(StartupSceneCommandFile, p.c_str(), sizeof(StartupSceneCommandFile));
++        if (arg_param(cmd, "scene-time", p)) {
++            if (sscanf(p.c_str(), "%d", &StartupSceneTime) != 1 || StartupSceneTime < 0 || StartupSceneTime > 1439)
++                FatalError("Invalid --scene-time: expected minutes 0..1439", nullptr);
++        }
+         if (arg_param(cmd, "scene-ambient", p))
+         {
+             StartupSceneAmbientSet = sscanf(p.c_str(), "%d,%d,%d,%d", &StartupSceneAmbient[0],
+diff --git a/src/testconfig.cpp b/src/testconfig.cpp
+index 5167d7b..9ba1270 100644
+--- a/src/testconfig.cpp
++++ b/src/testconfig.cpp
+@@ -17,6 +17,7 @@ char StartupSceneModule[64] = "";
+ char StartupSceneCommandFile[MAXPATHLEN] = "";
+ int32_t StartupSceneAmbient[4] = {0,0,0,0};
+ bool StartupSceneAmbientSet = false;
++int32_t StartupSceneTime = -1;
+ char  StartupAssetPath[128]   = "";
+ float StartupAssetScale       = 0.0f;   // 0 = auto-fit based on bbox
+ char  StartupDumpTilesPath[MAXPATHLEN] = "";
+diff --git a/src/testconfig.h b/src/testconfig.h
+index 2042505..8bd96b4 100644
+--- a/src/testconfig.h
++++ b/src/testconfig.h
+@@ -28,6 +28,7 @@ extern char StartupSceneCommandFile[MAXPATHLEN];
+ // Optional authored scene lighting override: intensity,R,G,B.
+ extern int32_t StartupSceneAmbient[4];
+ extern bool StartupSceneAmbientSet;
++extern int32_t StartupSceneTime; // opt-in atlas/reference clock, minutes since midnight
+ // --asset=path — which imagery --test=i3d3d should load (default Misc\\Blood.I3D).
+ extern char StartupAssetPath[128];
+ // --scale=f — uniform mesh scale multiplier for --test=i3d3d.

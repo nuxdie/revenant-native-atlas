@@ -33,10 +33,10 @@ class MirrorTests(unittest.TestCase):
             base=f'http://127.0.0.1:{server.server_port}/api/'
             try:
                 with urllib.request.urlopen(base+'tile?revision=r-test&level=30&x=0&y=0')as r:self.assertEqual(r.read(),tile)
-                req=urllib.request.Request(base+'file?revision=r-test&level=30&name=full-resolution.tif',headers={'Range':'bytes=2-12'})
+                req=urllib.request.Request(base+'file?revision=r-test&level=30&variant=night&name=full-resolution.tif',headers={'Range':'bytes=2-12'})
                 with urllib.request.urlopen(req)as r:
-                    self.assertEqual(r.status,206);self.assertEqual(r.headers['Content-Type'],'image/tiff');self.assertEqual(r.read(),image[2:13]);self.assertIn('.tif',r.headers['Content-Disposition'])
-                for route,code in [('file?revision=r-test&level=30&name=validation.json',404),('file?revision=../&level=30&name=full-resolution.tif',400)]:
+                    self.assertEqual(r.status,206);self.assertEqual(r.headers['Content-Type'],'image/tiff');self.assertEqual(r.read(),image[2:13]);self.assertIn('level-30-night.tif',r.headers['Content-Disposition'])
+                for route,code in [('file?revision=r-test&level=30&name=validation.json',404),('file?revision=r-test&level=30&variant=../../&name=full-resolution.tif',400),('file?revision=../&level=30&name=full-resolution.tif',400)]:
                     with self.assertRaises(urllib.error.HTTPError)as failure:urllib.request.urlopen(base+route)
                     self.assertEqual(failure.exception.code,code)
             finally:server.shutdown();server.server_close();thread.join()

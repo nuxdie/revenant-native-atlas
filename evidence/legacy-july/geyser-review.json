@@ -1,0 +1,14 @@
+{
+  "profile": "loose_geyser_mesh_litadd_v2",
+  "reviewed_locations": {
+    "30": 63,
+    "31": 45
+  },
+  "method": "Native-pixel crops of every unique visible fire/steam geyser and matching trap position in the base module; full recapture of both levels; separate native-cycle recordings and lifecycle regression tests.",
+  "remaining_opaque_black_quads_observed": 0,
+  "viewport_counts": {
+    "30": 684,
+    "31": 676
+  },
+  "note": "Visual review of indexed effect locations; not a promise that all game states or unrelated rendering paths are defect-free."
+}

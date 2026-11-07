@@ -36,9 +36,12 @@ class Handler(SimpleHTTPRequestHandler):
             root=self.data/'releases'/revision/f'level-{level}'
             if url.path=='/api/file':
                 name=query.get('name',[''])[0]
+                variant=query.get('variant',[''])[0]
+                if variant not in('','day','night','fixed'):return self.send_error(400)
                 if name not in('overview.jpg','full-resolution.png','full-resolution.tif'):return self.send_error(404)
                 mime='image/png'if name.endswith('.png')else'image/tiff'if name.endswith('.tif')else'image/jpeg'
-                return self.file(root/name,mime,head,name!='overview.jpg')
+                attachment=f'revenant-{root.name}'+(f'-{variant}'if variant else'')+Path(name).suffix if name!='overview.jpg'else None
+                return self.file(root/name,mime,head,attachment)
             if url.path=='/api/tile':
                 x=query.get('x',[''])[0];y=query.get('y',[''])[0]
                 if not re.fullmatch(r'\d{1,4}',x)or not re.fullmatch(r'\d{1,4}',y):return self.send_error(400)
@@ -62,7 +65,7 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_response(status);self.send_header('Content-Type',mime);self.send_header('Content-Length',str(end-start+1));self.send_header('Accept-Ranges','bytes');self.send_header('X-Content-Type-Options','nosniff')
         if path.name=='catalog.json':self.send_header('Cache-Control','no-store')
         if status==206:self.send_header('Content-Range',f'bytes {start}-{end}/{size}')
-        if attachment:self.send_header('Content-Disposition',f'attachment; filename="revenant-{path.parent.name}{path.suffix}"')
+        if attachment:self.send_header('Content-Disposition',f'attachment; filename="{attachment}"')
         self.end_headers()
         if head:return
         try:

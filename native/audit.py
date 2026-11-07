@@ -70,6 +70,11 @@ def audit(root, full=True):
             absent.append(coord)
             continue
         state = json.loads(path.with_suffix('.json').read_text())
+        if plan.get('dataset')=='GOG 1.22L':
+            if (state.get('provider')!='original_retail_1.22L'
+                    or state.get('executable_sha256')!=plan['executable_sha256']
+                    or state.get('time_of_day_minutes')!=plan['time_of_day_minutes']):
+                raise ValueError(f'Retail capture dataset or clock mismatch: {path}')
         geyser_blending[state.get('geyser_blend_profile','prior capture outside geyser recapture region')]+=1
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         if digest==retired.get(path.stem):raise ValueError(f'Retired native source was reused: {path}')
@@ -82,7 +87,11 @@ def audit(root, full=True):
         if state['scroll'] != [cx*512-64, cy*256-42] or state['level'] != plan['level']:
             raise ValueError(f'Camera registration mismatch: {path}')
         modes.add(state.get('lighting_mode', 'unrecorded'))
-        if state.get('shadow_blend_profile')=='rgb565_black_alpha_to_argb1555_v1':
+        if (state.get('provider')=='original_retail_1.22L'
+                and state.get('executable_sha256')=='28bec27387bf53a553da320dd4883d00ff5bcc5a5f3d2658cca8e8ed586372b5'
+                and state.get('shadow_blend_profile')=='retail_original_raster'):
+            shadow_blending['pinned_retail_raster_capture']+=1
+        elif state.get('shadow_blend_profile')=='rgb565_black_alpha_to_argb1555_v1':
             shadow_blending['format_corrected_capture']+=1
         elif state.get('shadow_blend_validation'):
             shadow_blending['outside_conservative_shadow_bounds_verified']+=1
@@ -148,10 +157,12 @@ def audit(root, full=True):
             if state['level']!=plan['level']or source['scroll']!=state['scroll']:raise ValueError(f'Bridge source registration mismatch: {name}')
             digest=hashlib.sha256(path.read_bytes()).hexdigest()
             if digest!=state['source_png_sha256']or digest!=source['sha256']or verify_png(path)!=(640,340):raise ValueError(f'Bridge provenance mismatch: {name}')
-            if state['capture_recipe']!='console_redraw_bg_barrier_v3'or state['capture_end_screen_frame']<=state['screen_frame']:raise ValueError(f'Bridge renderer did not advance: {name}')
+            retail_bridge=(state.get('provider')=='original_retail_1.22L'and state.get('executable_sha256')=='28bec27387bf53a553da320dd4883d00ff5bcc5a5f3d2658cca8e8ed586372b5'and state.get('capture_recipe')=='retail_redraw_bg_barrier_v2')
+            if retail_bridge and state.get('time_of_day_minutes')!=plan['time_of_day_minutes']:raise ValueError('Bridge clock differs from its retail map')
+            if (state['capture_recipe']!='console_redraw_bg_barrier_v3'and not retail_bridge)or state['capture_end_screen_frame']<=state['screen_frame']:raise ValueError(f'Bridge renderer did not advance: {name}')
             if verify_png(root/'temporal'/path.name)!=(640,340):raise ValueError(f'Bridge motion mask dimensions: {name}')
             visibility[state['visibility_profile']if state.get('visibility_profile')=='gameplay_2d_and_3d'else'requires_visibility_review']+=1
-            shadow_blending['format_corrected_capture'if state.get('shadow_blend_profile')=='rgb565_black_alpha_to_argb1555_v1'else'requires_shadow_review']+=1
+            shadow_blending['pinned_retail_raster_capture'if retail_bridge and state.get('shadow_blend_profile')=='retail_original_raster'else'format_corrected_capture'if state.get('shadow_blend_profile')=='rgb565_black_alpha_to_argb1555_v1'else'requires_shadow_review']+=1
             modes.add(state['lighting_mode']);hashes.append(digest)
             sampling[f'{state.get("temporal_samples",3)} samples; {state.get("temporal_sample_interval_seconds",1/24):.6g} seconds apart']+=1
     pixels = sum(s['static_pixels'] for s in seams)

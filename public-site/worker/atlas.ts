@@ -78,13 +78,13 @@ export function parseRange(value: string | null, size: number): {offset:number;l
   return { offset: start, length: end - start + 1 };
 }
 
-async function file(request: Request, env: AtlasEnv, key: string, attachment = false) {
+async function file(request: Request, env: AtlasEnv, key: string, attachment: boolean | string = false) {
   const head = await env.BUCKET.head(key);
   if (!head) return json({ error: "Map file not found" }, 404);
   const headers = new Headers({ "Content-Type": mime(key), "Cache-Control": key === "catalog.json" ? "public, max-age=30" : immutable, "ETag": head.httpEtag, "Accept-Ranges": "bytes", "X-Content-Type-Options": "nosniff" });
   if (head.customMetadata?.sha256) headers.set("X-Content-SHA256", head.customMetadata.sha256);
   if (request.headers.get("If-None-Match") === head.httpEtag) return new Response(null, { status: 304, headers });
-  if (attachment) headers.set("Content-Disposition", `attachment; filename="revenant-${key.split("/").slice(-2).join("-")}"`);
+  if (attachment) headers.set("Content-Disposition", `attachment; filename="${typeof attachment === 'string' ? attachment : `revenant-${key.split("/").slice(-2).join("-")}`}"`);
   const range = parseRange(request.headers.get("Range"), head.size);
   if (range === false) { headers.set("Content-Range", `bytes */${head.size}`);return new Response(null, { status: 416, headers }); }
   headers.set("Content-Length", String(range ? range.length : head.size));
@@ -107,7 +107,10 @@ export async function handleAtlas(request: Request, env: AtlasEnv): Promise<Resp
     if (url.pathname === "/api/file") {
       const name = url.searchParams.get("name") || "";
       if (!/^(overview\.jpg|full-resolution\.(png|tif))$/.test(name)) return json({ error: "Invalid map file" }, 404);
-      return await file(request, env, prefix + name, name !== "overview.jpg");
+      const variant = url.searchParams.get("variant") || "";
+      if (variant && !/^(day|night|fixed)$/.test(variant)) return json({error:"Invalid lighting state"},400);
+      const attachment = name === "overview.jpg" ? false : `revenant-level-${level}${variant ? `-${variant}` : ''}.${name.endsWith('.tif') ? 'tif' : 'png'}`;
+      return await file(request, env, prefix + name, attachment);
     }
     if (url.pathname === "/api/tile") {
       const x = url.searchParams.get("x") || "";const y = url.searchParams.get("y") || "";
