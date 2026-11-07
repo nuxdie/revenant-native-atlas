@@ -36,7 +36,7 @@ class Publisher:
             headers={'Authorization': 'Bearer ' + self.secret, 'User-Agent': USER_AGENT, **(headers or {})})
         for attempt in range(5):
             try:
-                with urllib.request.urlopen(request, timeout=180) as response:
+                with urllib.request.urlopen(request, timeout=60) as response:
                     return json.load(response)
             except urllib.error.HTTPError as exc:
                 if missing and exc.code == 404:
@@ -46,6 +46,7 @@ class Publisher:
             except (OSError, TimeoutError):
                 if attempt == 4:
                     raise RuntimeError(f'{action}: network failure for {key}') from None
+            print(f'Retrying {action} for {key} (attempt {attempt+2}/5)',flush=True)
             time.sleep(min(2 ** attempt, 16))
 
     def verify(self, item):
@@ -85,6 +86,7 @@ class Publisher:
 
     def upload(self, item):
         key, size, sha = item['key'], item['size'], item['sha256']
+        print(f'Checking remote object: {key}',flush=True)
         existing = self.request('head', key, missing=True)
         if existing != dict(size=size, sha256=sha):
             print(f'Uploading {key}: {size:,} bytes', flush=True)
