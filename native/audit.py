@@ -13,9 +13,17 @@ from .plan import CORE_W, CORE_H,camera_for_core
 from .edges import verify_edges
 
 
-def registered_overlap(rgb,mask,scroll,reference_rgb,reference_mask,reference_scroll,minimum=1000,recover_black=False):
+def registered_overlap(rgb,mask,scroll,reference_rgb,reference_mask,reference_scroll,minimum=1000,recover_black=False,window=None):
     """Anchor native camera alignment; optional recovery adds only over black culling gaps."""
     sx,sy=scroll;rx,ry=reference_scroll;l,t=max(sx,rx),max(sy,ry);r,b=min(sx+640,rx+640),min(sy+340,ry+340)
+    if window is not None:
+        if window!='native_core_cross_strip_v1':raise ValueError('Unknown native registration window')
+        # Use a fixed geometric strip, never a rectangle chosen from pixel
+        # differences. Native viewport aprons can have different culling.
+        # This registers alignment only; the full output edge audit is unchanged.
+        if sy==ry and abs(sx-rx)==512:t,b=max(sy+42,ry+42),min(sy+298,ry+298)
+        elif sx==rx and abs(sy-ry)==256:l,r=max(sx+64,rx+64),min(sx+576,rx+576)
+        else:raise ValueError('Core-strip references must be cardinal grid neighbours')
     if r<=l or b<=t:raise ValueError('Registered camera has no native reference overlap')
     a=rgb[t-sy:b-sy,l-sx:r-sx];z=reference_rgb[t-ry:b-ry,l-rx:r-rx]
     static=~(mask[t-sy:b-sy,l-sx:r-sx]|reference_mask[t-ry:b-ry,l-rx:r-rx])
@@ -64,7 +72,7 @@ def load_native_reference(root,key,name,plan,seen=()):
         reference_rgb,reference_mask,reference=load_native_reference(root,
             state.get('registration_reference_key'),state['registration_reference'],plan,seen+(key,))
         registered_overlap(rgb,mask,state['scroll'],reference_rgb,reference_mask,reference['scroll'],
-            recover_black=state.get('registration_recovery')=='native_black_coverage_v1')
+            recover_black=state.get('registration_recovery')=='native_black_coverage_v1',window=state.get('registration_window'))
     return rgb,mask,state
 
 
@@ -196,7 +204,7 @@ def audit(root, full=True):
             with Image.open(rp)as im:reference_rgb=np.array(im.convert('RGB'))
             with Image.open(mp)as im:reference_mask=np.array(im)>0
             registered_overlap(array,dynamic,state['scroll'],reference_rgb,reference_mask,rs['scroll'],
-                recover_black=state.get('registration_recovery')=='native_black_coverage_v1')
+                recover_black=state.get('registration_recovery')=='native_black_coverage_v1',window=state.get('registration_window'))
         core = array[42:298,64:576]
         for neighbor, edge in [((cx-1,cy),core[:,0]), ((cx+1,cy),core[:,-1]),
                                ((cx,cy-1),core[0]), ((cx,cy+1),core[-1])]:

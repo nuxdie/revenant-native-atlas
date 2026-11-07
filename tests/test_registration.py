@@ -7,9 +7,38 @@ import numpy as np
 from PIL import Image
 from native.audit import audit,registered_overlap,load_native_reference
 from native.plan import camera_for_core
+from native.edges import verify_edges
 
 
 class NativeRegistrationTests(unittest.TestCase):
+    def test_registration_strip_is_geometric_and_keeps_interior_exact(self):
+        a=np.full((340,640,3),[20,40,60],np.uint8);b=a.copy();mask=np.zeros((340,640),bool)
+        b[310,600,0]^=1
+        with self.assertRaises(ValueError):registered_overlap(b,mask,[-512,0],a,mask,[0,0])
+        self.assertGreater(registered_overlap(b,mask,[-512,0],a,mask,[0,0],window='native_core_cross_strip_v1'),1000)
+        b[100,600,0]^=1
+        with self.assertRaises(ValueError):registered_overlap(b,mask,[-512,0],a,mask,[0,0],window='native_core_cross_strip_v1')
+        with self.assertRaises(ValueError):registered_overlap(a,mask,[-512,256],a,mask,[0,0],window='native_core_cross_strip_v1')
+
+    def test_alignment_strip_does_not_exempt_viewport_aprons_from_seam_audit(self):
+        a=np.full((340,640,3),[20,40,60],np.uint8);b=a.copy();b[310:315,600:604,0]^=1
+        mask=np.zeros((340,640),bool)
+        registered_overlap(b,mask,[-512,0],a,mask,[0,0],window='native_core_cross_strip_v1')
+        with tempfile.TemporaryDirectory()as directory:
+            root=Path(directory)
+            for folder in ['captures','temporal','tiles','ownership']:(root/folder).mkdir()
+            records=[]
+            for ident,(name,rgb,scroll)in enumerate([('a',a,[0,0]),('b',b,[-512,0])],1):
+                Image.fromarray(rgb).save(root/'captures'/f'{name}.png')
+                Image.fromarray(mask).save(root/'temporal'/f'{name}.png')
+                records.append(dict(id=ident,capture=name,scroll=scroll))
+            (root/'ownership-sources.json').write_text(json.dumps(records))
+            rgb=a[:,:128].copy();rgb[:,90:]=b[:,602:640]
+            owners=np.ones((340,128),np.uint16);owners[:,90:]=2
+            Image.fromarray(rgb).save(root/'tiles/0_0.png');Image.fromarray(owners).save(root/'ownership/0_0.png')
+            report=verify_edges(root,dict(bounds=[0,0,128,340],tiles=[[0,0]]))
+            self.assertGreater(report['unmeasured_edges_requiring_review'],0)
+
     def test_authored_background_crop_requires_every_interior_view(self):
         with tempfile.TemporaryDirectory()as directory:
             root=Path(directory)

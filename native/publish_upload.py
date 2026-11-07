@@ -14,6 +14,7 @@ from atlas import dump
 from .publish_pack import prepare
 
 PART = 16 * 1024 * 1024
+VERIFY_PART = 4 * 1024 * 1024
 USER_AGENT = 'RevenantAtlasPublisher/1.0'
 
 
@@ -54,15 +55,33 @@ class Publisher:
             return
         digest = hashlib.sha256()
         count = 0
-        request = urllib.request.Request(self.url('read', key), headers={'Authorization': 'Bearer ' + self.secret, 'User-Agent': USER_AGENT})
-        with urllib.request.urlopen(request, timeout=180) as response:
-            while block := response.read(1024 * 1024):
-                digest.update(block)
-                count += len(block)
+        for offset in range(0,item['size'],VERIFY_PART):
+            length=min(VERIFY_PART,item['size']-offset)
+            request=urllib.request.Request(self.url('read',key),headers={
+                'Authorization':'Bearer '+self.secret,'User-Agent':USER_AGENT,
+                'Range':f'bytes={offset}-{offset+length-1}'})
+            for attempt in range(3):
+                try:
+                    deadline=time.monotonic()+120;chunks=[];remaining=length
+                    with urllib.request.urlopen(request,timeout=30)as response:
+                        expected=f'bytes {offset}-{offset+length-1}/{item["size"]}'
+                        if response.status!=206 or response.headers.get('Content-Range')!=expected:
+                            raise ValueError(f'Remote verification range differs: {key}')
+                        while remaining:
+                            if time.monotonic()>deadline:raise TimeoutError('Remote range verification stalled')
+                            block=response.read(min(64*1024,remaining))
+                            if not block:raise OSError('Remote range ended before its recorded length')
+                            chunks.append(block);remaining-=len(block)
+                    data=b''.join(chunks);break
+                except(OSError,TimeoutError):
+                    if attempt==2:raise RuntimeError(f'Remote range verification failed: {key}, offset {offset}')from None
+                    time.sleep(2**attempt)
+            digest.update(data);count+=len(data)
         if count != item['size'] or digest.hexdigest() != item['sha256']:
             raise RuntimeError(f'Remote bytes differ: {key}')
         self.verified[marker] = item['sha256']
         dump(self.state, self.verified)
+        print(f'Remote bytes verified: {key}',flush=True)
 
     def upload(self, item):
         key, size, sha = item['key'], item['size'], item['sha256']

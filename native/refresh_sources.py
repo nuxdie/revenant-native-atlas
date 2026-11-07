@@ -46,6 +46,7 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
                     if previous.get('registration_recovery'):state['registration_recovery']=previous['registration_recovery']
                     if previous.get('registration_reference_key'):state['registration_reference_key']=previous['registration_reference_key']
                     if previous.get('original_grid_reference_key'):state['original_grid_reference_key']=previous['original_grid_reference_key']
+                    if previous.get('registration_window'):state['registration_window']=previous['registration_window']
                 for folder,suffix in [('captures','.png'),('captures','.json'),('temporal','.png')]:
                     source=root/folder/(name+suffix);target=archive/folder/source.name
                     target.parent.mkdir(parents=True,exist_ok=True)

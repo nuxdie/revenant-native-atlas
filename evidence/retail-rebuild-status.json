@@ -1,0 +1,450 @@
+{
+  "checked_at": "2026-11-07T19:48:30.194244+00:00",
+  "dataset": "English GOG 1.22L",
+  "verified_images": 36,
+  "expected_images": 39,
+  "verified_maps": [
+    {
+      "level": 0,
+      "variant": "day",
+      "names": [
+        "The Forest",
+        "Misthaven"
+      ],
+      "width": 31744,
+      "height": 18432,
+      "png_sha256": "a4db04d8343e0394276db8744cd0e763aaa3271cdd1ba9c1d19916d0805fd462",
+      "tiff_sha256": "0037082048e07ba396d24a113b4f74667230ab054734540f844c19b7e9e2a07d",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 5,
+      "variant": "day",
+      "names": [
+        "The Ruins"
+      ],
+      "width": 16896,
+      "height": 9216,
+      "png_sha256": "bf7d94bf020e468e30f63591c15543ee6d49bb6a1a9735bf3c33e71a4fc6b613",
+      "tiff_sha256": "d73fe94b6d19d7d334ace5e26c250b68f87e4ad71257cb59c6bc81b10a0a4cf0",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 1,
+      "variant": "fixed",
+      "names": [
+        "House Interior"
+      ],
+      "width": 22528,
+      "height": 7680,
+      "png_sha256": "c2a97dd57d65b7177be1a835bf4e019ab4cd307aa88b48282ba3f8bb2897aff5",
+      "tiff_sha256": "9ecb620ef5b45f6395a16efdf1a3c4061a85d6dde5c19a849c2f3147eebad6ad",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 100,
+      "variant": "fixed",
+      "names": [
+        "Deathmatch5"
+      ],
+      "width": 9216,
+      "height": 6400,
+      "png_sha256": "f615443667e253b38b1a83faaf92a56a685457319ee609db13e0f462faa629fb",
+      "tiff_sha256": "21a4714e5eb2ec9ceca6ecbe4ccd24b0343b24bdd9f973dae24f24a469f4c589",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 101,
+      "variant": "fixed",
+      "names": [
+        "Deathmatch2"
+      ],
+      "width": 8192,
+      "height": 4608,
+      "png_sha256": "a6565866c0b720482fe0f7a2c4649108109521b174bc5c955a660bf5fa300017",
+      "tiff_sha256": "d9859bf32749d6187cbb8c7154827a19557a4e0ea87538438528fe155d7f5ebc",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 102,
+      "variant": "fixed",
+      "names": [
+        "Deathmatch1"
+      ],
+      "width": 6656,
+      "height": 4352,
+      "png_sha256": "28071f4bec43045a1d903a0a55c5f8515a3c8c23c9f8f3e0ea115ead097f7adc",
+      "tiff_sha256": "086d57cb08b38317970d3692af925d5ab15b8f9876b59f46e0d1f53bb7f92b46",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 2,
+      "variant": "fixed",
+      "names": [
+        "The Keep"
+      ],
+      "width": 8192,
+      "height": 13824,
+      "png_sha256": "2d535636cf144dc4486f6d03fc813d6abb3769882abdfadf5b6838d4b627d75b",
+      "tiff_sha256": "81a6e1ac5386bb783a68caf8daa81b6142064faa9379cda7dee2560a59fe55bd",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 205,
+      "variant": "fixed",
+      "names": [
+        "Deathmatch4"
+      ],
+      "width": 9216,
+      "height": 5376,
+      "png_sha256": "6c7306d323399e35713c07be36aace727a9c7e8136cf060cf4e5f9007e6030c1",
+      "tiff_sha256": "b6317581b426897a7cdd8faabc736b41f1157f977d8b8e5323b0b1f1f0c51359",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 3,
+      "variant": "fixed",
+      "names": [
+        "The Ancient Tower"
+      ],
+      "width": 4096,
+      "height": 7680,
+      "png_sha256": "faddb1f38ae00ea2fa73a912383ba099823e6b1d3842147332c0fb440a5f82f9",
+      "tiff_sha256": "ad692353f88ac8857b1697780f4f62e830812a66e341f700ffd5dbe161b339a2",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 30,
+      "variant": "fixed",
+      "names": [
+        "The Caverns"
+      ],
+      "width": 15872,
+      "height": 13568,
+      "png_sha256": "602309bb8afc3591ceadfeff37d077fb20f6414b95053e7a0fa064eec0e96ebc",
+      "tiff_sha256": "137af1ee7d21f3850985a7fc8e784290a07ec5aa71a15ee342eb0ce7bb5dd393",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 31,
+      "variant": "fixed",
+      "names": [
+        "The Spiral Arm"
+      ],
+      "width": 14336,
+      "height": 8960,
+      "png_sha256": "9a47b4a0698daf8e32a304ec13e6e428acfe8d3dd5f0cab0dac735a0efa4b2ff",
+      "tiff_sha256": "fe8a71f2623d5af16c01e77b60c8d5a862ba961a0398115ca8f43a93e73ec4ae",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 32,
+      "variant": "fixed",
+      "names": [
+        "Kragg Mountain"
+      ],
+      "width": 8704,
+      "height": 8448,
+      "png_sha256": "9c8e91859dab8908a07166ce3794893f547f18ea332d3162445b2c1949372b7c",
+      "tiff_sha256": "b554431d18fd8bfd73bc97a7325a972f8ed45b0482f282023032b6ea6dc80a22",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 36,
+      "variant": "fixed",
+      "names": [
+        "The Maze of Darkness"
+      ],
+      "width": 14848,
+      "height": 8192,
+      "png_sha256": "f298d163a1b8868233e8940f3dd2c7435f8c414c380bc4a1cdbdfb5e2fe57f55",
+      "tiff_sha256": "55420fb25d3b88180cdde2d42562a8d5f65f01ace0ab36604ccc196c95749111",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 37,
+      "variant": "fixed",
+      "names": [
+        "The Queen's Crypt"
+      ],
+      "width": 4096,
+      "height": 2816,
+      "png_sha256": "5dbcbeb33c34c43a6dffde2896868393cdba7418e839bb116a29134f32067453",
+      "tiff_sha256": "740a31096d547d3ecc6efaa58cfbab638e48ab6732298a6c99a9dc7c4aba1f16",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 39,
+      "variant": "fixed",
+      "names": [
+        "The Infested Swamp"
+      ],
+      "width": 8704,
+      "height": 16896,
+      "png_sha256": "a541d256c78127df0142e4b87b733ac56a52fd8a29c7074cdd1a508d710663fb",
+      "tiff_sha256": "8306e22199cbcc6b0aeb70bc939f7a34c3f6bef68638d77a23d112555cfd6dae",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 4,
+      "variant": "fixed",
+      "names": [
+        "Arakna Island"
+      ],
+      "width": 9728,
+      "height": 5632,
+      "png_sha256": "1765d6c1f89cb928dd79aca5f5d5b4295ece393c25deeb350d43938e9418c132",
+      "tiff_sha256": "93f6c6e3189005724c918cdcd1673c41ca6e0691ee50fef20bcd8b9b958b52af",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 44,
+      "variant": "fixed",
+      "names": [
+        "The Underground Pyramid"
+      ],
+      "width": 11264,
+      "height": 16896,
+      "png_sha256": "a4d7a13289bf547dd6f4c837fc759e8a85b476c07e1299b35cfaa32bf2883ede",
+      "tiff_sha256": "1f296b818ac942af953cda41ae885e13ffc30ba3d8786f5fbe537880fc0eac6d",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 45,
+      "variant": "fixed",
+      "names": [
+        "The Chase of Sabu"
+      ],
+      "width": 11776,
+      "height": 6144,
+      "png_sha256": "6d8561cb8eafb3fd778b319e8be8d20fb9ae76645147200918cf16c1dff6eb5d",
+      "tiff_sha256": "c41492871b3411d440133ae88e79137432b9068a9699ce0790a4ff095da48311",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 46,
+      "variant": "fixed",
+      "names": [
+        "The Slave Camp"
+      ],
+      "width": 28672,
+      "height": 13312,
+      "png_sha256": "6aa051ec87a15c15c2911810098be5684e2de57d253ba8ea3d4af562e4492619",
+      "tiff_sha256": "b4cb1762baf6d5274fc4ac4fc156cfce88f6bae4a259e7af3703dad38d194fc0",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 47,
+      "variant": "fixed",
+      "names": [
+        "The Nahkranoth Lair "
+      ],
+      "width": 3072,
+      "height": 1792,
+      "png_sha256": "5e5fa3e3bc1e10529f7e7ce27b8e869e33a7661d271fbb5ee08a22694cfd658b",
+      "tiff_sha256": "b8f4bc7976946a72bca23701b08b6afbd115da3a6d17661ffaa42e277c91397e",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 48,
+      "variant": "fixed",
+      "names": [
+        "The Pit"
+      ],
+      "width": 9216,
+      "height": 22528,
+      "png_sha256": "ade3746a5c6c7609dd783c20ef3f4ccbb37bf7c112e021c98ffa4906ff798938",
+      "tiff_sha256": "cf198522840bd3f81f938eddad7d3f9184fbe581c7bb2bc42549d90fa5719b96",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 49,
+      "variant": "fixed",
+      "names": [
+        "The Nahkranoth Lair"
+      ],
+      "width": 5632,
+      "height": 9728,
+      "png_sha256": "f0b7a1acc4582dfae595ce6416937ca95d8fa381a41629d985dcc5894e40f66c",
+      "tiff_sha256": "65e27c485e3b7518ac167893719c3b56a0698ce781c75193ed8d375f1c6b3c00",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 51,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 6656,
+      "height": 3584,
+      "png_sha256": "c32f12d132a158598f0ea866f9e3afecdcd50ea3895702875c77996de45c1a3b",
+      "tiff_sha256": "7fdfd73d29655eda35934f6263a8e595e6b4372c149d6b3af8bcfa001d6ffa99",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 52,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 9216,
+      "height": 6656,
+      "png_sha256": "76409047c4becfb6a1276b43492912d9f83c7f89b73316fec3f875baa190546c",
+      "tiff_sha256": "95ba84b9e114fd48c3c74dae156289d23bee218ef7de90adc8b9ce71b3dfdfd1",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 53,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 9216,
+      "height": 6656,
+      "png_sha256": "28441fcc20667df4cd02af4ed3e46a16b4752d019619c78a3b4a994a73b9adb9",
+      "tiff_sha256": "586f87908da4ac9a07e8b14dd6a48a8a8a9ba38ca63d5a70134695165e9ac94b",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 54,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 8704,
+      "height": 6656,
+      "png_sha256": "bf347439cb4eadc9a6ec9b713443542a20eaf636a7e59a5f1695e07f52942659",
+      "tiff_sha256": "f3409ce02d0386ea8cf3c8d0855572e752e550d3e24496c2b489d0aa829ce5a3",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 55,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 8192,
+      "height": 5120,
+      "png_sha256": "3a7125f0a07cf9ab3a337f6fda51329abc7997e08f93113f05f979b00b69895a",
+      "tiff_sha256": "c0d4d2c181db638fdadc6383072bb1212db315347551b0fe5351cd9c7cc485f5",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 56,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 10752,
+      "height": 6656,
+      "png_sha256": "2c84100a0c5d82a3901dee9c6ad4db60ba2338a1e99667966ce242380bcc9195",
+      "tiff_sha256": "d31afd8124ff073233015a6035ca3fe7a41c67b344d3feaf7e79c3623c475bdd",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 57,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 8192,
+      "height": 5632,
+      "png_sha256": "adff0cd7bc718997d6c2497f6502a6e999ecbb6b6eff9f63a0332092fe972c87",
+      "tiff_sha256": "0e67814d82e8de4e05b25e779b32c13f626112fb2cc42b3e3737a5cb9d025433",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 58,
+      "variant": "fixed",
+      "names": [
+        "The Labyrinth"
+      ],
+      "width": 4608,
+      "height": 3840,
+      "png_sha256": "aed644cf990cdbf76c7bc0eec75b49463ba5d0c2a88a1ec4896e29c927b9624c",
+      "tiff_sha256": "af8b7743039010422074240b392faa1328a7788ecf114d019025170f49ba4f50",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 6,
+      "variant": "fixed",
+      "names": [
+        "The Keep"
+      ],
+      "width": 4608,
+      "height": 3072,
+      "png_sha256": "ec303f62a806a248b343ba5edb085e27ed9f2f98697f4b80a1a87c706fecbbd0",
+      "tiff_sha256": "277a2b747481be161c46f9d0526bdcd706e8fdfa7f38cc54dce810bd607b4a8d",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 66,
+      "variant": "fixed",
+      "names": [
+        "Ahkuilon"
+      ],
+      "width": 2560,
+      "height": 1792,
+      "png_sha256": "b2127935137bcba0dd0b8affb2cc0f3855e9149042431a69bc20a391a20c56a9",
+      "tiff_sha256": "71c40357e9e22ca96c9141e01b86ea66592edc53c3ed0a1749e4445e3b5292c5",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 73,
+      "variant": "fixed",
+      "names": [
+        "The Frozen Flame"
+      ],
+      "width": 10240,
+      "height": 5888,
+      "png_sha256": "54257f1c82300aac90d830c2d4750c6453d46a7205f61e6b29e068a33053057c",
+      "tiff_sha256": "391b2233034ac72a02670e6541f8ec28280064b53fdff1b219abf18b5404e1e7",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 83,
+      "variant": "fixed",
+      "names": [
+        "Tower of Nimrod"
+      ],
+      "width": 5632,
+      "height": 4608,
+      "png_sha256": "0d317a5f326fc4912f661d3b922a081189b55e12a9a4cfd6b5b25d9be3d27237",
+      "tiff_sha256": "73dd6dc97c0e410d81a8d11394752d9c24e5851bf0fe25064c3c44a69a7914e2",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 0,
+      "variant": "night",
+      "names": [
+        "The Forest",
+        "Misthaven"
+      ],
+      "width": 31744,
+      "height": 18432,
+      "png_sha256": "0264f699feb3ae203bab93a27f4e144172d115c54e438c88fbd5b77e65205a7c",
+      "tiff_sha256": "28d957076f8289e7dcc1e730d6569e813bc76a85ccad03de5a8e3a6c2a09128b",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 5,
+      "variant": "night",
+      "names": [
+        "The Ruins"
+      ],
+      "width": 16896,
+      "height": 9216,
+      "png_sha256": "bedc8678f1470d44f6065a03670c312ddd9cb5bd7a09c85e1b01f874ed82bd0a",
+      "tiff_sha256": "20b9aafb73b6d13edef442b8d9fc2a88d7dfa6f50d306b6fa6af5c12153313a2",
+      "unexplained_static_edges": 0
+    }
+  ],
+  "held_levels": [
+    41,
+    42,
+    43
+  ],
+  "hold": "Legacy records reference absent object IDs; the original retail engine crashes in those sectors.",
+  "public_catalog": "Previous July dataset retained until retail build is complete.",
+  "animation_limit": "Stitched views have different native animation phases; checks do not prove one simultaneous island tick or a universal artifact-free result."
+}

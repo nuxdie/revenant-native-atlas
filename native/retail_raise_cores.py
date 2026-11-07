@@ -63,10 +63,11 @@ def matching_reference(root,by_name,cx,cy,rgb,motion,state):
         rs=json.loads(p.with_suffix('.json').read_text())
         with Image.open(p)as im:reference_rgb=np.array(im.convert('RGB'))
         with Image.open(p.parent/f'{key}-motion.png')as im:reference_mask=np.array(im)>0
-        try:count=registered_overlap(rgb,motion,state['scroll'],reference_rgb,reference_mask,rs['scroll'],recover_black=True)
-        except ValueError:continue
-        return candidate,count
-    return None,0
+        for window in [None,'native_core_cross_strip_v1']:
+            try:count=registered_overlap(rgb,motion,state['scroll'],reference_rgb,reference_mask,rs['scroll'],recover_black=True,window=window)
+            except ValueError:continue
+            return candidate,count,window
+    return None,0,None
 
 
 def pin_current_reference(root,name):
@@ -136,7 +137,7 @@ def raise_cores(root):
             heights=list(dict.fromkeys([192*math.ceil((negative*1000/867+1)/192),209*math.ceil((negative*1000/867+1)/209)]))
             for height in heights:
                 first,rgb,motion,state,camera=capture_raised(game,capture,cx,cy,height)
-                reference,count=matching_reference(root,by_name,cx,cy,rgb,motion,state)
+                reference,count,window=matching_reference(root,by_name,cx,cy,rgb,motion,state)
                 if reference is not None:break
             if reference is None:
                 unresolved.append(name);print('No exact in-world reference yet:',name,flush=True);continue
@@ -150,6 +151,7 @@ def raise_cores(root):
                 registration_reference_key=pin_current_reference(root,reference),
                 original_grid_reference_key=pin_reference(root,name),
                 registration_recovery='native_black_coverage_v1',
+                registration_window=window,
                 registration_foreground_pixels=count,original_grid_camera=original,
                 camera_policy='in-world XY, same observed native pixel scroll',
                 capture_recipe='retail_redraw_bg_barrier_v2',temporal_samples=32,
