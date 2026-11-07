@@ -14,3 +14,5 @@
 @media(max-width:650px){.credits-dialog{width:calc(100% - 20px);max-height:calc(100dvh - 28px);border-width:7px}.credits-heading{padding:17px 17px 15px}.credits-heading h2{font-size:25px}.credits-scroll{padding:2px 19px 20px}.credits-scroll>p:first-child{font-size:18px;margin:18px 0}.credits-list>div{grid-template-columns:1fr;row-gap:5px;padding:15px 0}.credits-list dt{font-size:18px}.credits-list dd{font-size:17px}}
 
 .credits-list a{color:inherit;text-decoration-line:underline;text-decoration-color:#b08a555c;text-underline-offset:4px;text-decoration-thickness:1px}.credits-list a:hover{color:#fff0cb;text-decoration-color:var(--gold)}.credits-list a:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
+
+.credits-note a{display:inline-block;margin-bottom:8px;color:var(--gold-light);text-decoration-color:#b08a5577;text-underline-offset:4px}.credits-note a:hover{text-decoration-color:var(--gold)}

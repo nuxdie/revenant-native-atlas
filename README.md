@@ -2,7 +2,7 @@
 
 Full-resolution artwork maps of **all 33 drawable levels** in Revenant's Ahkuilon base module, captured with the original executable and its level editor.
 
-**[Explore the atlas](https://revenant-native-atlas-2026.lithepond4.chatgpt.site/) · [Download maps and mirror files](../../releases/latest) · [Credits](CREDITS.md)**
+**[Explore the atlas](https://revenant-native-atlas-2026.lithepond4.chatgpt.site/) · [Download maps and mirror files](https://github.com/nuxdie/revenant-native-atlas/releases/latest) · [Credits](CREDITS.md)**
 
 The outdoor island is **65,024 × 29,952 pixels**. Every level has a PNG and a lossless, tiled BigTIFF download. The viewer pans and zooms native tiles; dimensions and actual file sizes sit beside the downloads. Credits opens within the viewer.
 
@@ -19,7 +19,7 @@ The outdoor island is **65,024 × 29,952 pixels**. Every level has a PNG and a l
 
 ## Use the maps
 
-Open the [hosted atlas](https://revenant-native-atlas-2026.lithepond4.chatgpt.site/) or download a level's PNG/TIFF from [Releases](../../releases/latest). Maps are individual files, without redundant ZIP wrappers. The island decodes to about 5.84 GB of RGB; its tiled BigTIFF allows readers to process sections without loading the whole image.
+Open the [hosted atlas](https://revenant-native-atlas-2026.lithepond4.chatgpt.site/) or download a level's PNG/TIFF from [Releases](https://github.com/nuxdie/revenant-native-atlas/releases/latest). Maps are individual files, without redundant ZIP wrappers. The island decodes to about 5.84 GB of RGB; its tiled BigTIFF allows readers to process sections without loading the whole image.
 
 For an independent copy of the complete viewer, follow [mirroring and hosting](docs/hosting.md). No ChatGPT account or game installation is needed to view already-rendered maps.
 

@@ -14,7 +14,7 @@ Full PNGs are streamed rather than assembled as a multi-billion-pixel in-memory 
 
 - **Barrel/crate shadow colour bands:** the old dispatcher treated ARGB1555 destination coverage as RGB565 colour. The guarded black-shadow correction preserves coverage and native channel rounding, clipping and mirroring. Other draw paths retain the original dispatcher.
 - **Shoreline bands:** stale original-game source frames were retired and replaced with fresh, registered captures. The earlier session's low-level cause is not established. Source digests and frame-advancement checks prevent those frames from silently returning.
-- **Geyser diamonds:** June 1999 loose resources omit base-quad blend configuration found in later fire-geyser data. Compatibility work is restricted to the relevant native effect surfaces; authored geometry, particle controllers, textures, placements and lighting remain in the original engine. The release evidence identifies the exact accepted correction and recapture scope.
+- **Geyser diamonds:** June 1999 loose resources omit base-quad blend configuration found in later fire-geyser data. The full mesh correction covers fire/spark templates restored to defaults when PartSys controllers close, as well as the base glow. Compatibility work is restricted to default/additive surfaces in the pinned geyser meshes; authored geometry, particle controllers, textures, placements and lighting remain in the original engine. The release evidence identifies the exact accepted correction and recapture scope.
 
 The executable and resource files on disk remain unchanged. Compatibility changes exist only in the isolated process and are guarded by binary/resource signatures.
 
