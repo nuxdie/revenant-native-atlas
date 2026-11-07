@@ -46,7 +46,7 @@ The HTTP interface is deliberately small:
 
 The unchanged viewer is in `public-site/public/`. It can be served by another backend implementing those routes.
 
-The catalog contains 37 distinct locations and 39 images. Levels 0 and 5 contain separate day/night entries under `variants`; their immutable revisions and file sizes differ. The viewer preserves position and zoom when switching. Other levels have one fixed-lighting entry. The API continues to identify the actual image by `revision` and `level`; `variant=day`, `night` or `fixed` optionally labels the download filename.
+The complete retail catalog is planned to contain 37 distinct locations and 39 images; the live catalog remains on the earlier dataset until the retail build clears its holds. Levels 0 and 5 contain separate day/night entries under `variants`; their immutable revisions and file sizes differ. The viewer preserves position and zoom when switching. Other levels have one fixed-lighting entry. The API continues to identify the actual image by `revision` and `level`; `variant=day`, `night` or `fixed` optionally labels the download filename.
 
 ## Original Worker/R2 application
 
@@ -71,6 +71,14 @@ After reproducing and accepting native maps:
 python3 -m native.publish_retail
 python3 -m native.publish_retail --publish https://YOUR-HOST
 ```
+
+If a connection fails, resume the staged immutable files without regenerating the upload manifest:
+
+```sh
+python3 -m native.publish_retail --resume-staged --passes 5 --publish https://YOUR-HOST
+```
+
+Remote verification reads the complete object through bounded batches of four 1 MiB ranges, checks each range's exact position and hashes the returned bytes in order. A failed file is held while other files continue, then retried in another pass. `runtime/retail-publication/upload-status.json` records the batch's checked-file count and failures. A finished process reports held files explicitly; the catalog is never sent while any referenced file remains unverified or the retail dataset is incomplete.
 
 The retail publisher reads its key through hidden stdin and verifies complete remote bytes. It stages accepted immutable objects incrementally, but adds the catalog upload only when all 39 PNG/TIFF pairs are ready. Keep the catalog as the last upload. `runtime/retail-publication/upload-manifest.json` records paths, keys, sizes and hashes; do not distribute its local paths as public provenance. Verify the deployed catalog, both lighting states, file sizes, byte ranges and download hashes before announcing it. It does not silently rebuild the native maps. ZIPs and private validation JSONs are excluded from the public file endpoint.
 

@@ -4,6 +4,7 @@ from collections import defaultdict
 import getpass
 import json
 from pathlib import Path
+import time
 
 from atlas import dump
 from .publish_pack import digest
@@ -72,15 +73,45 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
     return result
 
 
+def publish_files(manifest,publisher,status,passes=3):
+    """Retry individual failures without blocking unrelated verified assets."""
+    if not 1<=passes<=10:raise ValueError('Upload passes must be between 1 and 10')
+    catalogs=[x for x in manifest['uploads']if x['key']=='catalog.json']
+    pending=[x for x in manifest['uploads']if x['key']!='catalog.json']
+    total=len(pending);finished=0;failures=[]
+    for attempt in range(passes):
+        failures=[];next_pending=[]
+        for item in pending:
+            try:publisher.upload(item);finished+=1
+            except Exception as exc:
+                next_pending.append(item);failures.append(dict(key=item['key'],error=str(exc)))
+                print('File held for retry:',item['key'],str(exc),flush=True)
+            dump(status,dict(state='uploading',pass_number=attempt+1,verified_files=finished,
+                total_files=total,failed_files=failures,catalog_published=False))
+        pending=next_pending
+        if not pending:break
+        if attempt+1<passes:time.sleep(5)
+    published=False
+    if not pending and manifest['complete']:
+        for item in catalogs:publisher.upload(item)
+        published=bool(catalogs)
+    report=dict(state='held_files'if pending else'files_verified',verified_files=finished,total_files=total,
+        failed_files=failures,retail_complete=manifest['complete'],catalog_published=published)
+    dump(status,report);return report
+
+
 if __name__=='__main__':
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root',type=Path,default=Path('retail-output'))
     p.add_argument('--out',type=Path,default=Path('runtime/retail-publication'))
     p.add_argument('--publish',help='Atlas URL; leave unset to stage locally')
-    a=p.parse_args();manifest=prepare(a.root,a.out)
+    p.add_argument('--resume-staged',action='store_true',help='Resume the existing staged upload manifest')
+    p.add_argument('--passes',type=int,default=3,help='Retry failed files in up to this many passes (1–10)')
+    a=p.parse_args();manifest=json.loads((a.out/'upload-manifest.json').read_text())if a.resume_staged else prepare(a.root,a.out)
     print(f"Retail maps ready: {manifest['maps']}/{manifest['expected_maps']}; catalog complete: {manifest['complete']}",flush=True)
     if a.publish:
         key=getpass.getpass('Atlas upload key (hidden): ')
         publisher=Publisher(a.publish,key,a.out/'remote-verified.json')
-        for item in manifest['uploads']:publisher.upload(item)
+        result=publish_files(manifest,publisher,a.out/'upload-status.json',a.passes)
+        if result['failed_files']:raise RuntimeError('Some files remain held; resume the staged upload manifest')
         print('PUBLIC RETAIL CATALOG' if manifest['complete'] else 'Files staged; public catalog retained',flush=True)

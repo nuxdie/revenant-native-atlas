@@ -14,7 +14,7 @@ from atlas import dump
 from .publish_pack import prepare
 
 PART = 16 * 1024 * 1024
-VERIFY_PART = 4 * 1024 * 1024
+VERIFY_PART = 1024 * 1024
 USER_AGENT = 'RevenantAtlasPublisher/1.0'
 
 
@@ -56,7 +56,7 @@ class Publisher:
             return
         digest = hashlib.sha256()
         count = 0
-        for offset in range(0,item['size'],VERIFY_PART):
+        def read_range(offset):
             length=min(VERIFY_PART,item['size']-offset)
             print(f'Verifying remote bytes {offset}-{offset+length-1}: {key}',flush=True)
             request=urllib.request.Request(self.url('read',key),headers={
@@ -74,11 +74,17 @@ class Publisher:
                             block=response.read1(min(64*1024,remaining))
                             if not block:raise OSError('Remote range ended before its recorded length')
                             chunks.append(block);remaining-=len(block)
-                    data=b''.join(chunks);break
+                    return b''.join(chunks)
                 except(OSError,TimeoutError):
                     if attempt==2:raise RuntimeError(f'Remote range verification failed: {key}, offset {offset}')from None
                     time.sleep(2**attempt)
-            digest.update(data);count+=len(data)
+        # Four requests at a time bound both memory and concurrency. Preserve
+        # byte order when hashing even when later ranges finish first.
+        with ThreadPoolExecutor(max_workers=4)as pool:
+            for start in range(0,item['size'],4*VERIFY_PART):
+                offsets=range(start,min(start+4*VERIFY_PART,item['size']),VERIFY_PART)
+                for data in pool.map(read_range,offsets):
+                    digest.update(data);count+=len(data)
         if count != item['size'] or digest.hexdigest() != item['sha256']:
             raise RuntimeError(f'Remote bytes differ: {key}')
         self.verified[marker] = item['sha256']

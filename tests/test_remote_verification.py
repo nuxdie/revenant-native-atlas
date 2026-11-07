@@ -33,7 +33,7 @@ class RemoteVerificationTests(unittest.TestCase):
                 publisher=Publisher(f'http://127.0.0.1:{server.server_port}','test-only',state)
                 item=dict(key='map.png',size=len(data),sha256=hashlib.sha256(data).hexdigest())
                 publisher.verify(item)
-                self.assertEqual(calls,[f'bytes=0-{VERIFY_PART-1}',f'bytes={VERIFY_PART}-{len(data)-1}'])
+                self.assertCountEqual(calls,[f'bytes=0-{VERIFY_PART-1}',f'bytes={VERIFY_PART}-{len(data)-1}'])
                 self.assertEqual(len(json.loads(state.read_text())),1)
                 publisher.verify(item);self.assertEqual(len(calls),2)
                 publisher.verified.clear();state.unlink();mode[0]='changed'
