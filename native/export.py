@@ -50,6 +50,7 @@ def capture_core(game, capture, coord, settle, temporal_samples=3, temporal_inte
     game.command('mono 0')
     game.command('@wait')
     state=game.info()
+    if hasattr(game,'prepare_capture'):state=game.prepare_capture()
     fade_deadline=time.monotonic()+10
     while state.get('ambient_fade_frames',0):
         if time.monotonic()>fade_deadline:raise RuntimeError('Original area lighting did not finish its transition')
@@ -69,9 +70,15 @@ def capture_core(game, capture, coord, settle, temporal_samples=3, temporal_inte
         raise RuntimeError('Original renderer stopped advancing during capture')
     if end['camera']!=state['camera']or end['scroll']!=state['scroll']:
         raise RuntimeError('Original camera changed during capture')
+    profile=getattr(game,'capture_lighting',None)
+    if profile and(end.get('ambient')!=profile['expected_native_ambient']or end.get('ambient_rgb')!=profile['ambient_rgb']or end.get('ambient_fade_frames',0)):
+        raise RuntimeError('Original authored ambient changed during capture')
+    if state.get('provider')=='original_retail_1.22L'and end.get('time_of_day_minutes')!=state['time_of_day_minutes']:
+        raise RuntimeError('Original scene clock changed during capture')
     state['capture_end_screen_frame']=end['screen_frame']
     state['requested_camera']=[x,y,z]
     state['capture_end_camera']=end['camera'];state['capture_end_scroll']=end['scroll']
+    if 'ambient'in end:state.update(capture_end_ambient=end['ambient'],capture_end_ambient_rgb=end['ambient_rgb'])
     # Explicit temporal mask, with a measured-motion margin. Static differences
     # outside it stay visible in seam reports; no pixels are blended or repaired.
     dynamic=np.asarray(Image.fromarray(mask.astype(np.uint8)*255).filter(ImageFilter.MaxFilter(17)))>0

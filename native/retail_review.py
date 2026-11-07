@@ -25,6 +25,11 @@ def review(root,attempts=6):
     for attempt in range(attempts):
         meta=json.loads((root/'manifest.json').read_text())
         edges=verify_edges(root,meta)
+        if not edges['unmeasured_edges_requiring_review']:
+            checked=audit(root,full=False)
+            if checked['acceptance']!='review_required':finalize(root);bigtiff(root);return True
+            print('Remaining hold is coverage or provenance, not an unexplained static join',flush=True)
+            return False
         previous_count=edges['unmeasured_edges_requiring_review']
         identifiers=set(edges.get('static_owner_ids',[]))or{i for sample in edges['static_samples']for i in sample['owners']if i}
         sources=json.loads((root/'ownership-sources.json').read_text())
@@ -32,7 +37,7 @@ def review(root,attempts=6):
         if not names:raise RuntimeError('Held retail map has no static source candidates')
         if any(name.startswith('bridge-')for name in names):
             raise RuntimeError('Inspect the registered bridge separately')
-        samples=32 if attempt<2 else 64
+        samples=32 if attempt==0 else 64
         print(f'{root}: attempt {attempt+1}, {len(names)} native sources, {samples} samples at 0.1 s',flush=True)
         archive=RUNTIME/'review-archive'/root.parent.name/root.name/f'{int(time.time())}-{attempt}'
         refresh(root,names,archive,temporal_samples=samples,temporal_interval=.1,
@@ -47,7 +52,7 @@ def review(root,attempts=6):
             print(f'REVIEW RESOLVED {root}',flush=True)
             return True
         print(f'STILL HELD {root}: {report["actual_stitched_edges"]["unmeasured_edges_requiring_review"]}',flush=True)
-        if report['actual_stitched_edges']['unmeasured_edges_requiring_review']>=previous_count:
+        if attempt>=1 and report['actual_stitched_edges']['unmeasured_edges_requiring_review']>=previous_count:
             print('Longer native observation did not resolve the static geometry; inspect registered bridge views.',flush=True)
             return False
     return False

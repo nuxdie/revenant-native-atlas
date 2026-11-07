@@ -22,8 +22,17 @@ from .retail import RetailGame,ROOT,RUNTIME,EXE_SHA256
 
 def capture(plan,variant,out,samples=8,rebuild_held=False):
     root=out/variant/f'level-{plan["level"]}'
+    profile=plan.get('lighting_profiles',{}).get(variant)
+    def ambient_matches(state):
+        return not profile or(state.get('ambient')==profile['expected_native_ambient']and state.get('ambient_rgb')==profile['ambient_rgb']and not state.get('ambient_fade_frames',0))
+    def module_matches(state):
+        return plan['module']=='Ahkuilon'or state.get('native_module','').casefold()==plan['module'].casefold()
+    prior_ambient_valid=not profile or all(
+        (p:=root/'captures'/f'{x}_{y}.json').exists()and ambient_matches(json.loads(p.read_text()))for x,y in plan['cores'])
+    prior_ambient_valid=prior_ambient_valid and(plan['module']=='Ahkuilon'or all(
+        (p:=root/'captures'/f'{x}_{y}.json').exists()and module_matches(json.loads(p.read_text()))for x,y in plan['cores']))
     validation=root/'validation.json';tiff=root/'tiff-validation.json'
-    if validation.exists()and tiff.exists():
+    if validation.exists()and tiff.exists()and prior_ambient_valid:
         checked=json.loads(validation.read_text());tiff_checked=json.loads(tiff.read_text())
         png=root/'full-resolution.png';tif=root/'full-resolution.tif'
         if (checked.get('acceptance','').startswith('native_pixels_verified')
@@ -33,7 +42,10 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
                 and hashlib.sha256(tif.read_bytes()).hexdigest()==tiff_checked['sha256']):
             print(f'ALREADY VERIFIED {root}',flush=True)
             return True
-    if validation.exists()and not rebuild_held:
+    if validation.exists()and not prior_ambient_valid:
+        checked=json.loads(validation.read_text());checked.update(acceptance='review_required',capture_review='Recapture inconsistent ambient states or missing native module observations')
+        dump(validation,checked)
+    if validation.exists()and not rebuild_held and prior_ambient_valid:
         checked=json.loads(validation.read_text())
         if checked.get('acceptance')=='review_required'and all(
                 (root/'captures'/f'{x}_{y}.png').exists()
@@ -44,8 +56,9 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
     for name in ['captures','temporal']: (root/name).mkdir(parents=True,exist_ok=True)
     minute=60 if variant=='night' else 720
     plan=dict(plan,variant=variant,time_of_day_minutes=minute,game_time='01:00'if variant=='night'else'12:00')
+    if profile:plan['lighting_profile']=profile
     dump(root/'plan.json',plan)
-    game=RetailGame();game.export_level=plan['level']
+    game=RetailGame();game.export_level=plan['level'];game.capture_lighting=profile
     deadline=time.monotonic()+180
     while True:
         state=game.info()
@@ -53,8 +66,7 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
         if time.monotonic()>deadline:raise RuntimeError('Retail editor did not finish initialization')
         time.sleep(.5)
     game.command('@presentation');game.command('@helpers-off');game.command('@grid')
-    game.command(f'setcurmodule "{plan["module"]}"')
-    game.command('@wait')
+    game.mount(plan['module'])
     game.view(plan['level'],*camera_for_core(*plan['cores'][0]))
     game.command(f'@time {minute}');game.command('mono 0');game.command('@wait')
     started=time.monotonic();done=0
@@ -67,7 +79,16 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
                     raise ValueError(f'Capture dataset/time differs: {path}')
                 if hashlib.sha256(path.read_bytes()).hexdigest()!=old['source_png_sha256']:
                     raise ValueError(f'Capture hash differs: {path}')
-                done+=1;continue
+                if ambient_matches(old)and module_matches(old):
+                    try:
+                        with Image.open(root/'temporal'/path.name)as mask:mask.load();valid=mask.size==(640,340)
+                    except OSError:valid=False
+                    if valid:done+=1;continue
+                archive=RUNTIME/'ambient-history'/variant/root.name
+                for source in [path,path.with_suffix('.json'),root/'temporal'/path.name]:
+                    target=archive/('temporal'if source.parent.name=='temporal'else'captures')/source.name
+                    target.parent.mkdir(parents=True,exist_ok=True)
+                    if not target.exists():shutil.copy2(source,target)
             if shutil.disk_usage(out).free<1024**3:
                 raise RuntimeError('Less than 1 GiB disk space remains; retail export safely stopped')
             first,array,motion,state=capture_core(game,grab,coord,.08,temporal_samples=samples)
@@ -78,7 +99,8 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
                 temporal_samples=samples,temporal_sample_interval_seconds=1/24,temporal_margin_pixels=8)
             temporary=path.with_suffix('.png.tmp');first.save(temporary,format='PNG',compress_level=3);temporary.replace(path)
             state['source_png_sha256']=hashlib.sha256(path.read_bytes()).hexdigest();dump(path.with_suffix('.json'),state)
-            Image.fromarray(motion.astype(np.uint8)*255).save(root/'temporal'/path.name)
+            mask_path=root/'temporal'/path.name;mask_tmp=mask_path.with_suffix('.png.tmp')
+            Image.fromarray(motion.astype(np.uint8)*255).save(mask_tmp,format='PNG');mask_tmp.replace(mask_path)
             done+=1
             if done%25==0 or done==1:
                 progress=dict(level=plan['level'],variant=variant,captured=done,planned=len(plan['cores']),seconds=time.monotonic()-started)

@@ -85,7 +85,7 @@ class RetailGame:
             if values[1]:
                 raise RuntimeError(f'Retail command failed ({values[1]}): {command}')
             signed = lambda v: struct.unpack('<i', struct.pack('<I', v))[0]
-            return dict(level=signed(values[2]), camera=list(map(signed, values[3:6])),
+            state=dict(level=signed(values[2]), camera=list(map(signed, values[3:6])),
                 scroll=list(map(signed, values[6:8])), editor=bool(values[8]),
                 visibility_profile='gameplay_2d_and_3d' if values[9] == 0xe9eb else 'incomplete',
                 shadow_blend_profile='retail_original_raster',
@@ -96,9 +96,54 @@ class RetailGame:
                 ambient_fade_frames=values[16], current_screen=values[17],
                 provider='original_retail_1.22L', executable_sha256=EXE_SHA256,
                 rendering_patch='none', command=command)
+            if command.startswith('@memory '):state['_memory_hex']=(RUNTIME/'control-memory.bin').read_bytes().hex()
+            return state
 
     def info(self):
         return self.command('@info')
+
+    def module_info(self):
+        def memory(address,size):
+            return bytes.fromhex(self.command(f'@memory {address:x} {size}')['_memory_hex'])
+        for _ in range(3):
+            manager=struct.unpack('<8I',memory(0x65a768,32));index=manager[7]
+            if index==0xffffffff:return dict(module_index=-1,native_module='')
+            if index>=manager[1]or manager[1]>128:raise ValueError('Invalid native module catalog')
+            pointer=struct.unpack('<I',memory(manager[5]+index*4,4))[0]
+            name=memory(pointer+0x58,260).split(b'\0',1)[0].decode('cp1252')
+            after=struct.unpack('<8I',memory(0x65a768,32))
+            if manager==after:return dict(module_index=index,native_module=name)
+        raise RuntimeError('Native module changed during observation')
+
+    def mount(self,module):
+        observed=self.module_info()
+        if observed['native_module'].casefold()!=module.casefold():
+            # Let the old area's Exit clear its scripts before changing packs.
+            # Otherwise retail reloads e.g. keep.s from a deathmatch pack.
+            self.command('level 90');self.command('map 10000 10000 0');self.command('@wait')
+            self.command(f'setcurmodule "{module}"');self.command('@wait')
+            observed=self.module_info()
+        if observed['native_module'].casefold()!=module.casefold():
+            raise RuntimeError(f'Original engine did not mount the requested module: {observed}')
+        self.capture_module_observation=observed
+        return observed
+
+    def prepare_capture(self):
+        """Select authored ambient through retail setters, avoiding its fade gamma loss."""
+        profile=getattr(self,'capture_lighting',None)
+        state=self.info()
+        if profile:
+            if (state['ambient']!=profile['expected_native_ambient']
+                    or state['ambient_rgb']!=profile['ambient_rgb']or state['ambient_fade_frames']):
+                self.command(f'amb {profile["ambient"]}')
+                self.command('ambcolor '+' '.join(map(str,profile['ambient_rgb'])))
+                self.command('@wait');state=self.info()
+            if (state['ambient']!=profile['expected_native_ambient']
+                    or state['ambient_rgb']!=profile['ambient_rgb']or state['ambient_fade_frames']):
+                raise RuntimeError('Retail authored ambient did not match the pinned GammaLevel 3 target')
+            state['capture_lighting_policy']=profile['policy']
+        if getattr(self,'capture_module_observation',None):state.update(self.capture_module_observation)
+        return state
 
     def view(self, level, x, y, z=0):
         state = self.info()

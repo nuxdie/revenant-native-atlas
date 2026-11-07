@@ -13,6 +13,61 @@ from .plan import CORE_W, CORE_H,camera_for_core
 from .edges import verify_edges
 
 
+def registered_overlap(rgb,mask,scroll,reference_rgb,reference_mask,reference_scroll,minimum=1000,recover_black=False):
+    """Anchor native camera alignment; optional recovery adds only over black culling gaps."""
+    sx,sy=scroll;rx,ry=reference_scroll;l,t=max(sx,rx),max(sy,ry);r,b=min(sx+640,rx+640),min(sy+340,ry+340)
+    if r<=l or b<=t:raise ValueError('Registered camera has no native reference overlap')
+    a=rgb[t-sy:b-sy,l-sx:r-sx];z=reference_rgb[t-ry:b-ry,l-rx:r-rx]
+    static=~(mask[t-sy:b-sy,l-sx:r-sx]|reference_mask[t-ry:b-ry,l-rx:r-rx])
+    same=np.all(a==z,axis=2)
+    foreground=static&same&np.any(z,axis=2)
+    recovered=~np.any(z,axis=2)&np.any(a,axis=2)if recover_black else np.zeros(static.shape,bool)
+    if foreground.sum()<minimum or np.any(static&~same&~recovered):
+        raise ValueError('Registered camera does not match its native reference outside measured motion')
+    return int(foreground.sum())
+
+
+def load_native_reference(root,key,name,plan,seen=()):
+    """Verify every immutable overlap back to an ordinary in-world view."""
+    if not key or Path(key).name!=key or key in seen or len(seen)>=64:
+        raise ValueError('Invalid or cyclic native reference chain')
+    cx,cy=map(int,name.split('_'))
+    if [cx,cy]not in plan['cores']:raise ValueError('Native reference is not planned')
+    p=root/'registration-references'/f'{key}.png';mp=p.parent/f'{key}-motion.png'
+    state=json.loads(p.with_suffix('.json').read_text())
+    sha=hashlib.sha256(p.read_bytes()).hexdigest()
+    if sha!=state['source_png_sha256']or key!=name+'-'+sha[:16]+'-'+hashlib.sha256(mp.read_bytes()).hexdigest()[:12]:
+        raise ValueError('Native reference snapshot differs')
+    if (state.get('provider')!='original_retail_1.22L'
+            or state.get('executable_sha256')!=plan['executable_sha256']
+            or state['level']!=plan['level']or state['time_of_day_minutes']!=plan['time_of_day_minutes']):
+        raise ValueError('Native reference dataset or clock differs')
+    if (state.get('visibility_profile')!='gameplay_2d_and_3d'
+            or state.get('shadow_blend_profile')!='retail_original_raster'
+            or state.get('lighting_mode')!='real_time_grid'):
+        raise ValueError('Native reference capture profile differs')
+    profile=plan.get('lighting_profile')
+    if profile and(state['ambient']!=profile['expected_native_ambient']or state['ambient_rgb']!=profile['ambient_rgb']or state['ambient_fade_frames']):
+        raise ValueError('Native reference ambient differs')
+    if (state['capture_end_screen_frame']<=state['screen_frame']
+            or verify_png(p)!=(640,340)or verify_png(mp)!=(640,340)):
+        raise ValueError('Native reference frame is incomplete')
+    if state['scroll']!=[cx*512-64,cy*256-42]:raise ValueError('Native reference scroll differs')
+    if not all(0<=v<=32768 for v in state['camera'][:2]):raise ValueError('Native reference camera is outside world XY')
+    with Image.open(p)as im:rgb=np.array(im.convert('RGB'))
+    with Image.open(mp)as im:mask=np.array(im)>0
+    if state['camera']!=list(camera_for_core(cx,cy)):
+        if (state.get('source_registration')!='native_raised_core_v1'
+                or state['camera']!=state['requested_camera']
+                or state['camera']!=state['capture_end_camera']or state['scroll']!=state['capture_end_scroll']):
+            raise ValueError('Native reference raised camera lacks registration')
+        reference_rgb,reference_mask,reference=load_native_reference(root,
+            state.get('registration_reference_key'),state['registration_reference'],plan,seen+(key,))
+        registered_overlap(rgb,mask,state['scroll'],reference_rgb,reference_mask,reference['scroll'],
+            recover_black=state.get('registration_recovery')=='native_black_coverage_v1')
+    return rgb,mask,state
+
+
 def verify_ownership(root,meta):
     index={r['id']:r for r in json.loads((root/'ownership-sources.json').read_text())}
     cache=OrderedDict();checked=0;nonblack=0
@@ -62,7 +117,12 @@ def audit(root, full=True):
     history=root/'source-refresh.json'
     retired={r['capture']:r['before']for r in json.loads(history.read_text())['captures']if r['before']!=r['after']}if history.exists()else{}
     frontier = []
+    background_frontier=[]
     planned = set(map(tuple, plan['cores']))
+    background_crop=bool(plan.get('background_crop')and plan.get('background_effects'))
+    if background_crop:
+        l,t,r,b=plan['bounds'];rectangle={(x,y)for y in range(t//256,b//256)for x in range(l//512,r//512)}
+        if planned!=rectangle:raise ValueError('Native background crop still has uncaptured interior views')
     for coord in plan['cores']:
         cx, cy = coord
         path = root / 'captures' / f'{cx}_{cy}.png'
@@ -75,6 +135,13 @@ def audit(root, full=True):
                     or state.get('executable_sha256')!=plan['executable_sha256']
                     or state.get('time_of_day_minutes')!=plan['time_of_day_minutes']):
                 raise ValueError(f'Retail capture dataset or clock mismatch: {path}')
+            if state.get('native_module')and state['native_module'].casefold()!=plan['module'].casefold():
+                raise ValueError(f'Retail mounted module mismatch: {path}')
+            if plan['module']!='Ahkuilon'and not state.get('native_module'):
+                raise ValueError(f'Retail module mount was not observed: {path}')
+            profile=plan.get('lighting_profile')
+            if profile and(state['ambient']!=profile['expected_native_ambient']or state['ambient_rgb']!=profile['ambient_rgb']or state['ambient_fade_frames']):
+                raise ValueError(f'Retail ambient differs from authored setter target: {path}')
         geyser_blending[state.get('geyser_blend_profile','prior capture outside geyser recapture region')]+=1
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         if digest==retired.get(path.stem):raise ValueError(f'Retired native source was reused: {path}')
@@ -105,12 +172,38 @@ def audit(root, full=True):
             array = np.array(im.convert('RGB'))
         with Image.open(root / 'temporal' / path.name) as im:
             dynamic = np.array(im) > 0
+        if state.get('provider')=='original_retail_1.22L'and state['camera']!=list(camera_for_core(cx,cy)):
+            if state.get('source_registration')!='native_raised_core_v1':raise ValueError('Nonstandard retail core camera lacks registration')
+            if state['camera']!=state['requested_camera']or state['camera']!=state['capture_end_camera']or state['scroll']!=state['capture_end_scroll']:raise ValueError('Raised core camera changed')
+            reference=state['registration_reference'];rx,ry=map(int,reference.split('_'))
+            if(rx,ry)not in planned:raise ValueError('Raised camera reference is not planned')
+            key=state.get('registration_reference_key')
+            if key:
+                if Path(key).name!=key:raise ValueError('Invalid native reference key')
+                rp=root/'registration-references'/f'{key}.png';mp=root/'registration-references'/f'{key}-motion.png'
+            else:rp=root/'captures'/f'{reference}.png';mp=root/'temporal'/rp.name
+            rs=json.loads(rp.with_suffix('.json').read_text())
+            reference_sha=hashlib.sha256(rp.read_bytes()).hexdigest()
+            if reference_sha!=rs['source_png_sha256']:raise ValueError('Native reference digest differs')
+            if key and key!=reference+'-'+reference_sha[:16]+'-'+hashlib.sha256(mp.read_bytes()).hexdigest()[:12]:raise ValueError('Native reference snapshot differs')
+            if (rs.get('provider')!='original_retail_1.22L'or rs.get('executable_sha256')!=plan['executable_sha256']or rs['level']!=plan['level']or rs['time_of_day_minutes']!=plan['time_of_day_minutes']):raise ValueError('Native reference dataset or clock differs')
+            if rs.get('visibility_profile')!='gameplay_2d_and_3d'or rs.get('shadow_blend_profile')!='retail_original_raster'or rs.get('lighting_mode')!='real_time_grid':raise ValueError('Native reference capture profile differs')
+            if rs['capture_end_screen_frame']<=rs['screen_frame']or verify_png(rp)!=(640,340)or verify_png(mp)!=(640,340):raise ValueError('Native reference frame is incomplete')
+            if key:
+                load_native_reference(root,key,reference,plan)
+            elif rs['camera']!=list(camera_for_core(rx,ry))or not all(0<=v<=32768 for v in rs['camera'][:2]):raise ValueError('Raised core requires an ordinary in-world native reference')
+            if rs['scroll']!=[rx*512-64,ry*256-42]:raise ValueError('Native reference scroll differs')
+            with Image.open(rp)as im:reference_rgb=np.array(im.convert('RGB'))
+            with Image.open(mp)as im:reference_mask=np.array(im)>0
+            registered_overlap(array,dynamic,state['scroll'],reference_rgb,reference_mask,rs['scroll'],
+                recover_black=state.get('registration_recovery')=='native_black_coverage_v1')
         core = array[42:298,64:576]
         for neighbor, edge in [((cx-1,cy),core[:,0]), ((cx+1,cy),core[:,-1]),
                                ((cx,cy-1),core[0]), ((cx,cy+1),core[-1])]:
             if neighbor not in planned and np.any(edge):
-                frontier.append({'core':coord, 'unplanned_neighbor':list(neighbor),
-                                 'nonblack_boundary_pixels':int(np.any(edge,axis=1).sum())})
+                record={'core':coord, 'unplanned_neighbor':list(neighbor),
+                    'nonblack_boundary_pixels':int(np.any(edge,axis=1).sum())}
+                (background_frontier if background_crop else frontier).append(record)
         for neighbor in ((cx-1, cy), (cx+1, cy), (cx, cy-1)):
             if neighbor in cache:
                 seams.append(dict(core=coord, neighbor=list(neighbor), **overlap((array, dynamic), cache[neighbor], coord, neighbor)))
@@ -147,12 +240,7 @@ def audit(root, full=True):
                 with Image.open(root/'temporal'/rp.name)as im:reference_mask=np.array(im)>0
                 with Image.open(path)as im:bridge_rgb=np.array(im.convert('RGB'))
                 with Image.open(root/'temporal'/path.name)as im:bridge_mask=np.array(im)>0
-                sx,sy=state['scroll'];rx,ry=rs['scroll'];l,t=max(sx,rx),max(sy,ry);r,b=min(sx+640,rx+640),min(sy+340,ry+340)
-                if r<=l or b<=t:raise ValueError('Bridge has no native reference overlap')
-                a=bridge_rgb[t-sy:b-sy,l-sx:r-sx];z=reference_rgb[t-ry:b-ry,l-rx:r-rx]
-                static=~(bridge_mask[t-sy:b-sy,l-sx:r-sx]|reference_mask[t-ry:b-ry,l-rx:r-rx])
-                foreground=static&(np.any(a,axis=2)|np.any(z,axis=2))
-                if foreground.sum()<1000 or np.any(a[static]!=z[static]):raise ValueError('Bridge does not align exactly with its native reference outside measured motion')
+                registered_overlap(bridge_rgb,bridge_mask,state['scroll'],reference_rgb,reference_mask,rs['scroll'])
             else:raise ValueError(f'Unknown source registration: {name}')
             if state['level']!=plan['level']or source['scroll']!=state['scroll']:raise ValueError(f'Bridge source registration mismatch: {name}')
             digest=hashlib.sha256(path.read_bytes()).hexdigest()
@@ -172,6 +260,8 @@ def audit(root, full=True):
     quilting=json.loads((root/'quilting.json').read_text())if meta and meta.get('ownership')else None
     nonblack=None
     if quilting:checked,nonblack=verify_ownership(root,meta)
+    if nonblack==0 and int(plan.get('source_objects_by_class',{}).get('9',0)):
+        raise ValueError('The source map contains scenery, but the original renderer returned no foreground')
     report = {'provider': 'original_game', 'captures': len(hashes), 'missing_captures': absent,
               'lighting_modes': sorted(modes), 'capture_hashes': 'all verified',
               'visibility_validation':dict(visibility),
@@ -185,6 +275,7 @@ def audit(root, full=True):
               'foreground_static_overlap_exact_fraction':1-foreground_errors/max(1,foreground),
               'seams_over_0_1_percent_static_difference': len(failures),
               'nonblack_unplanned_boundaries': len(frontier),
+              'native_background_crop_boundaries':len(background_frontier),
               'temporal_mask': 'Per-source measured samples, 8 pixel dilation; changing pixels are reported separately',
               'temporal_sampling':dict(sampling),
               'temporal_limitation': 'A stitched snapshot does not synchronize animation phases between captures.',

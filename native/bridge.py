@@ -17,6 +17,7 @@ from .game import NativeGame,RUNTIME
 
 
 def bridge(root,camera=None,reference=None,point=None,partial=False):
+    prior={name:(root/name).read_bytes()for name in ('manifest.json','ownership-sources.json','overview.jpg','validation.json','edge-validation.json')if(root/name).exists()}
     meta=json.loads((root/'manifest.json').read_text());report=verify_edges(root,meta)
     points=[s['world_pixel']for s in report['static_samples']]
     if not points:raise ValueError('No static join needs a bridge')
@@ -30,8 +31,8 @@ def bridge(root,camera=None,reference=None,point=None,partial=False):
     retail=meta.get('provider')=='original_retail_1.22L'
     if retail:
         from .retail import RetailGame
-        game=RetailGame();game.command('@presentation');game.command('@helpers-off')
-        game.command(f'setcurmodule "{meta["module"]}"');game.command('@wait')
+        game=RetailGame();game.capture_lighting=meta.get('lighting_profile');game.command('@presentation');game.command('@helpers-off')
+        game.mount(meta['module'])
         commands=['@grid',f'@time {meta["time_of_day_minutes"]}']
     else:
         game=NativeGame();commands=['@presentation','@grid','@time 487','@normal']
@@ -96,10 +97,15 @@ def bridge(root,camera=None,reference=None,point=None,partial=False):
             x,y=round(tx*1024*scale),round(ty*1024*scale);xx,yy=round((tx*1024+im.width)*scale),round((ty*1024+im.height)*scale)
             preview.paste(im.resize((xx-x,yy-y),Image.Resampling.LANCZOS),(x,y))
     preview.save(root/'overview.jpg',quality=94,subsampling=0)
-    validation=audit(root,full=False)
-    if validation['acceptance']=='review_required':
-        if not partial:raise RuntimeError('Bridge failed the complete native audit')
-    else:finalize(root)
+    try:
+        validation=audit(root,full=False)
+        if validation['acceptance']=='review_required'and not partial:
+            raise RuntimeError('Bridge failed the complete native audit')
+    except Exception:
+        save(old)
+        for filename,data in prior.items():(root/filename).write_bytes(data)
+        raise
+    if validation['acceptance']!='review_required':finalize(root)
     return chosen
 
 

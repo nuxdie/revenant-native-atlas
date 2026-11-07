@@ -13,6 +13,7 @@ from .publish_upload import Publisher
 def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
     dataset=json.loads((root/'dataset.json').read_text())
     expected={(m['level'],variant)for m in dataset['levels']for variant in m['variants']}
+    profiles={(m['level'],variant):profile for m in dataset['levels']for variant,profile in m.get('lighting_profiles',{}).items()}
     maps=[];uploads=[]
     def upload(key,path,sha=None):
         uploads.append(dict(key=key,path=str(path.resolve()),size=path.stat().st_size,sha256=sha or digest(path)))
@@ -22,6 +23,12 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
         if not all(p.exists()for p in paths):continue
         meta,validation,tiff=(json.loads(p.read_text())for p in paths[:3])
         if validation['acceptance']=='review_required' or validation.get('full_png_crc')!='verified':continue
+        profile=profiles.get((level,variant))
+        if profile or meta['module']!='Ahkuilon':
+            states=[json.loads(p.read_text())for p in(directory/'captures').glob('*.json')]
+            if not states:continue
+            if profile and any(s.get('ambient')!=profile['expected_native_ambient']or s.get('ambient_rgb')!=profile['ambient_rgb']or s.get('ambient_fade_frames',0)for s in states):continue
+            if meta['module']!='Ahkuilon'and any(s.get('native_module','').casefold()!=meta['module'].casefold()for s in states):continue
         sha=validation['full_png_sha256']
         if tiff['source_png_sha256']!=sha or digest(paths[3])!=sha or digest(paths[4])!=tiff['sha256']:
             raise ValueError(f'Stale retail download: level {level} {variant}')

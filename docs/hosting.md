@@ -73,3 +73,15 @@ python3 -m native.publish_retail --publish https://YOUR-HOST
 ```
 
 The retail publisher reads its key through hidden stdin and verifies complete remote bytes. It stages accepted immutable objects incrementally, but adds the catalog upload only when all 39 PNG/TIFF pairs are ready. Keep the catalog as the last upload. `runtime/retail-publication/upload-manifest.json` records paths, keys, sizes and hashes; do not distribute its local paths as public provenance. Verify the deployed catalog, both lighting states, file sizes, byte ranges and download hashes before announcing it. It does not silently rebuild the native maps. ZIPs and private validation JSONs are excluded from the public file endpoint.
+
+## Prepare a GitHub dataset release
+
+After the complete retail set passes:
+
+```sh
+python3 tools/stage_retail_release.py --out release-assets
+```
+
+This refuses an incomplete dataset. It links each accepted image, overview and native tile pack under names that include both level and lighting state, then writes `release-manifest.json` with portable object paths, byte counts and SHA-256 digests. The mirror helper consumes that manifest; no game files, local paths, credentials or private validation reports are included.
+
+Upload those files to a **draft** GitHub release with `gh release upload TAG release-assets/*`. Keep the release a draft while announcements or dataset publication are on hold. Publishing the draft is a separate deliberate action, not a step performed by the staging helper.

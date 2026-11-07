@@ -10,6 +10,7 @@ from native.bigtiff import build
 from native.plan import positions
 from native.publish_retail import prepare
 from native.retail_dataset import parse_areas
+from tools.stage_retail_release import stage
 
 
 class RetailTests(unittest.TestCase):
@@ -54,11 +55,18 @@ END
             variant('day',(50,60,70));first=prepare(root,out)
             self.assertFalse(first['complete'])
             self.assertNotIn('catalog.json',[u['key']for u in first['uploads']])
+            with self.assertRaisesRegex(RuntimeError,'1/2 accepted'):
+                stage(root,Path(directory)/'assets',out)
             variant('night',(10,20,60));second=prepare(root,out)
             self.assertTrue(second['complete']);self.assertEqual(second['uploads'][-1]['key'],'catalog.json')
             catalog=json.loads((out/'catalog.json').read_text())
             self.assertEqual(catalog['levels'][0]['variants'][0]['variant'],'day')
             self.assertNotEqual(*[v['revision']for v in catalog['levels'][0]['variants']])
+            released=stage(root,Path(directory)/'assets',out)
+            self.assertEqual(released['images'],2)
+            names={item['asset']for item in released['files']}
+            self.assertIn('level-0-day.png',names);self.assertIn('level-0-night.tif',names)
+            self.assertTrue(all(not Path(item['path']).is_absolute()for item in released['files']))
 
 
 if __name__=='__main__':unittest.main()

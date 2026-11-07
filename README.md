@@ -16,7 +16,7 @@ The current capture tools pin the retail executable and inventory the installed 
 
 ## Rendering and verification
 
-- The original retail engine renders the terrain, lighting, 3D props, visible actors/items, shadows and visual effects. The capture configuration uses Wine/D7VK, the retail light grid and GammaLevel 3.
+- The original retail engine renders the terrain, lighting, 3D props, visible actors/items, shadows and visual effects. Outdoors, its own ambient commands select the authored day/night state consistently, avoiding the retail fade path’s gamma-offset loss. The capture configuration uses Wine/D7VK, the retail light grid and GammaLevel 3.
 - Output pixels come directly from registered original-game viewports. Stitching selects existing source pixels; it does not average colours, recolour a daytime image, inpaint gaps or upscale artwork.
 - Camera/scroll registration, frame progress, source hashes, pixel ownership and actual neighbouring pixel pairs at stitching boundaries are checked. Moving regions are measured from native frames, rather than inferred from image disagreements.
 - PNGs are streamed. BigTIFF uses 64-bit offsets, 1024-pixel tiles and lossless Deflate; every decoded TIFF tile is compared against its source RGB pixels.

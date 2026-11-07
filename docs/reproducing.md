@@ -71,6 +71,8 @@ python3 -m native.retail_export --levels 0 --variant night
 
 Re-running resumes recorded captures after validating their identity and hashes. Keep `retail-output/` and its source frames; final PNGs alone cannot reproduce the ownership audit. A process reports `REVIEW` and continues to another map when unexplained joins remain. That map is held, not accepted.
 
+The outdoor plans record the authored light intensity and colour. After each camera change, the original ambient setters ensure that nearby-area fading has not lost the GammaLevel 3 offset. Resume rejects earlier outdoor captures whose recorded ambient differs from that target and recaptures their pixels.
+
 Day is 12:00 and night is 01:00. Interiors without a day/night area definition have one `fixed` state. These are original-engine renders at the selected clock, not colour transforms of one image.
 
 ## Review and export
@@ -80,6 +82,14 @@ Use an idle isolated renderer for review; its `export.lock` serializes camera us
 ```sh
 python3 -m native.retail_review retail-output/fixed/level-30 retail-output/fixed/level-31
 ```
+
+To supervise review, native edge-camera recovery and final PNG/BigTIFF generation for a completed selection:
+
+```sh
+python3 -m native.retail_finish --levels 0,5,30,31
+```
+
+Use `--wait-for-batch` only when the same isolated instance's batch is still running. Assign disjoint output levels to separate workers. The finisher reports each accepted, held or missing state in its runtime's `finish-status.json`; completion of the process does not imply every assigned map passed. Retain `registration-references/` and the source metadata with the output, since recovered cameras are audited against those immutable native anchors.
 
 This recaptures the affected registered sources with longer native animation observation and tries alternate source ownership. It never manufactures a motion mask from overlap differences or changes RGB values. A persistent problem stays `review_required` and needs investigation; do not relax acceptance to publish it.
 
@@ -98,7 +108,14 @@ PY
 
 The exporter and review command build the tiled BigTIFF after an accepted PNG. TIFF uses 64-bit offsets, Deflate compression and decoded-tile equality checks. Both formats retain native resolution. Overview previews alone are resized.
 
-Review known shoreline, shadow, light and geyser scenes against fresh original-game viewports. A stitch can preserve a rendering defect perfectly: source-pixel identity does not by itself establish visual fidelity. See [rendering.md](rendering.md) for configuration, comparison evidence and limits.
+Review known shoreline, shadow, light and geyser scenes against fresh original-game viewports, using an idle retail instance:
+
+```sh
+python3 -m native.check_scene --atlas retail-output/fixed --camera 30 10536 10736 0 --out comparisons/retail-geyser
+python3 -m native.clip --atlas retail-output/fixed --camera 30 10536 10736 0 --seconds 20 --out comparisons/retail-geyser-cycle
+```
+
+The comparison retains a measured static-foreground mask. The clip is lossless APNG and verifies every stored RGB frame against a recorded source frame. A stitch can preserve a rendering defect perfectly: source-pixel identity does not by itself establish visual fidelity. See [rendering.md](rendering.md) for configuration, comparison evidence and limits.
 
 ## Parallel instances and older research
 

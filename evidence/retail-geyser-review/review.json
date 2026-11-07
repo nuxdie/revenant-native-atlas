@@ -1,0 +1,14 @@
+{
+  "provider": "original_retail_1.22L",
+  "reviewed_locations": {
+    "30": 63,
+    "31": 45
+  },
+  "method": "224 by 224 native-pixel crops of every indexed fire/steam effect or matching trap in the base retail module, contact sheets visually reviewed",
+  "opaque_black_quads_observed": 0,
+  "scope": "Static snapshot review of indexed locations; not a complete animation-cycle or map acceptance claim",
+  "native_join_acceptance": {
+    "30": "held",
+    "31": "held"
+  }
+}

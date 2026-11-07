@@ -24,8 +24,18 @@ def parse_areas(text):
         level=re.search(r'^\s*LEVEL\s+(\d+)',body,re.I|re.M)
         if not level:
             continue
+        def intensity(name):
+            value=re.search(r'^\s*'+name+r'\s+(\d+)',body,re.I|re.M)
+            return int(value[1])if value else None
+        def color(name):
+            value=re.search(r'^\s*'+name+r'\s+(\d+)\s*,\s*(\d+)\s*,\s*(\d+)',body,re.I|re.M)
+            return list(map(int,value.groups()))if value else None
         areas.append(dict(name=match[1],level=int(level[1]),
-            day_night=bool(re.search(r'^\s*NIGHTAMB(?:LIGHT|COLOR)\b',body,re.I|re.M))))
+            day_night=bool(re.search(r'^\s*NIGHTAMB(?:LIGHT|COLOR)\b',body,re.I|re.M)),
+            ambient=intensity('AMBLIGHT'),ambient_rgb=color('AMBCOLOR'),
+            night_ambient=intensity('NIGHTAMBLIGHT'),night_ambient_rgb=color('NIGHTAMBCOLOR')))
+        bg=re.search(r'^\s*BGEFFECT\s+"([^"]+)"',body,re.I|re.M)
+        areas[-1]['background_effect']=bg[1]if bg else None
     return areas
 
 
@@ -88,6 +98,16 @@ def index(data=DATA, out=ROOT/'runtime/retail-index'):
                 retained_source_objects=len(items),source_objects_by_class=dict(Counter(str(o['class'])for o in items)),
                 dataset='GOG 1.22L',executable_sha256=EXE_SHA256,
                 variants=['day','night']if has_night else ['fixed'])
+            if has_night:
+                profiles={}
+                for variant,prefix in [('day',''),('night','night_')]:
+                    values={(a[prefix+'ambient'],tuple(a[prefix+'ambient_rgb']or[]))for a in current_areas}
+                    if len(values)!=1:raise ValueError('Cyclic areas need an explicit per-area lighting policy')
+                    intensity,rgb=values.pop()
+                    if intensity is None or len(rgb)!=3:raise ValueError('Incomplete authored outdoor lighting')
+                    profiles[variant]=dict(policy='authored_setter_gamma3_v1',ambient=intensity,
+                        ambient_rgb=list(rgb),expected_native_ambient=intensity+10)
+                plan['lighting_profiles']=profiles
             # All installed retail modules use distinct drawable level IDs.
             if any(p['level']==level for p in levels):
                 raise ValueError(f'Level collision across modules: {level}')

@@ -47,6 +47,7 @@ if __name__=='__main__':
     p.add_argument('--index',type=Path,default=ROOT/'runtime/retail-index')
     p.add_argument('--out',type=Path,default=ROOT/'retail-output')
     a=p.parse_args();selected=set(map(int,a.levels.split(',')))
+    (RUNTIME/'batch.pid').write_text(str(os.getpid()))
     dataset=json.loads((a.index/'dataset.json').read_text())
     broken={r['level']for r in dataset.get('unresolved_types',[])if r['native_load'].startswith('fatal')}
     held=sorted(selected&broken);selected-=broken

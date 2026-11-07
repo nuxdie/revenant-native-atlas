@@ -24,8 +24,9 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
     if retail:
         from .retail import RetailGame
         game=RetailGame()
+        game.capture_lighting=meta.get('lighting_profile')
         game.command('@presentation');game.command('@helpers-off')
-        game.command(f'setcurmodule "{meta["module"]}"');game.command('@wait')
+        game.mount(meta['module'])
         game.command(f'@time {meta["time_of_day_minutes"]}')
     else:
         game=NativeGame();game.command('@presentation');game.command('@normal');game.command('@time 487')
@@ -35,7 +36,16 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
         with game.backing_capture()as capture:
             for name in sorted(selected,key=lambda s:tuple(reversed(tuple(map(int,s.split('_')))))):
                 old=root/'captures'/f'{name}.png';previous=json.loads(old.with_suffix('.json').read_text())
-                first,array,dynamic,state=capture_core(game,capture,list(map(int,name.split('_'))),.1,temporal_samples,temporal_interval)
+                raised=retail and previous.get('source_registration')=='native_raised_core_v1'
+                first,array,dynamic,state=capture_core(game,capture,list(map(int,name.split('_'))),.1,temporal_samples,temporal_interval,
+                    camera=previous['camera']if raised else None)
+                if raised:
+                    if state['scroll']!=previous['scroll']:raise ValueError('Raised core refresh lost native registration')
+                    for key in ['source_registration','registration_reference','original_grid_camera','camera_policy']:
+                        state[key]=previous[key]
+                    if previous.get('registration_recovery'):state['registration_recovery']=previous['registration_recovery']
+                    if previous.get('registration_reference_key'):state['registration_reference_key']=previous['registration_reference_key']
+                    if previous.get('original_grid_reference_key'):state['original_grid_reference_key']=previous['original_grid_reference_key']
                 for folder,suffix in [('captures','.png'),('captures','.json'),('temporal','.png')]:
                     source=root/folder/(name+suffix);target=archive/folder/source.name
                     target.parent.mkdir(parents=True,exist_ok=True)
