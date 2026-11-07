@@ -16,3 +16,15 @@ class ClockPreviewTests(unittest.TestCase):
         self.assertEqual(result['levels'][0]['variants'][2]['width'],120)
         self.assertEqual(len(result['levels'][0]['clock']['hours']),24)
         self.assertNotIn('clock',result['levels'][1])
+
+    def test_completed_clock_catalog_clears_actual_missing_levels(self):
+        base=dict(expected_maps=4,cycling_levels=[0],missing_maps=[],levels=[
+            dict(level=0,variants=[dict(level=0,variant='day'),dict(level=0,variant='night')]),
+            dict(level=41,variant='fixed'),dict(level=42,variant='fixed')])
+        result=compose(base,dict(levels=[dict(level=0,variant='twilight')]))
+        self.assertTrue(result['publication_complete']);self.assertFalse(result['preview'])
+        self.assertEqual(result['unresolved_levels'],[]);self.assertEqual(result['ready_maps'],5)
+        self.assertEqual(result['expected_maps'],5)
+        base['missing_maps']=[dict(level=43,variant='fixed')];base['expected_maps']=5
+        result=compose(base,dict(levels=[dict(level=0,variant='twilight')]))
+        self.assertFalse(result['publication_complete']);self.assertEqual(result['unresolved_levels'],[43])

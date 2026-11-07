@@ -133,3 +133,31 @@ Parallel work requires a different runtime, desktop, private game directory and 
 The older `native.launch`, `native.export`, `native.repair_effects`, `native.live` and `native/provider.json` belong to the July 1999 installation. Their runtime addresses, lighting clock and effect patches are deliberately separate. Do not apply them to retail. `atlas.py` remains an independent static decoder; its output is not the production native render.
 
 Revisited comparison patches and upstream revisions are in `patches/` and `sources.json`. The scene comparison harness accepts an explicit scene clock, but its extra rendering features do not establish parity with the original retail executable.
+
+
+## Diagnose the three legacy loader failures
+
+The shipped Ahkuilon pack contains version-1 sectors with 16 placements whose
+11 type IDs do not exist in the available class catalogs. Unlike bounded modern
+records, the original retail loader cannot skip those unknown v1 records. It
+stops with “Bad object”. This affects levels 41, 42 and 43.
+
+A private diagnostic pack can omit only those unresolvable tile slots, retaining
+all other record bytes and positions. This does **not** recover the absent
+artwork and cannot qualify as the exact retail edition:
+
+```sh
+python3 -m native.legacy_recovery \
+  --source /path/to/retail/Modules/Ahkuilon.rvm \
+  --destination /separate/private/recovery/Modules/Ahkuilon.rvm \
+  --dataset runtime/retail-index/dataset.json \
+  --diagnostic-omissions
+```
+
+The command verifies the indexed source-pack hash, records every omitted slot,
+checks surviving placements, refuses to overwrite an existing destination, and
+writes `recovery.json`. Preserve that marker with any diagnostic captures.
+`native.publish_retail` excludes a dataset carrying recovery metadata, an output root with `recovery.json`,
+or a map with `recovery.json`; successful raster/seam checks cannot override missing
+source content. Exact completion needs authoritative definitions/assets for
+those IDs. Do not invent aliases or silently omit them from a normal release.

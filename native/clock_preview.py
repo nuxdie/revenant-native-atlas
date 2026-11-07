@@ -20,11 +20,15 @@ def compose(base,twilight):
         if current is None:continue
         variants=current.setdefault('variants',[{k:v for k,v in current.items()if k!='variants'}])
         variants[:]=[v for v in variants if v['variant']!=addition['variant']]+[addition]
+    cycle_levels=base.get('cycling_levels',[0,5])
     for level in catalog['levels']:
-        if level['level']in(0,5):level['clock']=clock_metadata()
-    catalog.update(revision='retail-clock-preview',preview=True,publication_complete=False,
-        unresolved_levels=[41,42,43],expected_maps=base.get('expected_maps',39)+2,
-        ready_maps=sum(len(l.get('variants',[]))or 1 for l in catalog['levels']))
+        if level['level']in cycle_levels:level['clock']=clock_metadata()
+    available={(l['level'],v['variant'])for l in catalog['levels']for v in l.get('variants',[l])}
+    missing=base.get('missing_maps',[])+[dict(level=level,variant='twilight')for level in cycle_levels if(level,'twilight')not in available]
+    expected=base.get('expected_maps',39)+len(cycle_levels);ready=len(available)
+    complete=ready==expected and not missing
+    catalog.update(revision='retail-1-22l-clock'if complete else'retail-clock-preview',preview=not complete,publication_complete=complete,
+        unresolved_levels=sorted({m['level']for m in missing}),missing_maps=missing,expected_maps=expected,ready_maps=ready)
     return catalog
 
 
@@ -65,6 +69,6 @@ if __name__=='__main__':
                 publisher.upload(dict(key=path.name,path=str(path.resolve()),size=path.stat().st_size,sha256=digest(path)))
             report=dict(images=catalog['ready_maps'],twilight_images=twilight['maps'],base_images=base['maps'],published=bool(publisher))
             dump(out/'status.json',report);print(report,flush=True);prior=fingerprint
-            if twilight['maps']==2 and base['maps']==36:break
+            if catalog['publication_complete']:break
         if not a.watch or time.monotonic()>deadline:break
         time.sleep(10)

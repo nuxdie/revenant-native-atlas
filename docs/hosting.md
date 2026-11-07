@@ -82,7 +82,7 @@ Remote verification reads the complete object through bounded batches of four 1 
 
 The retail publisher reads its key through hidden stdin and verifies complete remote bytes. It stages accepted immutable objects incrementally, but adds the catalog upload only when all 39 PNG/TIFF pairs are ready. Keep the catalog as the last upload. `runtime/retail-publication/upload-manifest.json` records paths, keys, sizes and hashes; do not distribute its local paths as public provenance. Verify the deployed catalog, both lighting states, file sizes, byte ranges and download hashes before announcing it. It does not silently rebuild the native maps. ZIPs and private validation JSONs are excluded from the public file endpoint.
 
-An opt-in hourly retail preview uses a separate catalog and leaves that complete-atlas publication guard intact:
+The hourly retail edition uses a separate catalog. Preparing or uploading even a complete baseline retail set never overwrites the July edition’s `catalog.json`. Publish the composed retail catalog through `native.clock_preview`:
 
 ```sh
 python3 -m native.clock_preview --watch --publish https://YOUR-HOST

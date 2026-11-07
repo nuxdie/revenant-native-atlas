@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-11-07T23:07:13.664Z",
+  "counts": {
+    "july": {
+      "locations": 33,
+      "images": 33,
+      "missing": []
+    },
+    "retail": {
+      "locations": 34,
+      "images": 38,
+      "missing": [
+        41,
+        42,
+        43
+      ]
+    }
+  },
+  "checked": 284,
+  "failed": [],
+  "passed": true
+}

@@ -73,3 +73,13 @@ The older July world's daytime ambient is 80 with colour (250,245,240), while re
 A later audit found three source frames containing unrelated compositor contents immediately after a Wine desktop was mapped. Their exports and all 15 corresponding remote objects were withdrawn. The older public catalog did not reference those revisions. A pass over 16,373 sources found three matches to the observed browser signature; authored full-screen animated backgrounds were reviewed separately. This targeted signature check is not a universal application-origin detector.
 
 Capture now requests the original game's redraw and waits for native frames **after** mapping and naming the XComposite pixmap, before reading it. A regression check covers that ordering. The affected sources are recaptured and must pass the full provenance and static-edge checks again before publication. Pixel ownership alone did not prove the pixels belonged to the intended application, and an almost-full temporal mask concealed the erroneous joins; that earlier acceptance was invalid.
+
+
+A further acquisition guard renames the current XComposite backing pixmap for
+every read. A Wine desktop resize can leave an old named pixmap readable while
+it stops receiving frames. A generated red/blue X11 fixture reproduces that
+failure; per-read naming returns the new backing. The original-game A/B/A camera
+repeat returned all 68,833 sampled static foreground pixels identically while
+the intermediate camera produced a different image. Invalid private diagnostic
+captures were archived and recaptured; this check does not replace the native
+source, coverage, seam, and exported-file validation gates.

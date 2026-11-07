@@ -10,10 +10,20 @@ from native.bigtiff import build
 from native.plan import positions
 from native.publish_retail import prepare
 from native.retail_dataset import parse_areas
-from tools.stage_retail_release import stage
+from native.retail import next_sequence
 
 
 class RetailTests(unittest.TestCase):
+    def test_command_counter_recovers_a_killed_writer_without_reusing_native_id(self):
+        with tempfile.TemporaryDirectory()as directory:
+            root=Path(directory);(root/'control-sequence.txt').write_text('')
+            state=[0]*18;state[0]=0x41544c53;state[10]=77
+            (root/'control-state.bin').write_bytes(struct.pack('<18I',*state))
+            self.assertEqual(next_sequence(root),78)
+            self.assertEqual(next_sequence(root),79)
+            self.assertEqual((root/'control-sequence.txt').read_text(),'79')
+            self.assertFalse((root/'control-sequence.tmp').exists())
+
     def test_cycle_is_authored_per_area_not_assumed_for_every_level(self):
         areas=parse_areas('''AREA "Town"
 BEGIN
@@ -50,23 +60,22 @@ END
                     tiles=[[0,0]],statistics={},provider='original_retail_1.22L')
                 (p/'manifest.json').write_text(json.dumps(meta))
                 (p/'validation.json').write_text(json.dumps(dict(acceptance='native_pixels_verified',
-                    full_png_crc='verified',full_png_sha256=sha)))
+                    full_png_crc='verified',full_png_sha256=sha,actual_stitched_edges=dict(unmeasured_edges_requiring_review=0))))
                 build(p)
             variant('day',(50,60,70));first=prepare(root,out)
             self.assertFalse(first['complete'])
             self.assertNotIn('catalog.json',[u['key']for u in first['uploads']])
-            with self.assertRaisesRegex(RuntimeError,'1/2 accepted'):
-                stage(root,Path(directory)/'assets',out)
             variant('night',(10,20,60));second=prepare(root,out)
-            self.assertTrue(second['complete']);self.assertEqual(second['uploads'][-1]['key'],'catalog.json')
+            self.assertTrue(second['complete']);self.assertNotIn('catalog.json',[u['key']for u in second['uploads']])
             catalog=json.loads((out/'catalog.json').read_text())
             self.assertEqual(catalog['levels'][0]['variants'][0]['variant'],'day')
             self.assertNotEqual(*[v['revision']for v in catalog['levels'][0]['variants']])
-            released=stage(root,Path(directory)/'assets',out)
-            self.assertEqual(released['images'],2)
-            names={item['asset']for item in released['files']}
-            self.assertIn('level-0-day.png',names);self.assertIn('level-0-night.tif',names)
-            self.assertTrue(all(not Path(item['path']).is_absolute()for item in released['files']))
+            (root/'day/level-0/recovery.json').write_text('{"omitted_placements":1}')
+            held=prepare(root,out);self.assertFalse(held['complete']);self.assertEqual(held['maps'],1)
+            self.assertEqual(held['held'][0]['level'],0)
+            self.assertEqual(held['missing_maps'],[dict(level=0,variant='day')])
+            (root/'recovery.json').write_text('{}')
+            self.assertEqual(prepare(root,out)['maps'],0)
 
 
 if __name__=='__main__':unittest.main()

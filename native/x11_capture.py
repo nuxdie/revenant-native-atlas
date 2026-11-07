@@ -36,6 +36,7 @@ class WindowCapture:
         if not self.display:
             raise RuntimeError('Cannot open game display')
         self.pixmap = None
+        self.backing_policy = 'current_pixmap_each_read_v1' if composite else 'direct_drawable_v1'
         if composite:
             extension = C.CDLL(ctypes.util.find_library('Xcomposite'))
             extension.XCompositeRedirectWindow.argtypes = [C.c_void_p, C.c_ulong, C.c_int]
@@ -50,7 +51,19 @@ class WindowCapture:
             self.pixmap = extension.XCompositeNameWindowPixmap(self.display, self.window)
             self.window = self.pixmap
 
+    def refresh_backing(self):
+        # A named pixmap remains readable after a window resize, but no longer
+        # receives the window's new frames. Name the current backing store on
+        # every read; keeping the old XID can silently freeze an entire export.
+        if self.pixmap is None:return
+        current=self._composite.XCompositeNameWindowPixmap(self.display,self._redirected_window)
+        if not current:raise RuntimeError('Current game backing store unavailable')
+        previous=self.pixmap;self.pixmap=current;self.window=current
+        self.x.XFreePixmap.argtypes=[C.c_void_p,C.c_ulong]
+        self.x.XFreePixmap(self.display,previous)
+
     def frame(self, width=640, height=480):
+        self.refresh_backing()
         raw = self.x.XGetImage(self.display, self.window, 0, 0, width, height, C.c_ulong(-1).value, 2)
         if not raw:
             raise RuntimeError('Game drawable unavailable')

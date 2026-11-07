@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-11-07T21:17:35.804829+00:00",
+  "checked_at": "2026-11-07T22:53:12.618932+00:00",
   "dataset": "English GOG 1.22L",
-  "verified_images": 34,
-  "expected_images": 39,
+  "verified_images": 38,
+  "expected_images": 41,
   "verified_maps": [
     {
       "level": 0,
@@ -18,15 +18,29 @@
       "unexplained_static_edges": 0
     },
     {
-      "level": 5,
-      "variant": "day",
+      "level": 0,
+      "variant": "night",
       "names": [
-        "The Ruins"
+        "The Forest",
+        "Misthaven"
       ],
-      "width": 16896,
-      "height": 9216,
-      "png_sha256": "bf7d94bf020e468e30f63591c15543ee6d49bb6a1a9735bf3c33e71a4fc6b613",
-      "tiff_sha256": "d73fe94b6d19d7d334ace5e26c250b68f87e4ad71257cb59c6bc81b10a0a4cf0",
+      "width": 31744,
+      "height": 18432,
+      "png_sha256": "a10ff2736763308f9bbd401ea762ca4d937c4653026457aa53e7235492b15c73",
+      "tiff_sha256": "1f84081124e21be921f886168112fb2fd0003943c4b6c58a5788f7b7dbf5078f",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 0,
+      "variant": "twilight",
+      "names": [
+        "The Forest",
+        "Misthaven"
+      ],
+      "width": 31744,
+      "height": 18432,
+      "png_sha256": "eee3e584722a9830b284de6909f210aea4f5fce5573d0bf926376bdf1f7db5a0",
+      "tiff_sha256": "6d457372232f137c2a89aef84c0709a41c2529c6c6c95ebb484666ca284eeae8",
       "unexplained_static_edges": 0
     },
     {
@@ -42,42 +56,6 @@
       "unexplained_static_edges": 0
     },
     {
-      "level": 100,
-      "variant": "fixed",
-      "names": [
-        "Deathmatch5"
-      ],
-      "width": 9216,
-      "height": 6400,
-      "png_sha256": "f615443667e253b38b1a83faaf92a56a685457319ee609db13e0f462faa629fb",
-      "tiff_sha256": "21a4714e5eb2ec9ceca6ecbe4ccd24b0343b24bdd9f973dae24f24a469f4c589",
-      "unexplained_static_edges": 0
-    },
-    {
-      "level": 101,
-      "variant": "fixed",
-      "names": [
-        "Deathmatch2"
-      ],
-      "width": 8192,
-      "height": 4608,
-      "png_sha256": "a6565866c0b720482fe0f7a2c4649108109521b174bc5c955a660bf5fa300017",
-      "tiff_sha256": "d9859bf32749d6187cbb8c7154827a19557a4e0ea87538438528fe155d7f5ebc",
-      "unexplained_static_edges": 0
-    },
-    {
-      "level": 102,
-      "variant": "fixed",
-      "names": [
-        "Deathmatch1"
-      ],
-      "width": 6656,
-      "height": 4352,
-      "png_sha256": "28071f4bec43045a1d903a0a55c5f8515a3c8c23c9f8f3e0ea115ead097f7adc",
-      "tiff_sha256": "086d57cb08b38317970d3692af925d5ab15b8f9876b59f46e0d1f53bb7f92b46",
-      "unexplained_static_edges": 0
-    },
-    {
       "level": 2,
       "variant": "fixed",
       "names": [
@@ -90,18 +68,6 @@
       "unexplained_static_edges": 0
     },
     {
-      "level": 205,
-      "variant": "fixed",
-      "names": [
-        "Deathmatch4"
-      ],
-      "width": 9216,
-      "height": 5376,
-      "png_sha256": "6c7306d323399e35713c07be36aace727a9c7e8136cf060cf4e5f9007e6030c1",
-      "tiff_sha256": "b6317581b426897a7cdd8faabc736b41f1157f977d8b8e5323b0b1f1f0c51359",
-      "unexplained_static_edges": 0
-    },
-    {
       "level": 3,
       "variant": "fixed",
       "names": [
@@ -111,6 +77,66 @@
       "height": 7680,
       "png_sha256": "faddb1f38ae00ea2fa73a912383ba099823e6b1d3842147332c0fb440a5f82f9",
       "tiff_sha256": "ad692353f88ac8857b1697780f4f62e830812a66e341f700ffd5dbe161b339a2",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 4,
+      "variant": "fixed",
+      "names": [
+        "Arakna Island"
+      ],
+      "width": 9728,
+      "height": 5632,
+      "png_sha256": "1765d6c1f89cb928dd79aca5f5d5b4295ece393c25deeb350d43938e9418c132",
+      "tiff_sha256": "93f6c6e3189005724c918cdcd1673c41ca6e0691ee50fef20bcd8b9b958b52af",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 5,
+      "variant": "day",
+      "names": [
+        "The Ruins"
+      ],
+      "width": 16896,
+      "height": 9216,
+      "png_sha256": "bf7d94bf020e468e30f63591c15543ee6d49bb6a1a9735bf3c33e71a4fc6b613",
+      "tiff_sha256": "d73fe94b6d19d7d334ace5e26c250b68f87e4ad71257cb59c6bc81b10a0a4cf0",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 5,
+      "variant": "night",
+      "names": [
+        "The Ruins"
+      ],
+      "width": 16896,
+      "height": 9216,
+      "png_sha256": "bedc8678f1470d44f6065a03670c312ddd9cb5bd7a09c85e1b01f874ed82bd0a",
+      "tiff_sha256": "20b9aafb73b6d13edef442b8d9fc2a88d7dfa6f50d306b6fa6af5c12153313a2",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 5,
+      "variant": "twilight",
+      "names": [
+        "The Ruins"
+      ],
+      "width": 16896,
+      "height": 9216,
+      "png_sha256": "7c8766dfedcf2b3e794c2505073a6ceeb4a2cf1715a478336c958c68c7127033",
+      "tiff_sha256": "ec5c7bb10d5dccfc1de8044c3a55e39ffa0d5b918a287c607dd800c084d9ccaa",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 6,
+      "variant": "fixed",
+      "names": [
+        "The Keep"
+      ],
+      "width": 4608,
+      "height": 3072,
+      "png_sha256": "ec303f62a806a248b343ba5edb085e27ed9f2f98697f4b80a1a87c706fecbbd0",
+      "tiff_sha256": "277a2b747481be161c46f9d0526bdcd706e8fdfa7f38cc54dce810bd607b4a8d",
       "unexplained_static_edges": 0
     },
     {
@@ -174,15 +200,15 @@
       "unexplained_static_edges": 0
     },
     {
-      "level": 4,
+      "level": 39,
       "variant": "fixed",
       "names": [
-        "Arakna Island"
+        "The Infested Swamp"
       ],
-      "width": 9728,
-      "height": 5632,
-      "png_sha256": "1765d6c1f89cb928dd79aca5f5d5b4295ece393c25deeb350d43938e9418c132",
-      "tiff_sha256": "93f6c6e3189005724c918cdcd1673c41ca6e0691ee50fef20bcd8b9b958b52af",
+      "width": 8704,
+      "height": 16896,
+      "png_sha256": "c02399b4da84b2a72fe92ac04f79976469694a983d358bd01ebf3f02bea9174b",
+      "tiff_sha256": "995a68c3381afc0fb6be30ce033a8f9e2eed99c51dae69765e61350e5780d0f1",
       "unexplained_static_edges": 0
     },
     {
@@ -354,18 +380,6 @@
       "unexplained_static_edges": 0
     },
     {
-      "level": 6,
-      "variant": "fixed",
-      "names": [
-        "The Keep"
-      ],
-      "width": 4608,
-      "height": 3072,
-      "png_sha256": "ec303f62a806a248b343ba5edb085e27ed9f2f98697f4b80a1a87c706fecbbd0",
-      "tiff_sha256": "277a2b747481be161c46f9d0526bdcd706e8fdfa7f38cc54dce810bd607b4a8d",
-      "unexplained_static_edges": 0
-    },
-    {
       "level": 66,
       "variant": "fixed",
       "names": [
@@ -402,28 +416,55 @@
       "unexplained_static_edges": 0
     },
     {
-      "level": 5,
-      "variant": "night",
+      "level": 100,
+      "variant": "fixed",
       "names": [
-        "The Ruins"
+        "Deathmatch5"
       ],
-      "width": 16896,
-      "height": 9216,
-      "png_sha256": "bedc8678f1470d44f6065a03670c312ddd9cb5bd7a09c85e1b01f874ed82bd0a",
-      "tiff_sha256": "20b9aafb73b6d13edef442b8d9fc2a88d7dfa6f50d306b6fa6af5c12153313a2",
+      "width": 9216,
+      "height": 6400,
+      "png_sha256": "f615443667e253b38b1a83faaf92a56a685457319ee609db13e0f462faa629fb",
+      "tiff_sha256": "21a4714e5eb2ec9ceca6ecbe4ccd24b0343b24bdd9f973dae24f24a469f4c589",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 101,
+      "variant": "fixed",
+      "names": [
+        "Deathmatch2"
+      ],
+      "width": 8192,
+      "height": 4608,
+      "png_sha256": "a6565866c0b720482fe0f7a2c4649108109521b174bc5c955a660bf5fa300017",
+      "tiff_sha256": "d9859bf32749d6187cbb8c7154827a19557a4e0ea87538438528fe155d7f5ebc",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 102,
+      "variant": "fixed",
+      "names": [
+        "Deathmatch1"
+      ],
+      "width": 6656,
+      "height": 4352,
+      "png_sha256": "28071f4bec43045a1d903a0a55c5f8515a3c8c23c9f8f3e0ea115ead097f7adc",
+      "tiff_sha256": "086d57cb08b38317970d3692af925d5ab15b8f9876b59f46e0d1f53bb7f92b46",
+      "unexplained_static_edges": 0
+    },
+    {
+      "level": 205,
+      "variant": "fixed",
+      "names": [
+        "Deathmatch4"
+      ],
+      "width": 9216,
+      "height": 5376,
+      "png_sha256": "6c7306d323399e35713c07be36aace727a9c7e8136cf060cf4e5f9007e6030c1",
+      "tiff_sha256": "b6317581b426897a7cdd8faabc736b41f1157f977d8b8e5323b0b1f1f0c51359",
       "unexplained_static_edges": 0
     }
   ],
-  "held_captures": [
-    {
-      "level": 39,
-      "variant": "fixed"
-    },
-    {
-      "level": 0,
-      "variant": "night"
-    }
-  ],
+  "held_captures": [],
   "missing_asset_levels": [
     41,
     42,
@@ -433,8 +474,11 @@
     "affected_images": 3,
     "remote_objects": 15,
     "confirmed_absent": true,
-    "note": "Earlier acceptance of these revisions was invalid; remapping could capture unrelated compositor contents. A post-mapping native-redraw barrier and recapture are required."
+    "note": "Earlier acceptance of three revisions was invalid because remapping could capture unrelated compositor contents. Their 15 objects were removed. All three have since been recaptured and published under new verified revisions; the withdrawn revisions remain absent.",
+    "replacements_published": true
   },
-  "public_catalog": "Previous July dataset retained; retail hourly preview is opt-in.",
-  "animation_limit": "Successive native snapshots; animation and quest state are not synchronized across the island."
+  "public_catalog": "July edition: latest 33 maps. Separate retail edition: 34 locations / 38 images, including both twilight states.",
+  "animation_limit": "Successive native snapshots; animation and quest state are not synchronized across the island.",
+  "verified_baseline_images": 36,
+  "expected_baseline_images": 39
 }

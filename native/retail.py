@@ -32,6 +32,20 @@ def build():
     (RUNTIME/'native-control.exe.tmp').replace(RUNTIME/'native-control.exe')
 
 
+def next_sequence(runtime):
+    """Keep command IDs monotonic after an interrupted counter write."""
+    runtime=Path(runtime);counter=runtime/'control-sequence.txt';values=[0]
+    try:values.append(int(counter.read_text()))
+    except(FileNotFoundError,ValueError):pass
+    try:
+        state=struct.unpack('<18I',(runtime/'control-state.bin').read_bytes())
+        if state[0]==0x41544c53:values.append(state[10])
+    except(FileNotFoundError,struct.error):pass
+    sequence=max(values)+1
+    temporary=counter.with_suffix('.tmp');temporary.write_text(str(sequence));temporary.replace(counter)
+    return sequence
+
+
 class RetailGame:
     def __init__(self):
         actual = hashlib.sha256((DATA/'Revenant.exe').read_bytes()).hexdigest()
@@ -61,9 +75,7 @@ class RetailGame:
                         env=self.env, cwd=ROOT, stdout=log, stderr=log, stdin=subprocess.DEVNULL,
                         start_new_session=True)
                 pidfile.write_text(str(p.pid))
-            counter = RUNTIME/'control-sequence.txt'
-            seq = (int(counter.read_text()) if counter.exists() else 0) + 1
-            counter.write_text(str(seq))
+            seq = next_sequence(RUNTIME)
             data = command.encode('ascii')
             if len(data) > 253:
                 raise ValueError('Native command too long')
@@ -197,6 +209,7 @@ class RetailCapture:
     def __init__(self,game):
         self.game=game
         self.capture=None
+        self.backing_policy='current_pixmap_each_read_v1'
 
     def frame(self):
         for attempt in range(20):

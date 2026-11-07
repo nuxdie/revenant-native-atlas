@@ -1,0 +1,42 @@
+{
+  "captures": 34163,
+  "maps": 71,
+  "flagged_maps": [
+    {
+      "root": "native-output/level-0",
+      "groups": 79,
+      "max_sampled_colors": 260
+    },
+    {
+      "root": "retail-output/day/level-5",
+      "groups": 6,
+      "max_sampled_colors": 42
+    },
+    {
+      "root": "retail-output/day/level-0",
+      "groups": 7,
+      "max_sampled_colors": 44
+    },
+    {
+      "root": "retail-output/night/level-5",
+      "groups": 4,
+      "max_sampled_colors": 16
+    },
+    {
+      "root": "retail-output/night/level-0",
+      "groups": 6,
+      "max_sampled_colors": 17
+    },
+    {
+      "root": "retail-clock-output/twilight/level-5",
+      "groups": 4,
+      "max_sampled_colors": 32
+    },
+    {
+      "root": "retail-clock-output/twilight/level-0",
+      "groups": 6,
+      "max_sampled_colors": 33
+    }
+  ],
+  "interpretation": "All duplicate groups were confined to outdoor repeating water/shore scenery. Two detailed July level-0 groups were inspected and contain repeated authored shoreline/tree tiles. No indoor repeated nonblack capture group was found. This scan is a diagnostic, not a proof that every object or quest state is present."
+}

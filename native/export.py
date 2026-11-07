@@ -63,6 +63,7 @@ def capture_core(game, capture, coord, settle, temporal_samples=3, temporal_inte
     time.sleep(settle)
     first=capture.frame().crop((0,0,640,340));array=np.array(first);mask=np.zeros((340,640),bool)
     if getattr(capture,'window_barrier',None):state['capture_window_barrier']=capture.window_barrier
+    if getattr(capture,'backing_policy',None):state['capture_backing_policy']=capture.backing_policy
     for _ in range(temporal_samples-1):
         time.sleep(temporal_interval)
         mask|=np.any(np.array(capture.frame().crop((0,0,640,340)))!=array,axis=2)

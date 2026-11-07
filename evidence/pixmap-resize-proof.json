@@ -1,0 +1,46 @@
+{
+  "cameras": [
+    [
+      10000,
+      10000,
+      0
+    ],
+    [
+      10432,
+      11584,
+      0
+    ],
+    [
+      10000,
+      10000,
+      0
+    ]
+  ],
+  "foreground_pixels": [
+    68833,
+    29697,
+    68833
+  ],
+  "different_cameras_return_different_frames": true,
+  "return_static_pixels": 68833,
+  "return_static_mismatches": 0,
+  "policy": "current_pixmap_each_read_v1",
+  "synthetic_resize_fixture": {
+    "before_resize": [
+      255,
+      0,
+      0
+    ],
+    "old_named_pixmap_after_resize": [
+      255,
+      0,
+      0
+    ],
+    "current_named_pixmap_after_resize": [
+      0,
+      0,
+      255
+    ]
+  },
+  "scope": "Private generated X11 color window and original-game A/B/A camera repeat. No shared-desktop screenshot."
+}

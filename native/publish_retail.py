@@ -15,15 +15,20 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
     dataset=json.loads((root/'dataset.json').read_text())
     expected={(m['level'],variant)for m in dataset['levels']for variant in m['variants']}
     profiles={(m['level'],variant):profile for m in dataset['levels']for variant,profile in m.get('lighting_profiles',{}).items()}
-    maps=[];uploads=[]
+    maps=[];uploads=[];held=[]
     def upload(key,path,sha=None):
         uploads.append(dict(key=key,path=str(path.resolve()),size=path.stat().st_size,sha256=sha or digest(path)))
     for level,variant in sorted(expected):
         directory=root/variant/f'level-{level}'
+        if dataset.get('recovery')or(root/'recovery.json').exists()or(directory/'recovery.json').exists():
+            held.append(dict(level=level,variant=variant,reason='Recovery changes authored placements; not eligible for the exact edition'))
+            continue
         paths=[directory/name for name in ['manifest.json','validation.json','tiff-validation.json','full-resolution.png','full-resolution.tif']]
         if not all(p.exists()for p in paths):continue
         meta,validation,tiff=(json.loads(p.read_text())for p in paths[:3])
-        if validation['acceptance']=='review_required' or validation.get('full_png_crc')!='verified':continue
+        if (not validation.get('acceptance','').startswith('native_pixels_verified')
+                or validation.get('full_png_crc')!='verified'
+                or validation.get('actual_stitched_edges',{}).get('unmeasured_edges_requiring_review')!=0):continue
         profile=profiles.get((level,variant))
         if profile or meta['module']!='Ahkuilon':
             states=[json.loads(p.read_text())for p in(directory/'captures').glob('*.json')]
@@ -63,12 +68,14 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication')):
         primary=next((v for v in variants if v['variant']=='day'),variants[0])
         levels.append(dict(primary,variants=variants)if len(variants)>1 else primary)
     complete=len(maps)==len(expected)
+    missing=[dict(level=level,variant=variant)for level,variant in sorted(expected-{(m['level'],m['variant'])for m in maps})]
     catalog=out/'catalog.json'
     dump(catalog,dict(revision='retail-1-22l',dataset='GOG 1.22L',levels=levels,
-        expected_levels=dataset['expected_levels'],expected_maps=len(expected),ready_maps=len(maps)))
-    # Never replace the existing public atlas with an incomplete retail build.
-    if complete:upload('catalog.json',catalog)
-    result=dict(complete=complete,maps=len(maps),expected_maps=len(expected),levels=len(levels),uploads=uploads)
+        expected_levels=dataset['expected_levels'],expected_maps=len(expected),ready_maps=len(maps),
+        missing_maps=missing,cycling_levels=sorted({m['level']for m in dataset['levels']if 'night'in m['variants']})))
+    # The July catalog is a separate edition. Only clock_preview publishes the
+    # composed retail catalog, after all referenced files have been verified.
+    result=dict(complete=complete,held=held,missing_maps=missing,maps=len(maps),expected_maps=len(expected),levels=len(levels),uploads=uploads)
     dump(out/'upload-manifest.json',result)
     return result
 
@@ -114,4 +121,4 @@ if __name__=='__main__':
         publisher=Publisher(a.publish,key,a.out/'remote-verified.json')
         result=publish_files(manifest,publisher,a.out/'upload-status.json',a.passes)
         if result['failed_files']:raise RuntimeError('Some files remain held; resume the staged upload manifest')
-        print('PUBLIC RETAIL CATALOG' if manifest['complete'] else 'Files staged; public catalog retained',flush=True)
+        print('Retail files verified; publish the edition catalog with native.clock_preview',flush=True)
