@@ -7,10 +7,15 @@
   <div class="identity"><h1 class="wordmark">Revenant</h1><button id="credits-open" class="text-button" aria-haspopup="dialog" aria-controls="credits">Credits</button><span id="dataset-label" class="dataset-label" hidden>Retail preview</span></div>
   <label class="location"><span class="sr-only">Location</span><select id="levels" aria-label="Choose a map level"><option>Loading the maps…</option></select></label>
   <div id="lighting-controls" class="lighting-controls" role="group" aria-label="Game lighting clock" hidden>
-    <div class="clock-row"><svg class="clock-face" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><text x="24" y="10">0</text><text x="40" y="27">6</text><text x="24" y="43">12</text><text x="8" y="27">18</text><line id="clock-hand" x1="24" y1="24" x2="24" y2="13"/><circle class="clock-pin" cx="24" cy="24" r="2"/></svg>
-    <label class="clock-field"><span class="sr-only">Game time, whole hours</span><input id="clock-time" type="time" value="12:00" step="3600" required><span id="clock-state" aria-live="polite">Daylight</span></label>
-    <button class="metal-button clock-preset" data-time="day" title="Noon · 12:00" aria-label="Set noon">☀</button><button class="metal-button clock-preset" data-time="night" title="Night · 01:00" aria-label="Set night">☾</button></div>
-    <input id="clock-hour" type="range" min="0" max="23" step="1" value="12" aria-label="Game hour" list="clock-ticks"><datalist id="clock-ticks"><option value="0"></option><option value="6"></option><option value="12"></option><option value="18"></option><option value="23"></option></datalist>
+    <div id="clock-dial" class="clock-dial" role="slider" tabindex="0" aria-label="Game hour" aria-description="Drag the hour hand around the 24-hour face. Arrow keys adjust one hour." aria-valuemin="0" aria-valuemax="23" aria-valuenow="12" aria-valuetext="12:00"><svg viewBox="0 0 120 120" aria-hidden="true">
+      <title id="clock-title">12:00 — drag the hour hand to set the time</title>
+      <defs><radialGradient id="dial-face"><stop stop-color="#3d3541"/><stop offset="1" stop-color="#17131d"/></radialGradient><linearGradient id="dial-metal" x2="1" y2="1"><stop stop-color="#c0a577"/><stop offset=".48" stop-color="#4e3e35"/><stop offset="1" stop-color="#ab8755"/></linearGradient></defs>
+      <circle class="dial-rim" cx="60" cy="60" r="57"/><circle class="dial-face" cx="60" cy="60" r="54"/>
+      <g id="clock-marks"></g><g id="clock-labels"></g>
+      <g id="clock-hand" transform="rotate(180 60 60)"><line x1="60" y1="64" x2="60" y2="31"/><path d="M56.8 34 60 25 63.2 34Z"/></g>
+      <circle class="clock-pin" cx="60" cy="60" r="4"/><circle class="clock-pin-inner" cx="60" cy="60" r="1.6"/>
+    </svg></div>
+    <output id="clock-value" class="clock-value" aria-hidden="true">12:00</output>
   </div>
 </header>
 <div class="zoom-controls" role="group" aria-label="Map zoom"><button id="minus" class="metal-button square" title="Zoom out" aria-label="Zoom out">−</button><output id="zoom-value" aria-label="Zoom percentage">—</output><button id="plus" class="metal-button square" title="Zoom in" aria-label="Zoom in">+</button><span class="control-divider"></span><button id="actual" class="metal-button" title="Show native pixels (1)">1:1</button><button id="fit" class="metal-button" title="Fit the whole map (F)">Fit map</button></div>

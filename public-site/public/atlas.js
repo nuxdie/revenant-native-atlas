@@ -1,8 +1,8 @@
 'use strict';
-import {catalogMaps,mapFor,clockFor,mapAtHour,hourFromTime,hourLabel} from './atlas-model.js';
+import {catalogMaps,mapFor,clockFor,mapAtHour,hourFromTime,hourLabel,hourFromDialPoint} from './atlas-model.js';
 const query=new URLSearchParams(location.search),retailPreview=query.get('dataset')==='retail';
 let preferredHour=hourFromTime(query.get('time'))??12,clockUnavailable=false;
-const clockTime=document.querySelector('#clock-time'),clockHour=document.querySelector('#clock-hour'),clockState=document.querySelector('#clock-state');
+const clockDial=document.querySelector('#clock-dial'),clockValue=document.querySelector('#clock-value');
 const lightingControls=document.querySelector('#lighting-controls');
 document.querySelector('#dataset-label').hidden=!retailPreview;
 const canvas=document.querySelector('#map'),ctx=canvas.getContext('2d'),select=document.querySelector('#levels');
@@ -21,11 +21,13 @@ function resize(){const r=canvas.getBoundingClientRect();canvas.width=Math.round
 function file(name){return '/api/file?'+new URLSearchParams({revision:current.revision,level:current.level,variant:current.variant,name})}
 function updateClock(level){
  const clock=clockFor(MAPS,level);lightingControls.hidden=!clock;
- clockTime.value=hourLabel(preferredHour);clockHour.value=preferredHour;
- clockHour.setAttribute('aria-valuetext',hourLabel(preferredHour));
- document.querySelector('#clock-hand').setAttribute('transform','rotate('+(preferredHour*15)+' 24 24)');
+ clockValue.value=hourLabel(preferredHour);clockDial.setAttribute('aria-valuenow',preferredHour);
+ document.querySelector('#clock-hand').setAttribute('transform','rotate('+(preferredHour*15)+' 60 60)');
+ for(const label of document.querySelectorAll('#clock-labels text'))label.classList.toggle('selected',Number(label.dataset.hour)===preferredHour);
  const state=clock?.hours.find(h=>h.hour===preferredHour)?.variant;
- clockState.textContent=state==='twilight'?(preferredHour<12?'Dawn':'Dusk'):state==='night'?'Night':'Daylight';
+ const phase=state==='twilight'?(preferredHour<12?'Dawn':'Dusk'):state==='night'?'Night':'Daylight';
+ clockDial.setAttribute('aria-valuetext',hourLabel(preferredHour)+', '+phase);
+ document.querySelector('#clock-title').textContent=hourLabel(preferredHour)+' · '+phase+' — drag the hour hand';
 }
 function updateDownloads(){
  for(const link of [download,tiffDownload])link.setAttribute('aria-disabled',String(clockUnavailable));
@@ -37,23 +39,35 @@ function updateDownloads(){
  else{tiffDownload.removeAttribute('href');tiffDownload.setAttribute('aria-disabled','true')}
  document.querySelector('#dimensions').textContent=current.width.toLocaleString()+' × '+current.height.toLocaleString()+' pixels';
 }
+function updateLocation(level){try{const url=new URL(window.parent.location.href);url.searchParams.set('level',level);url.searchParams.set('time',hourLabel(preferredHour));if(retailPreview)url.searchParams.set('dataset','retail');window.parent.history.replaceState(null,'',url)}catch{}}
 function change(preserveView=false){
  const level=Number(select.value),previous=current;updateClock(level);
  const selected=mapAtHour(MAPS,level,preferredHour);clockUnavailable=!selected;
  current=selected||(previous?.level===level?previous:mapFor(MAPS,level,'day'));if(!current)return;
- try{const url=new URL(window.parent.location.href);url.searchParams.set('level',level);url.searchParams.set('time',hourLabel(preferredHour));if(retailPreview)url.searchParams.set('dataset','retail');window.parent.history.replaceState(null,'',url)}catch{}
- updateDownloads();canvas.setAttribute('aria-busy',String(clockUnavailable));
- if(clockUnavailable){notice.hidden=false;notice.textContent=hourLabel(preferredHour)+' lighting is still rendering.';clockState.textContent='Rendering…'}
+ if(clockPointer===null)updateLocation(level);
+ updateDownloads();canvas.setAttribute('aria-busy',String(clockUnavailable));clockDial.classList.toggle('pending',clockUnavailable);
+ if(clockUnavailable){notice.hidden=false;notice.textContent=hourLabel(preferredHour)+' lighting is still rendering.'}
  if(previous?.revision===current.revision){if(!clockUnavailable)notice.hidden=true;return}
  loaded.clear();available=new Set(current.tiles.map(t=>t.join('_')));failures=0;
  if(!clockUnavailable){notice.hidden=false;notice.textContent='Opening '+(current.names.join(' / ')||'level '+current.level)+'…'}
  const image=new Image();overview=image;image.onload=()=>{if(overview!==image)return;if(!clockUnavailable)notice.hidden=true;request()};image.onerror=()=>{if(overview===image){notice.hidden=false;notice.textContent='The map could not load. Select it again to retry.'}};image.src=file('overview.jpg');
  if(preserveView&&previous&&previous.level===current.level){ox+=(current.bounds[0]-previous.bounds[0])*scale;oy+=(current.bounds[1]-previous.bounds[1])*scale;request()}else fit();
 }
-function setHour(hour){clockTime.setCustomValidity('');preferredHour=hour;change(true)}
-clockHour.addEventListener('input',()=>setHour(Number(clockHour.value)));
-clockTime.addEventListener('change',()=>{const h=hourFromTime(clockTime.value);if(h==null){clockTime.setCustomValidity('Choose a whole hour, such as 06:00.');clockTime.reportValidity();return}clockTime.setCustomValidity('');setHour(h)});
-clockTime.addEventListener('input',()=>clockTime.setCustomValidity(''));
+function setHour(hour){preferredHour=((hour%24)+24)%24;change(true)}
+const svgNS='http://www.w3.org/2000/svg';
+for(let hour=0;hour<24;hour++){
+ const angle=hour*Math.PI/12,sin=Math.sin(angle),cos=Math.cos(angle);
+ const mark=document.createElementNS(svgNS,'line');
+ for(const [name,value]of Object.entries({x1:60+sin*(hour%6?51:49),y1:60-cos*(hour%6?51:49),x2:60+sin*54,y2:60-cos*54}))mark.setAttribute(name,value);
+ document.querySelector('#clock-marks').append(mark);
+ const label=document.createElementNS(svgNS,'text');label.setAttribute('x',60+sin*42);label.setAttribute('y',60-cos*42);label.dataset.hour=hour;label.textContent=hour;document.querySelector('#clock-labels').append(label);
+}
+let clockPointer=null;
+function pointHour(e){const r=clockDial.getBoundingClientRect();return hourFromDialPoint((e.clientX-r.left-r.width/2)*2/r.width,(e.clientY-r.top-r.height/2)*2/r.height)}
+clockDial.addEventListener('pointerdown',e=>{if(e.button!==0||clockPointer!==null)return;e.preventDefault();clockDial.focus({preventScroll:true});clockPointer=e.pointerId;clockDial.setPointerCapture(e.pointerId);clockDial.classList.add('dragging');const h=pointHour(e);if(h!==null)setHour(h)});
+clockDial.addEventListener('pointermove',e=>{if(e.pointerId!==clockPointer)return;const h=pointHour(e);if(h!==null&&h!==preferredHour)setHour(h)});
+for(const type of ['pointerup','pointercancel','lostpointercapture'])clockDial.addEventListener(type,e=>{if(e.pointerId!==clockPointer)return;clockPointer=null;updateLocation(Number(select.value));clockDial.classList.remove('dragging');if(clockDial.hasPointerCapture(e.pointerId))clockDial.releasePointerCapture(e.pointerId)});
+clockDial.addEventListener('keydown',e=>{let h=preferredHour;if(e.key==='ArrowRight'||e.key==='ArrowUp')h++;else if(e.key==='ArrowLeft'||e.key==='ArrowDown')h--;else if(e.key==='Home')h=0;else if(e.key==='End')h=23;else return;e.preventDefault();e.stopPropagation();setHour(h)});
 function tile(tx,ty){const key=tx+'_'+ty;if(!available.has(key))return null;if(loaded.has(key)){const im=loaded.get(key);loaded.delete(key);loaded.set(key,im);return im}const im=new Image();const revision=current.revision;im.onload=()=>{if(current.revision===revision)request()};im.onerror=()=>{if(current.revision===revision){failures++;notice.hidden=false;notice.textContent='Some map tiles could not load. Select the map again to retry.'}};im.src='/api/tile?'+new URLSearchParams({revision:current.revision,level:current.level,x:tx,y:ty});loaded.set(key,im);const limit=canvas.width<700?48:120;while(loaded.size>limit)loaded.delete(loaded.keys().next().value);return im}
 function draw(){raf=0;ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);if(!current)return;ctx.imageSmoothingEnabled=scale<1;if(overview?.complete&&overview.naturalWidth)ctx.drawImage(overview,ox,oy,current.width*scale,current.height*scale);if(scale>.095){const n=current.tile_size,x0=Math.max(0,Math.floor(-ox/scale/n)),y0=Math.max(0,Math.floor(-oy/scale/n)),x1=Math.min(Math.ceil(current.width/n),Math.ceil((canvas.width-ox)/scale/n)),y1=Math.min(Math.ceil(current.height/n),Math.ceil((canvas.height-oy)/scale/n));for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){const im=tile(x,y);if(im?.complete&&im.naturalWidth)ctx.drawImage(im,ox+x*n*scale,oy+y*n*scale,im.naturalWidth*scale,im.naturalHeight*scale)}}document.querySelector('#zoom-value').textContent=(scale*100).toFixed(scale<.1?1:0)+'%';document.querySelector('#actual').setAttribute('aria-pressed',String(scale===1))}
 function zoom(f,x=canvas.width/2,y=canvas.height/2){if(!current)return;const next=Math.max(.002,Math.min(8,scale*f));ox=x-(x-ox)*next/scale;oy=y-(y-oy)*next/scale;scale=next;request()}
@@ -62,7 +76,7 @@ canvas.addEventListener('pointerdown',e=>{if(!current||e.button!==0)return;canva
 canvas.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const old=gesture;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});gestureState();if(!old||!gesture||old.kind!==gesture.kind)return;const dx=gesture.x-old.x,dy=gesture.y-old.y;panDistance+=Math.abs(dx)+Math.abs(dy);ox+=dx;oy+=dy;if(gesture.kind==='pinch'&&old.distance>0){const r=canvas.getBoundingClientRect();zoom(gesture.distance/old.distance,gesture.x-r.left,gesture.y-r.top)}request()});
 for(const type of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(type,e=>{pointers.delete(e.pointerId);gestureState();if(!pointers.size)canvas.classList.remove('dragging')});
 canvas.addEventListener('wheel',e=>{e.preventDefault();const r=canvas.getBoundingClientRect();zoom(Math.exp(-e.deltaY*.0015),e.clientX-r.left,e.clientY-r.top)},{passive:false});
-document.querySelector('#minus').onclick=()=>zoom(.5);document.querySelector('#plus').onclick=()=>zoom(2);document.querySelector('#actual').onclick=()=>zoom(1/scale);document.querySelector('#fit').onclick=fit;select.onchange=()=>change();for(const button of lightingControls.querySelectorAll('button'))button.onclick=()=>{setHour(button.dataset.time==='night'?1:12)};window.addEventListener('resize',resize);window.addEventListener('keydown',e=>{if(credits.open||e.target.closest('select,input,button,a'))return;if(e.key.toLowerCase()==='f')fit();else if(e.key==='1')zoom(1/scale);else if(e.key==='+'||e.key==='=')zoom(2);else if(e.key==='-')zoom(.5)});
+document.querySelector('#minus').onclick=()=>zoom(.5);document.querySelector('#plus').onclick=()=>zoom(2);document.querySelector('#actual').onclick=()=>zoom(1/scale);document.querySelector('#fit').onclick=fit;select.onchange=()=>change();window.addEventListener('resize',resize);window.addEventListener('keydown',e=>{if(credits.open||e.target.closest('select,input,button,a,[role=slider]'))return;if(e.key.toLowerCase()==='f')fit();else if(e.key==='1')zoom(1/scale);else if(e.key==='+'||e.key==='=')zoom(2);else if(e.key==='-')zoom(.5)});
 const catalogUrl='/api/catalog'+(retailPreview?'?dataset=retail':'');
 async function loadCatalog(initial=false){const r=await fetch(catalogUrl,{cache:'no-store'});if(!r.ok)throw Error('The maps could not load. Refresh the page to retry.');const c=await r.json();MAPS=catalogMaps(c);if(!MAPS.length)throw Error('No maps are available yet.');
  if(initial){select.replaceChildren();for(const level of [...new Set(MAPS.map(m=>m.level))]){const m=mapFor(MAPS,level,'day'),o=document.createElement('option');o.value=level;o.textContent=(level===0?'Ahkuilon island':m.names.join(' / ')||'Map')+' — Level '+level;select.append(o)}const requested=Number(query.get('level')||0);select.value=MAPS.some(m=>m.level===requested)?requested:MAPS[0].level}

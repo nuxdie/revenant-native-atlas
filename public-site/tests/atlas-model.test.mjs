@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {catalogMaps, mapFor, lightingStates,hourFromTime,hourLabel,mapAtHour,clockFor} from '../public/atlas-model.js';
+import {catalogMaps, mapFor, lightingStates,hourFromTime,hourLabel,mapAtHour,clockFor,hourFromDialPoint} from '../public/atlas-model.js';
 
 test('day/night selects distinct immutable image revisions on the same level', () => {
   const maps=catalogMaps({levels:[{level:0,revision:'day-pixels',variant:'day'},
@@ -38,4 +38,12 @@ test('hour clock reuses matching native lighting and never substitutes an unavai
 test('clock labels preserve old links and reject unsupported minute precision',()=>{
  assert.equal(hourFromTime('day'),12);assert.equal(hourFromTime('night'),1);assert.equal(hourFromTime('23:00'),23);
  assert.equal(hourFromTime('06:30'),null);assert.equal(hourFromTime('24:00'),null);assert.equal(hourLabel(6),'06:00');
+});
+
+test('24-hour dial follows its hand through midnight and ignores the pivot',()=>{
+ assert.equal(hourFromDialPoint(0,-1),0);assert.equal(hourFromDialPoint(1,0),6);
+ assert.equal(hourFromDialPoint(0,1),12);assert.equal(hourFromDialPoint(-1,0),18);
+ for(let hour=0;hour<24;hour++){const a=hour*Math.PI/12;assert.equal(hourFromDialPoint(Math.sin(a),-Math.cos(a)),hour)}
+ assert.equal(hourFromDialPoint(-.01,-1),0);assert.equal(hourFromDialPoint(.01,-1),0);
+ assert.equal(hourFromDialPoint(0,0),null);assert.equal(hourFromDialPoint(.01,.01),null);
 });

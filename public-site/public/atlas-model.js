@@ -27,6 +27,12 @@ export function hourFromTime(value) {
 
 export function hourLabel(hour) { return String(hour).padStart(2,'0')+':00'; }
 
+export function hourFromDialPoint(x,y) {
+  if(!Number.isFinite(x)||!Number.isFinite(y)||Math.hypot(x,y)<.12)return null;
+  const angle=(Math.atan2(x,-y)+Math.PI*2)%(Math.PI*2);
+  return Math.round(angle*12/Math.PI)%24;
+}
+
 export function clockFor(maps,level) {
   return maps.find(m=>m.level===level&&m.clock?.step_minutes===60)?.clock;
 }
