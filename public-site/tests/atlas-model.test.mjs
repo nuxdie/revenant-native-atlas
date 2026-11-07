@@ -47,3 +47,18 @@ test('24-hour dial follows its hand through midnight and ignores the pivot',()=>
  assert.equal(hourFromDialPoint(-.01,-1),0);assert.equal(hourFromDialPoint(.01,-1),0);
  assert.equal(hourFromDialPoint(0,0),null);assert.equal(hourFromDialPoint(.01,.01),null);
 });
+
+test('edition query preserves old links and only opts into retail explicitly',async()=>{
+ const {editionFromQuery}=await import('../public/atlas-model.js');
+ assert.equal(editionFromQuery(null),'july');assert.equal(editionFromQuery('retail'),'retail');assert.equal(editionFromQuery('july'),'july');assert.equal(editionFromQuery('unknown'),'july');
+});
+
+test('switching edition crops keeps the same world point at the same screen pixel',async()=>{
+ const {offsetForBounds}=await import('../public/atlas-model.js');
+ const july=[-32256,3584,32768,33536],retail=[-30720,7168,1024,25600];
+ const scale=.7,world=[-12000,15000],view={x:-321,y:-654};
+ const next=offsetForBounds(view.x,view.y,scale,july,retail);
+ assert.equal(Math.round(next.x+(world[0]-retail[0])*scale),Math.round(view.x+(world[0]-july[0])*scale));
+ assert.equal(Math.round(next.y+(world[1]-retail[1])*scale),Math.round(view.y+(world[1]-july[1])*scale));
+ assert.deepEqual(offsetForBounds(next.x,next.y,scale,retail,july),view);
+});

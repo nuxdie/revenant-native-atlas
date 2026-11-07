@@ -22,6 +22,8 @@ class MirrorTests(unittest.TestCase):
     def test_packed_tile_tiff_range_and_private_file_rejection(self):
         with tempfile.TemporaryDirectory()as temp:
             data=Path(temp);root=data/'releases/r-test/level-30';root.mkdir(parents=True)
+            (data/'catalog.json').write_text('{"edition":"july"}')
+            (data/'retail-preview-catalog.json').write_text('{"edition":"retail"}')
             tile=b'original-native-png';(root/'tiles.pack').write_bytes(b'prefix'+tile+b'suffix')
             (root/'tiles.json').write_text(json.dumps(dict(tiles={'0_0':dict(offset=6,length=len(tile),sha256=hashlib.sha256(tile).hexdigest())})))
             image=b'II+\0\x08\0\0\0'+bytes(range(64));(root/'full-resolution.tif').write_bytes(image)
@@ -32,6 +34,11 @@ class MirrorTests(unittest.TestCase):
             server=ThreadingHTTPServer(('127.0.0.1',0),TestHandler);thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
             base=f'http://127.0.0.1:{server.server_port}/api/'
             try:
+                for query,edition in [('', 'july'),('?dataset=july','july'),('?dataset=retail','retail')]:
+                    with urllib.request.urlopen(base+'catalog'+query)as r:self.assertEqual(json.load(r)['edition'],edition)
+                for edition,label in [('july','july-1999'),('retail','retail-1.22l')]:
+                    req=urllib.request.Request(base+f'file?revision=r-test&level=30&variant=night&dataset={edition}&name=full-resolution.tif',method='HEAD')
+                    with urllib.request.urlopen(req)as r:self.assertIn(f'revenant-{label}-level-30-night.tif',r.headers['Content-Disposition'])
                 with urllib.request.urlopen(base+'tile?revision=r-test&level=30&x=0&y=0')as r:self.assertEqual(r.read(),tile)
                 req=urllib.request.Request(base+'file?revision=r-test&level=30&variant=night&name=full-resolution.tif',headers={'Range':'bytes=2-12'})
                 with urllib.request.urlopen(req)as r:

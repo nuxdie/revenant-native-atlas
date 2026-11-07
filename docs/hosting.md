@@ -88,7 +88,7 @@ An opt-in hourly retail preview uses a separate catalog and leaves that complete
 python3 -m native.clock_preview --watch --publish https://YOUR-HOST
 ```
 
-Open `/?dataset=retail&level=5&time=06:00`. The publisher includes only accepted native images, verifies their remote bytes before updating `retail-preview-catalog.json`, and can pick up completed twilight captures during its bounded six-hour watch. A missing hour state is visibly pending and has no download link. The clock supports whole hours; indoor locations retain their fixed lighting. The default Site URL continues to use `catalog.json`.
+Open `/?dataset=retail&level=5&time=06:00`. The publisher includes only accepted native images, verifies their remote bytes before updating `retail-preview-catalog.json`, and can pick up completed twilight captures during its bounded six-hour watch. A missing hour state is visibly pending and has no download link. The clock supports whole hours; indoor locations retain their fixed lighting. The viewer exposes both editions through the July 1999 / Retail 1.22L switch. July remains the default and uses `catalog.json`; `?dataset=july` selects it explicitly. Switching preserves the chosen level, world position, zoom, and preferred hour. A location missing from the selected edition remains selected with an unavailable message and no downloads. PNG and TIFF filenames identify the edition. The 24-hour dial appears only for locations with hourly capture metadata. For a local mirror, place the optional retail catalog at `retail-preview-catalog.json` alongside the original `catalog.json`, and include both catalogs’ immutable revisions under `releases/`.
 
 ## Prepare a GitHub dataset release
 

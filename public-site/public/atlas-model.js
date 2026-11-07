@@ -43,3 +43,10 @@ export function mapAtHour(maps,level,hour) {
   const target=clock.hours.find(h=>h.hour===hour);
   return target&&maps.find(m=>m.level===level&&m.variant===target.variant);
 }
+
+/** Preserve a world point when edition crops have different projected bounds. */
+export function offsetForBounds(x,y,scale,previous,next) {
+  return {x:x+(next[0]-previous[0])*scale,y:y+(next[1]-previous[1])*scale};
+}
+
+export function editionFromQuery(value) { return value==='retail'?'retail':'july'; }

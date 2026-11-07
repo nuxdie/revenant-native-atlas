@@ -29,7 +29,7 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):self.route(False)
     def route(self,head):
         url=urlparse(self.path);query=parse_qs(url.query)
-        if url.path=='/api/catalog':return self.file(self.data/'catalog.json','application/json',head)
+        if url.path=='/api/catalog':return self.file(self.data/('retail-preview-catalog.json'if query.get('dataset')==['retail']else'catalog.json'),'application/json',head)
         if url.path.startswith('/api/'):
             level=query.get('level',[''])[0];revision=query.get('revision',[''])[0]
             if not re.fullmatch(r'\d{1,3}',level)or not re.fullmatch(r'[a-z0-9-]{1,48}',revision):return self.send_error(400)
@@ -40,7 +40,8 @@ class Handler(SimpleHTTPRequestHandler):
                 if variant not in('','day','night','twilight','fixed'):return self.send_error(400)
                 if name not in('overview.jpg','full-resolution.png','full-resolution.tif'):return self.send_error(404)
                 mime='image/png'if name.endswith('.png')else'image/tiff'if name.endswith('.tif')else'image/jpeg'
-                attachment=f'revenant-{root.name}'+(f'-{variant}'if variant else'')+Path(name).suffix if name!='overview.jpg'else None
+                edition={'retail':'retail-1.22l-','july':'july-1999-'}.get(query.get('dataset',[''])[0],'')
+                attachment=f'revenant-{edition}{root.name}'+(f'-{variant}'if variant else'')+Path(name).suffix if name!='overview.jpg'else None
                 return self.file(root/name,mime,head,attachment)
             if url.path=='/api/tile':
                 x=query.get('x',[''])[0];y=query.get('y',[''])[0]
@@ -63,7 +64,7 @@ class Handler(SimpleHTTPRequestHandler):
         except ValueError:
             self.send_response(416);self.send_header('Content-Range',f'bytes */{size}');self.send_header('Content-Length','0');self.end_headers();return
         self.send_response(status);self.send_header('Content-Type',mime);self.send_header('Content-Length',str(end-start+1));self.send_header('Accept-Ranges','bytes');self.send_header('X-Content-Type-Options','nosniff')
-        if path.name=='catalog.json':self.send_header('Cache-Control','no-store')
+        if path.name in('catalog.json','retail-preview-catalog.json'):self.send_header('Cache-Control','no-store')
         if status==206:self.send_header('Content-Range',f'bytes {start}-{end}/{size}')
         if attachment:self.send_header('Content-Disposition',f'attachment; filename="{attachment}"')
         self.end_headers()

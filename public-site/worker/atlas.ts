@@ -114,7 +114,8 @@ export async function handleAtlas(request: Request, env: AtlasEnv): Promise<Resp
       if (!/^(overview\.jpg|full-resolution\.(png|tif))$/.test(name)) return json({ error: "Invalid map file" }, 404);
       const variant = url.searchParams.get("variant") || "";
       if (variant && !/^(day|night|twilight|fixed)$/.test(variant)) return json({error:"Invalid lighting state"},400);
-      const attachment = name === "overview.jpg" ? false : `revenant-level-${level}${variant ? `-${variant}` : ''}.${name.endsWith('.tif') ? 'tif' : 'png'}`;
+      const edition = url.searchParams.get("dataset")=== "retail" ? "retail-1.22l" : url.searchParams.get("dataset")=== "july" ? "july-1999" : "";
+      const attachment = name === "overview.jpg" ? false : `revenant-${edition ? edition+'-' : ''}level-${level}${variant ? `-${variant}` : ''}.${name.endsWith('.tif') ? 'tif' : 'png'}`;
       return await file(request, env, prefix + name, attachment);
     }
     if (url.pathname === "/api/tile") {

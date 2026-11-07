@@ -4,8 +4,9 @@
 <body>
 <main class="map-surface"><canvas id="map" tabindex="0" aria-label="Revenant map. Drag to pan, scroll to zoom. Press 1 for native pixels or F to fit."></canvas><p id="notice" role="status">Opening the maps…</p></main>
 <header class="masthead">
-  <div class="identity"><h1 class="wordmark">Revenant</h1><button id="credits-open" class="text-button" aria-haspopup="dialog" aria-controls="credits">Credits</button><span id="dataset-label" class="dataset-label" hidden>Retail preview</span></div>
-  <label class="location"><span class="sr-only">Location</span><select id="levels" aria-label="Choose a map level"><option>Loading the maps…</option></select></label>
+  <div class="identity"><h1 class="wordmark">Revenant</h1><button id="credits-open" class="text-button" aria-haspopup="dialog" aria-controls="credits">Credits</button></div>
+  <div class="map-choices"><div class="edition-switch" role="group" aria-label="Game version"><button type="button" data-edition="july" aria-pressed="true">July 1999</button><button type="button" data-edition="retail" aria-pressed="false">Retail 1.22L</button></div>
+  <label class="location"><span class="sr-only">Location</span><select id="levels" aria-label="Choose a map level"><option>Loading the maps…</option></select></label><p id="edition-note" class="edition-note">Earlier build · original atlas</p></div>
   <div id="lighting-controls" class="lighting-controls" role="group" aria-label="Game lighting clock" hidden>
     <div id="clock-dial" class="clock-dial" role="slider" tabindex="0" aria-label="Game hour" aria-description="Drag the hour hand around the 24-hour face. Arrow keys adjust one hour." aria-valuemin="0" aria-valuemax="23" aria-valuenow="12" aria-valuetext="12:00"><svg viewBox="0 0 120 120" aria-hidden="true">
       <title id="clock-title">12:00 — drag the hour hand to set the time</title>
@@ -37,6 +38,7 @@
       <div><dt><a href="https://www.accursedfarms.com/index.php?members/pvtjokerr.33944/" target="_blank" rel="noopener noreferrer">pvtjokerr</a></dt><dd>Early Kaitai and Python research, palette observations, reference renders, and investigations of chunks and partial edges.</dd></div>
       <div><dt><a href="https://www.accursedfarms.com/index.php?members/vinylon.28779/" target="_blank" rel="noopener noreferrer">Vinylon</a>, <a href="https://www.accursedfarms.com/index.php?members/ross-scott.4/" target="_blank" rel="noopener noreferrer">Ross Scott</a> &amp; the <a href="https://www.accursedfarms.com/index.php?threads/revenant-maps.3265/" target="_blank" rel="noopener noreferrer">Accursed Farms community</a></dt><dd>The original map extraction discussion and the call for a complete artwork map.</dd></div>
     </dl>
+    <p class="edition-explanation">July 1999 is the earlier build used for the original atlas, with brighter authored daylight. Retail 1.22L uses the GOG release and its own lighting. Its map collection is still a preview. The clock appears only where hourly lighting captures are available.</p>
     <p class="credits-note"><a href="https://github.com/nuxdie/revenant-native-atlas" target="_blank" rel="noopener noreferrer">Atlas source &amp; reproduction instructions</a><br>Game artwork belongs to its respective rights holders.</p>
   </div>
 </dialog>
