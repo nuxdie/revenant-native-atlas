@@ -46,6 +46,8 @@ Supply your own compatible game installation. The source repository contains no 
 
 The [live atlas](https://revenant-native-atlas-2026.lithepond4.chatgpt.site/) provides direct individual PNG/TIFF downloads, without redundant ZIP wrappers. [Hosting instructions](docs/hosting.md) cover the Sites Worker/R2 source and an independent local mirror.
 
+Complete copies of both editions are also available on [MediaFire](https://www.mediafire.com/folder/8cb21hsx5s9aj/Revenant_Native_Atlas_-_2026-11-08) and [MEGA](https://mega.nz/folder/LpwxGRTZ#Qr7J9HzEMwvJB9qFDK5D0Q). See [backup verification and restoration](docs/backups.md).
+
 The GitHub dataset release remains an unpublished staging draft. Download the current images from the live atlas; `tools/fetch_release.py` requires a published release. Source code and reproduction instructions are public independently of that release.
 
 ## Repository guide
