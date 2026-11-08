@@ -27,8 +27,8 @@ def launch():
     time.sleep(3)
     # The original executable presents its menu even with EDITOR supplied.
     game.command('@presentation')
-    subprocess.run(['xdotool','windowraise',str(game.desktop_window()),'windowactivate','--sync',
-                    str(game.desktop_window())],env=env,check=True,timeout=5)
+    subprocess.run(['xdotool','windowraise',str(game.desktop_window()),'windowfocus','--sync',
+                    str(window)],env=env,check=True,timeout=5)
     subprocess.run(['xdotool','mousemove','--window',str(window),'420','163','click','1'],env=env,check=True,timeout=3)
     deadline=time.monotonic()+60
     while True:

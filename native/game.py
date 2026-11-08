@@ -87,7 +87,7 @@ def _build_control():
 
 class NativeGame:
     def __init__(self, wine=DEFAULT_WINE, prefix=RUNTIME / 'prefix', display=None):
-        display=display or os.environ.get('DISPLAY', ':0.0')
+        display=display or os.environ.get('REVENANT_DISPLAY',os.environ.get('DISPLAY',':0.0'))
         actual = hashlib.sha256((RUNTIME / 'game/Revenant.exe').read_bytes()).hexdigest()
         if actual != EXPECTED_BINARY:
             raise RuntimeError('Original executable differs; native control addresses must be reverified')

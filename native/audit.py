@@ -112,6 +112,11 @@ def verify_ownership(root,meta):
 def audit(root, full=True):
     plan = json.loads((root / 'plan.json').read_text())
     meta = json.loads((root / 'manifest.json').read_text()) if (root / 'manifest.json').exists() else None
+    if meta and meta.get('sound_marker_profile'):
+        from .sound_markers import PROFILE,require_clean_owners
+        if meta['sound_marker_profile']!=PROFILE:raise ValueError('Unknown sound-marker presentation profile')
+        if 'speaker_positions' not in plan:raise ValueError('Sound-marker capture plan lacks its placement inventory')
+        require_clean_owners(root,plan['speaker_positions'])
     cache = OrderedDict()
     seams = []
     checked = 0

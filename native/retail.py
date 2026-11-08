@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
 import struct
 import subprocess
 import time
@@ -60,7 +61,19 @@ class RetailGame:
     def command(self, command):
         with (RUNTIME/'control.lock').open('a') as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
-            if not (RUNTIME/'native-control.exe').exists():
+            helper=RUNTIME/'native-control.exe'
+            source=Path(__file__).with_name('retail_control.c')
+            stale=helper.exists()and helper.stat().st_mtime_ns<source.stat().st_mtime_ns
+            if stale:
+                pidfile=RUNTIME/'control-server.pid'
+                try:
+                    pid=int(pidfile.read_text());process=Path(f'/proc/{pid}')
+                    if (b'native-control'in(process/'cmdline').read_bytes()
+                            and b'WINEPREFIX='+str(RUNTIME/'prefix').encode()in(process/'environ').read_bytes().split(b'\0')):
+                        os.kill(pid,signal.SIGTERM)
+                except(OSError,ValueError):pass
+                pidfile.unlink(missing_ok=True)
+            if not helper.exists()or stale:
                 build()
             pidfile = RUNTIME/'control-server.pid'
             alive = False
@@ -99,7 +112,8 @@ class RetailGame:
             signed = lambda v: struct.unpack('<i', struct.pack('<I', v))[0]
             state=dict(level=signed(values[2]), camera=list(map(signed, values[3:6])),
                 scroll=list(map(signed, values[6:8])), editor=bool(values[8]),
-                visibility_profile='gameplay_2d_and_3d' if values[9] == 0xe9eb else 'incomplete',
+                visibility_profile='gameplay_2d_and_3d' if values[9] & 0xffff == 0xe9eb else 'incomplete',
+                sound_marker_profile='speaker_mesh_hidden_v1' if values[9] & 0x10000 else 'unfiltered',
                 shadow_blend_profile='retail_original_raster',
                 geyser_blend_profile='retail_authored_blend_controllers',
                 lighting_mode='real_time_grid' if values[11] else 'software_dls',

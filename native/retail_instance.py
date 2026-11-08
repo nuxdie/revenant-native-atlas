@@ -57,7 +57,7 @@ def prepare(data,runtime,desktop,wine,ddraw,ini=None,prefix_template=None):
     if not target.exists():shutil.copy2(ddraw,target)
     elif hashlib.sha256(target.read_bytes()).digest()!=hashlib.sha256(ddraw.read_bytes()).digest():
         raise ValueError('Capture copy already has a different D7VK DLL')
-    env=dict(os.environ,DISPLAY=os.environ.get('DISPLAY',':0'),WINEPREFIX=str(runtime/'prefix'),
+    env=dict(os.environ,DISPLAY=os.environ.get('REVENANT_DISPLAY',os.environ.get('DISPLAY',':0')),WINEPREFIX=str(runtime/'prefix'),
         WINEDEBUG='-all',WINEDLLOVERRIDES='ddraw=n,b;d3dimm=b',DXVK_LOG_PATH=str(runtime),
         REVENANT_RETAIL_RUNTIME=str(runtime),REVENANT_RETAIL_DATA=str(game),REVENANT_RETAIL_DESKTOP=desktop)
     sink=silent_sink()

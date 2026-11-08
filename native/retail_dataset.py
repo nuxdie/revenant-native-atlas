@@ -98,6 +98,8 @@ def index(data=DATA, out=ROOT/'runtime/retail-index'):
                 retained_source_objects=len(items),source_objects_by_class=dict(Counter(str(o['class'])for o in items)),
                 dataset='GOG 1.22L',executable_sha256=EXE_SHA256,
                 variants=['day','night']if has_night else ['fixed'])
+            plan['speaker_positions']=[dict(position=obj['pos'],screen=list(project(*obj['pos'])[:2]))
+                for obj in items if obj['class']==25 and obj['uid']==0xad92bc10]
             if has_night:
                 profiles={}
                 for variant,prefix in [('day',''),('night','night_')]:

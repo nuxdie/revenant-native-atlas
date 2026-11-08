@@ -1,0 +1,190 @@
+{
+  "checked_at": "2026-11-08T03:29:54.486084+00:00",
+  "passed": true,
+  "images": 26,
+  "files": 52,
+  "maps": [
+    {
+      "level": 32,
+      "variant": "fixed",
+      "prior_png_sha256": "9c8e91859dab8908a07166ce3794893f547f18ea332d3162445b2c1949372b7c",
+      "prior_tiff_sha256": "b554431d18fd8bfd73bc97a7325a972f8ed45b0482f282023032b6ea6dc80a22",
+      "unchanged": true
+    },
+    {
+      "level": 53,
+      "variant": "fixed",
+      "prior_png_sha256": "28441fcc20667df4cd02af4ed3e46a16b4752d019619c78a3b4a994a73b9adb9",
+      "prior_tiff_sha256": "586f87908da4ac9a07e8b14dd6a48a8a8a9ba38ca63d5a70134695165e9ac94b",
+      "unchanged": true
+    },
+    {
+      "level": 1,
+      "variant": "fixed",
+      "prior_png_sha256": "c2a97dd57d65b7177be1a835bf4e019ab4cd307aa88b48282ba3f8bb2897aff5",
+      "prior_tiff_sha256": "9ecb620ef5b45f6395a16efdf1a3c4061a85d6dde5c19a849c2f3147eebad6ad",
+      "unchanged": true
+    },
+    {
+      "level": 56,
+      "variant": "fixed",
+      "prior_png_sha256": "2c84100a0c5d82a3901dee9c6ad4db60ba2338a1e99667966ce242380bcc9195",
+      "prior_tiff_sha256": "d31afd8124ff073233015a6035ca3fe7a41c67b344d3feaf7e79c3623c475bdd",
+      "unchanged": true
+    },
+    {
+      "level": 58,
+      "variant": "fixed",
+      "prior_png_sha256": "aed644cf990cdbf76c7bc0eec75b49463ba5d0c2a88a1ec4896e29c927b9624c",
+      "prior_tiff_sha256": "af8b7743039010422074240b392faa1328a7788ecf114d019025170f49ba4f50",
+      "unchanged": true
+    },
+    {
+      "level": 46,
+      "variant": "fixed",
+      "prior_png_sha256": "6aa051ec87a15c15c2911810098be5684e2de57d253ba8ea3d4af562e4492619",
+      "prior_tiff_sha256": "b4cb1762baf6d5274fc4ac4fc156cfce88f6bae4a259e7af3703dad38d194fc0",
+      "unchanged": true
+    },
+    {
+      "level": 45,
+      "variant": "fixed",
+      "prior_png_sha256": "6d8561cb8eafb3fd778b319e8be8d20fb9ae76645147200918cf16c1dff6eb5d",
+      "prior_tiff_sha256": "c41492871b3411d440133ae88e79137432b9068a9699ce0790a4ff095da48311",
+      "unchanged": true
+    },
+    {
+      "level": 30,
+      "variant": "fixed",
+      "prior_png_sha256": "602309bb8afc3591ceadfeff37d077fb20f6414b95053e7a0fa064eec0e96ebc",
+      "prior_tiff_sha256": "137af1ee7d21f3850985a7fc8e784290a07ec5aa71a15ee342eb0ce7bb5dd393",
+      "unchanged": true
+    },
+    {
+      "level": 2,
+      "variant": "fixed",
+      "prior_png_sha256": "2d535636cf144dc4486f6d03fc813d6abb3769882abdfadf5b6838d4b627d75b",
+      "prior_tiff_sha256": "81a6e1ac5386bb783a68caf8daa81b6142064faa9379cda7dee2560a59fe55bd",
+      "unchanged": true
+    },
+    {
+      "level": 36,
+      "variant": "fixed",
+      "prior_png_sha256": "0970c6698815f57adc19b5016bbf8e4d476044a7f6f42952a172fcedf4c80d0b",
+      "prior_tiff_sha256": "5b0466f997fc9c2670863e3254c6b0bdf28aa18996e74a2e76590d8b92fda843",
+      "unchanged": true
+    },
+    {
+      "level": 49,
+      "variant": "fixed",
+      "prior_png_sha256": "f0b7a1acc4582dfae595ce6416937ca95d8fa381a41629d985dcc5894e40f66c",
+      "prior_tiff_sha256": "65e27c485e3b7518ac167893719c3b56a0698ce781c75193ed8d375f1c6b3c00",
+      "unchanged": true
+    },
+    {
+      "level": 4,
+      "variant": "fixed",
+      "prior_png_sha256": "1765d6c1f89cb928dd79aca5f5d5b4295ece393c25deeb350d43938e9418c132",
+      "prior_tiff_sha256": "93f6c6e3189005724c918cdcd1673c41ca6e0691ee50fef20bcd8b9b958b52af",
+      "unchanged": true
+    },
+    {
+      "level": 48,
+      "variant": "fixed",
+      "prior_png_sha256": "ade3746a5c6c7609dd783c20ef3f4ccbb37bf7c112e021c98ffa4906ff798938",
+      "prior_tiff_sha256": "cf198522840bd3f81f938eddad7d3f9184fbe581c7bb2bc42549d90fa5719b96",
+      "unchanged": true
+    },
+    {
+      "level": 31,
+      "variant": "fixed",
+      "prior_png_sha256": "9a47b4a0698daf8e32a304ec13e6e428acfe8d3dd5f0cab0dac735a0efa4b2ff",
+      "prior_tiff_sha256": "fe8a71f2623d5af16c01e77b60c8d5a862ba961a0398115ca8f43a93e73ec4ae",
+      "unchanged": true
+    },
+    {
+      "level": 37,
+      "variant": "fixed",
+      "prior_png_sha256": "5dbcbeb33c34c43a6dffde2896868393cdba7418e839bb116a29134f32067453",
+      "prior_tiff_sha256": "740a31096d547d3ecc6efaa58cfbab638e48ab6732298a6c99a9dc7c4aba1f16",
+      "unchanged": true
+    },
+    {
+      "level": 44,
+      "variant": "fixed",
+      "prior_png_sha256": "a4d7a13289bf547dd6f4c837fc759e8a85b476c07e1299b35cfaa32bf2883ede",
+      "prior_tiff_sha256": "1f296b818ac942af953cda41ae885e13ffc30ba3d8786f5fbe537880fc0eac6d",
+      "unchanged": true
+    },
+    {
+      "level": 51,
+      "variant": "fixed",
+      "prior_png_sha256": "c32f12d132a158598f0ea866f9e3afecdcd50ea3895702875c77996de45c1a3b",
+      "prior_tiff_sha256": "7fdfd73d29655eda35934f6263a8e595e6b4372c149d6b3af8bcfa001d6ffa99",
+      "unchanged": true
+    },
+    {
+      "level": 54,
+      "variant": "fixed",
+      "prior_png_sha256": "bf347439cb4eadc9a6ec9b713443542a20eaf636a7e59a5f1695e07f52942659",
+      "prior_tiff_sha256": "f3409ce02d0386ea8cf3c8d0855572e752e550d3e24496c2b489d0aa829ce5a3",
+      "unchanged": true
+    },
+    {
+      "level": 3,
+      "variant": "fixed",
+      "prior_png_sha256": "faddb1f38ae00ea2fa73a912383ba099823e6b1d3842147332c0fb440a5f82f9",
+      "prior_tiff_sha256": "ad692353f88ac8857b1697780f4f62e830812a66e341f700ffd5dbe161b339a2",
+      "unchanged": true
+    },
+    {
+      "level": 5,
+      "variant": "day",
+      "prior_png_sha256": "bf7d94bf020e468e30f63591c15543ee6d49bb6a1a9735bf3c33e71a4fc6b613",
+      "prior_tiff_sha256": "d73fe94b6d19d7d334ace5e26c250b68f87e4ad71257cb59c6bc81b10a0a4cf0",
+      "unchanged": true
+    },
+    {
+      "level": 0,
+      "variant": "day",
+      "prior_png_sha256": "a4db04d8343e0394276db8744cd0e763aaa3271cdd1ba9c1d19916d0805fd462",
+      "prior_tiff_sha256": "0037082048e07ba396d24a113b4f74667230ab054734540f844c19b7e9e2a07d",
+      "unchanged": true
+    },
+    {
+      "level": 5,
+      "variant": "night",
+      "prior_png_sha256": "bedc8678f1470d44f6065a03670c312ddd9cb5bd7a09c85e1b01f874ed82bd0a",
+      "prior_tiff_sha256": "20b9aafb73b6d13edef442b8d9fc2a88d7dfa6f50d306b6fa6af5c12153313a2",
+      "unchanged": true
+    },
+    {
+      "level": 0,
+      "variant": "night",
+      "prior_png_sha256": "a10ff2736763308f9bbd401ea762ca4d937c4653026457aa53e7235492b15c73",
+      "prior_tiff_sha256": "1f84081124e21be921f886168112fb2fd0003943c4b6c58a5788f7b7dbf5078f",
+      "unchanged": true
+    },
+    {
+      "level": 5,
+      "variant": "twilight",
+      "prior_png_sha256": "7c8766dfedcf2b3e794c2505073a6ceeb4a2cf1715a478336c958c68c7127033",
+      "prior_tiff_sha256": "ec5c7bb10d5dccfc1de8044c3a55e39ffa0d5b918a287c607dd800c084d9ccaa",
+      "unchanged": true
+    },
+    {
+      "level": 0,
+      "variant": "twilight",
+      "prior_png_sha256": "eee3e584722a9830b284de6909f210aea4f5fce5573d0bf926376bdf1f7db5a0",
+      "prior_tiff_sha256": "6d457372232f137c2a89aef84c0709a41c2529c6c6c95ebb484666ca284eeae8",
+      "unchanged": true
+    },
+    {
+      "level": 41,
+      "variant": "fixed",
+      "prior_png_sha256": "d7f1a9298779a0bac9c2f2b32c5cd28db284d2ce7a6d141669348774eab70efc",
+      "prior_tiff_sha256": "74d54212cc2858fce0c194ed74c444d5dfa04d8e79cdeaf511044f8975e2ac81",
+      "unchanged": true
+    }
+  ]
+}

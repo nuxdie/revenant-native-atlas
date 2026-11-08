@@ -13,15 +13,17 @@ It reports version 1.22, built May 8, 2000. Supply your own game files. For an o
 Use Linux/X11, XComposite, a Vulkan driver, Python 3.10+, Pillow, NumPy, g++, libtiff, Clang 18, i686 MinGW binutils, xdotool and xwininfo. Capture was tested with GE-Proton 11-7 and 32-bit D7VK at commit `d6faa06439eb097783dee27fb2b5d1cf3bb1b335`.
 
 ```sh
-sudo apt-get install g++ libtiff6 libx11-6 libxcomposite1 xdotool x11-utils clang-18 binutils-mingw-w64-i686
+sudo apt-get install g++ libtiff6 libx11-6 libxcomposite1 xdotool x11-utils xvfb clang-18 binutils-mingw-w64-i686
 python3 -m venv .venv
 . .venv/bin/activate
 python3 -m pip install -r requirements.txt
-export DISPLAY=:0
+Xvfb :96 -screen 0 1280x960x24 +extension Composite -nolisten tcp -noreset > /tmp/revenant-xvfb.log 2>&1 &
+export REVENANT_DISPLAY=:96
+export DISPLAY="$REVENANT_DISPLAY"
 export REVENANT_WINE=/absolute/path/to/runner/files/bin/wine
 ```
 
-An X11 desktop must remain available throughout capture. The original renderer and its hardware support affect the result; another Wine/D7VK/GPU configuration needs its own visual checks.
+Choose an unused private display number. Keep Xvfb running throughout capture; game and Wine desktop windows stay off the interactive desktop. Set `REVENANT_DISPLAY` for the launcher, controller and any restart process. The original renderer and its hardware support affect the result; another Wine/D7VK/GPU configuration needs its own visual checks.
 
 ## Inventory and prepare an isolated copy
 
@@ -72,6 +74,8 @@ python3 -m native.retail_export --levels 0 --variant night
 Re-running resumes recorded captures after validating their identity and hashes. Keep `retail-output/` and its source frames; final PNGs alone cannot reproduce the ownership audit. A process reports `REVIEW` and continues to another map when unexplained joins remain. That map is held, not accepted.
 
 The outdoor plans record the authored light intensity and colour. After each camera change, the original ambient setters ensure that nearby-area fading has not lost the GammaLevel 3 offset. Resume rejects earlier outdoor captures whose recorded ambient differs from that target and recaptures their pixels.
+
+Plans also inventory the ambient-sound `speaker` placeholders. New native frames record `speaker_mesh_hidden_v1`; resume rejects older unfiltered frames whose viewports intersect a placeholder. When updating an already quilted atlas, recapture every source owning pixels around the inventoried positions and repeat the complete edge, provenance and file checks. Publication checks those owners again. See [rendering.md](rendering.md) for the precise presentation filter and its limits.
 
 Day is 12:00 and night is 01:00. Interiors without a day/night area definition have one `fixed` state. These are original-engine renders at the selected clock, not colour transforms of one image.
 

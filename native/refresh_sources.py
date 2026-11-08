@@ -57,7 +57,9 @@ def refresh(root,names,archive,temporal_samples=3,temporal_interval=1/24,reason=
                     source=root/folder/(name+suffix);target=archive/folder/source.name
                     target.parent.mkdir(parents=True,exist_ok=True)
                     if not target.exists():shutil.copy2(source,target)
-                if retail and (state['time_of_day_minutes']!=meta['time_of_day_minutes'] or state['visibility_profile']!='gameplay_2d_and_3d'):
+                if retail and (state['time_of_day_minutes']!=meta['time_of_day_minutes']
+                        or state['visibility_profile']!='gameplay_2d_and_3d'
+                        or state.get('sound_marker_profile')!='speaker_mesh_hidden_v1'):
                     raise RuntimeError('Retail refresh changed lighting or helper visibility')
                 state.update(core=coord,captured_at=time.time(),crop=[64,42,576,298],
                              capture_recipe='retail_redraw_bg_barrier_v2'if retail else'console_redraw_bg_barrier_v3',

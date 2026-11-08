@@ -45,6 +45,12 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication'),la
                 or validation.get('full_png_crc')!='verified'
                 or validation.get('actual_stitched_edges',{}).get('unmeasured_edges_requiring_review')!=0):continue
         profile=profiles.get((level,variant))
+        if meta.get('sound_marker_profile'):
+            from .sound_markers import PROFILE,require_clean_owners
+            plan=json.loads((directory/'plan.json').read_text())
+            if meta['sound_marker_profile']!=PROFILE or 'speaker_positions'not in plan:
+                raise ValueError(f'Unverified sound-marker presentation policy: {directory}')
+            require_clean_owners(directory,plan['speaker_positions'])
         if profile or meta['module']!='Ahkuilon':
             states=[json.loads(p.read_text())for p in(directory/'captures').glob('*.json')]
             if not states:continue
@@ -53,7 +59,8 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication'),la
         sha=validation['full_png_sha256']
         if tiff['source_png_sha256']!=sha or digest(paths[3])!=sha or digest(paths[4])!=tiff['sha256']:
             raise ValueError(f'Stale retail download: level {level} {variant}')
-        revision=f'r-{level}-'+('recovered-'if recovery else'')+f'{variant}-{sha[:20]}'
+        presentation='s1-'if meta.get('sound_marker_profile')=='speaker_mesh_hidden_v1'else''
+        revision=f'r-{level}-'+('recovered-'if recovery else'')+presentation+f'{variant}-{sha[:20]}'
         target=out/variant/f'level-{level}';target.mkdir(parents=True,exist_ok=True)
         index_path=target/'tiles.json';pack=target/'tiles.pack'
         old=json.loads(index_path.read_text())if index_path.exists()else{}
@@ -75,6 +82,7 @@ def prepare(root=Path('retail-output'),out=Path('runtime/retail-publication'),la
             names=meta['names'],width=meta['width'],height=meta['height'],bounds=meta['bounds'],
             tile_size=meta['tile_size'],tiles=meta['tiles'],statistics=meta['statistics'],
             provider='original_retail_renderer_recovered_assets'if recovery else meta['provider'],revision=revision,content_revision=sha[:16],
+            **(dict(sound_marker_profile=meta['sound_marker_profile'])if meta.get('sound_marker_profile')else{}),
             png_bytes=paths[3].stat().st_size,sha256=sha,tiff_bytes=paths[4].stat().st_size,tiff_sha256=tiff['sha256'],
             **(dict(recovery=recovery)if recovery else{})))
     by_level=defaultdict(list)

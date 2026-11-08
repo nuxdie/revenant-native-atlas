@@ -8,17 +8,20 @@
   ],
   "clock_minutes": {
     "day": 720,
-    "night": 60
+    "night": 60,
+    "twilight": 360
   },
   "rendering": "Original retail executable, real-time light grid, hardware rendering, GammaLevel 3, Wine/D7VK",
   "raster_patch": null,
-  "presentation": "Hide mouse overlays, disable mouse-edge camera drift and keep owned capture windows active in background",
-  "visibility": "Original gameplay handling of invisible/editor-only imagery; 2D and 3D filters guarded separately",
+  "presentation": "Hide mouse overlays and edge panning; capture on a private Xvfb display with a dedicated muted audio sink",
+  "visibility": "Guarded OF_EDITOR/OF_INVISIBLE presentation filters plus exact EFFECT speaker placeholder suppression; native sound objects retained",
   "barrier": "At least eight native frames and two quiet frames of original update/rectangle queues",
   "limits": [
     "D7VK ignores application display gamma ramps",
     "Editor pauses gameplay AI",
     "Stitched animation phases are local snapshots",
-    "Full retail release remains held until every image passes"
-  ]
+    "Recovered levels 41/42/43 omit 10/4/2 placements with absent source definitions; strict exact completion remains false"
+  ],
+  "sound_marker_profile": "speaker_mesh_hidden_v1",
+  "sound_marker_raster_editing": false
 }

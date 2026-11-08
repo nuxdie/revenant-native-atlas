@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-11-08T03:34:52.970839+00:00",
+  "passed": true,
+  "all_44_level_0_placements_visually_checked": true,
+  "public_shore_crops_equal_native_exports": true,
+  "fresh_static_fish_wound": [
+    {
+      "scene": "fish-day",
+      "static_fish_wound_pixels": 5643,
+      "exact_pixel_fraction": 1.0
+    },
+    {
+      "scene": "fish-night",
+      "static_fish_wound_pixels": 4273,
+      "exact_pixel_fraction": 1.0
+    }
+  ],
+  "cavern_static_pixels_exact": 88059,
+  "native_static_edge_audits": "26 images; zero unexplained static edges",
+  "prior_exports_preserved": true,
+  "limits": "Whole fish scenes have 26\u201328 residual static-classified differing pixels near the left viewport edge, away from the fish; animation phases are successive snapshots, not synchronized gameplay."
+}

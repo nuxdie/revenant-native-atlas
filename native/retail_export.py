@@ -21,6 +21,10 @@ from .retail import RetailGame,ROOT,RUNTIME,EXE_SHA256
 
 
 def capture(plan,variant,out,samples=8,rebuild_held=False):
+    from .sound_markers import PROFILE,intersects_viewport,speaker_positions
+    if 'speaker_positions' not in plan:
+        from .retail import DATA
+        plan=dict(plan,speaker_positions=speaker_positions(DATA/'Modules'/f'{plan["module"]}.rvm',plan['level']))
     root=out/variant/f'level-{plan["level"]}'
     minute=plan.get('time_of_day_minutes',60 if variant=='night'else 720)
     if not isinstance(minute,int)or not 0<=minute<1440:raise ValueError('Invalid native capture clock')
@@ -35,6 +39,10 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
         (p:=root/'captures'/f'{x}_{y}.json').exists()and json.loads(p.read_text()).get('time_of_day_minutes')==minute for x,y in plan['cores'])
     prior_ambient_valid=prior_ambient_valid and(plan['module']=='Ahkuilon'or all(
         (p:=root/'captures'/f'{x}_{y}.json').exists()and module_matches(json.loads(p.read_text()))for x,y in plan['cores']))
+    def speaker_matches(state):
+        return not intersects_viewport(state['scroll'],plan['speaker_positions']) or state.get('sound_marker_profile')==PROFILE
+    prior_ambient_valid=prior_ambient_valid and all(
+        (p:=root/'captures'/f'{x}_{y}.json').exists()and speaker_matches(json.loads(p.read_text()))for x,y in plan['cores'])
     validation=root/'validation.json';tiff=root/'tiff-validation.json'
     if validation.exists()and tiff.exists()and prior_ambient_valid:
         checked=json.loads(validation.read_text());tiff_checked=json.loads(tiff.read_text())
@@ -47,7 +55,7 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
             print(f'ALREADY VERIFIED {root}',flush=True)
             return True
     if validation.exists()and not prior_ambient_valid:
-        checked=json.loads(validation.read_text());checked.update(acceptance='review_required',capture_review='Recapture inconsistent ambient states or missing native module observations')
+        checked=json.loads(validation.read_text());checked.update(acceptance='review_required',capture_review='Recapture inconsistent lighting, mounted module or sound-marker visibility states')
         dump(validation,checked)
     if validation.exists()and not rebuild_held and prior_ambient_valid:
         checked=json.loads(validation.read_text())
@@ -82,7 +90,7 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
                     raise ValueError(f'Capture dataset/time differs: {path}')
                 if hashlib.sha256(path.read_bytes()).hexdigest()!=old['source_png_sha256']:
                     raise ValueError(f'Capture hash differs: {path}')
-                if ambient_matches(old)and module_matches(old):
+                if ambient_matches(old)and module_matches(old)and speaker_matches(old):
                     try:
                         with Image.open(root/'temporal'/path.name)as mask:mask.load();valid=mask.size==(640,340)
                     except OSError:valid=False
@@ -95,7 +103,8 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
             if shutil.disk_usage(out).free<1024**3:
                 raise RuntimeError('Less than 1 GiB disk space remains; retail export safely stopped')
             first,array,motion,state=capture_core(game,grab,coord,.08,temporal_samples=samples)
-            if state['time_of_day_minutes']!=minute or state['visibility_profile']!='gameplay_2d_and_3d':
+            if (state['time_of_day_minutes']!=minute or state['visibility_profile']!='gameplay_2d_and_3d'
+                    or state.get('sound_marker_profile')!=PROFILE):
                 raise RuntimeError(f'Retail state changed: {state}')
             state.update(core=coord,captured_at=time.time(),crop=[64,42,576,298],
                 capture_recipe='retail_redraw_bg_barrier_v2',variant=variant,module=plan['module'],
@@ -111,6 +120,7 @@ def capture(plan,variant,out,samples=8,rebuild_held=False):
     tiles=assemble(root,plan)
     manifest={k:v for k,v in plan.items()if k!='cores'}
     manifest.update(provider='original_retail_1.22L',renderer='Original GOG 1.22L executable, Wine/D7VK, GammaLevel 3',
+        sound_marker_profile=PROFILE,
         tile_size=1024,tiles=tiles,tile_count=len(tiles),pixel_scale='native pixels, no resampling',
         statistics=dict(source_objects=plan['retained_source_objects'],captures=len(plan['cores'])),
         temporal_scope='Stitched native animation snapshots at a fixed day/night clock')

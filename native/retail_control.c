@@ -40,6 +40,50 @@ static HANDLE observed=0;
 static DWORD retiredPid=0,retiredIndex=0;
 static void* retiredCommands[16];
 static void* traceAllocation=0;
+/* Capture presentation: hide the ambient-sound placeholder, not its object.
+   This is separate from OF_EDITOR: shipped Speaker placements lack that flag. */
+static DWORD speaker_filter(HANDLE process,HWND window){
+ const DWORD site=0x413a05,continuation=0x413a0c,skip=0x413f8c;
+ unsigned char original[7]={0xf7,0x43,0x08,0x80,0x01,0x00,0x00};
+ unsigned char code[]={
+  0x66,0x83,0x7b,0x04,0x19, /* cmp word [ebx+4], EFFECT */
+  0x75,0x26,               /* jne original flags test */
+  0x50,0x8b,0x43,0x4c,     /* save eax; type-info */
+  0x85,0xc0,0x74,0x1d,
+  0x8b,0x00,0x85,0xc0,0x74,0x17, /* type name */
+  0x81,0x38,0x73,0x70,0x65,0x61, /* exact "spea" */
+  0x75,0x0f,
+  0x81,0x78,0x04,0x6b,0x65,0x72,0x00, /* exact "ker\0" */
+  0x75,0x06,0x58,
+  0xe9,0,0,0,0,           /* skip only this mesh draw */
+  0x58,                   /* nonmatch: restore eax */
+  0xf7,0x43,0x08,0x80,0x01,0x00,0x00,
+  0xe9,0,0,0,0};
+ unsigned char actual[7];DWORD n=0;
+ if(!ReadProcessMemory(process,(void*)site,actual,7,&n)||n!=7)return 18;
+ if(actual[0]==0xe9&&actual[5]==0x90&&actual[6]==0x90){
+  DWORD target=site+5+*(long*)(actual+1);unsigned char installed[sizeof(code)];
+  *(long*)(code+40)=(long)(skip-(target+44));
+  *(long*)(code+53)=(long)(continuation-(target+57));
+  if(!ReadProcessMemory(process,(void*)target,installed,sizeof(installed),&n)||n!=sizeof(installed))return 18;
+  for(unsigned i=0;i<sizeof(code);++i)if(installed[i]!=code[i])return 12;
+  return 0;
+ }
+ for(int i=0;i<7;++i)if(actual[i]!=original[i])return 12;
+ /* Branch targets are validated in the native visibility regression check. */
+ void* remote=VirtualAllocEx(process,0,sizeof(code),0x3000,0x40);if(!remote)return 7;
+ *(long*)(code+40)=(long)(skip-((DWORD)remote+44));
+ *(long*)(code+53)=(long)(continuation-((DWORD)remote+57));
+ if(!WriteProcessMemory(process,remote,code,sizeof(code),&n)||n!=sizeof(code)){VirtualFreeEx(process,remote,0,0x8000);return 8;}
+ unsigned char jump[7]={0xe9,0,0,0,0,0x90,0x90};*(long*)(jump+1)=(long)((DWORD)remote-site-5);
+ DWORD pid=0,tid=GetWindowThreadProcessId(window,&pid);HANDLE thread=OpenThread(2,0,tid);
+ if(!thread){VirtualFreeEx(process,remote,0,0x8000);return 3;}
+ if(SuspendThread(thread)==0xffffffff){CloseHandle(thread);VirtualFreeEx(process,remote,0,0x8000);return 3;}
+ DWORD protection=0;int ok=VirtualProtectEx(process,(void*)site,7,0x40,&protection)&&WriteProcessMemory(process,(void*)site,jump,7,&n)&&n==7;
+ FlushInstructionCache(process,remote,sizeof(code));FlushInstructionCache(process,(void*)site,7);
+ if(protection)VirtualProtectEx(process,(void*)site,7,protection,&protection);
+ ResumeThread(thread);CloseHandle(thread);return ok?0:8;
+}
 static void path(char* out,const char* name){DWORD i=0,j=0;while(directory[i]){out[i]=directory[i];++i;}while(name[j])out[i++]=name[j++];out[i]=0;}
 static void output(const char* name,const void* bytes,DWORD size){
  char filename[1100];DWORD n=0;path(filename,name);
@@ -56,6 +100,8 @@ static void report(DWORD code,DWORD sequence){
   DWORD sites[4]={0x456d9d,0x456fb8,0x45737e,0x413a15};int hidden=1;
   for(int i=0;i<4;++i){unsigned short guard=0;ReadProcessMemory(observed,(void*)sites[i],&guard,2,&n);if(guard!=0xe990)hidden=0;}
   s[9]=hidden?0xe9eb:0;
+  unsigned char speaker[7];
+  if(ReadProcessMemory(observed,(void*)0x413a05,speaker,7,&n)&&n==7&&speaker[0]==0xe9&&speaker[5]==0x90&&speaker[6]==0x90)s[9]|=0x10000;
 
   ReadProcessMemory(observed,(void*)0x5d7a18,s+11,4,&n);
   DWORD screen=0;ReadProcessMemory(observed,(void*)0x667fd0,&screen,4,&n);
@@ -88,7 +134,7 @@ static DWORD execute(const char* text,DWORD length){
     for(int j=0;j<4;++j)if(b[j+2]!=tails[i][j])return 12;
     DWORD protection;unsigned char jump[2]={0x90,0xe9};VirtualProtectEx(process,(void*)sites[i],6,0x40,&protection);WriteProcessMemory(process,(void*)sites[i],jump,2,&n);FlushInstructionCache(process,(void*)sites[i],6);VirtualProtectEx(process,(void*)sites[i],6,protection,&protection);
    }
-   return 0;
+   return speaker_filter(process,h);
   }
   if(command[1]=='p'){
    DWORD pause=0;WriteProcessMemory(process,(void*)0x5d7a20,&pause,4,&n);
