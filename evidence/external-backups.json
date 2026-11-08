@@ -1,81 +1,89 @@
 {
   "mediafire": {
-    "checked_at": "2026-11-08T00:16:56.087662+00:00",
+    "checked_at": "2026-11-08T03:38:38.421426+00:00",
     "provider": "MediaFire",
     "expected": 378,
     "uploaded": 378,
-    "expected_bytes": 5050075831,
-    "verified_bytes": 5050075831,
+    "expected_bytes": 5050555626,
+    "verified_bytes": 5050555626,
     "missing": [],
     "digest_failures": [],
     "passed": true,
     "url": "https://www.mediafire.com/folder/8cb21hsx5s9aj/Revenant_Native_Atlas_-_2026-11-08"
   },
   "mega": {
-    "checked_at": "2026-11-08T00:17:22.460Z",
+    "checked_at": "2026-11-08T03:39:58.494Z",
     "provider": "MEGA",
     "url": "https://mega.nz/folder/LpwxGRTZ#Qr7J9HzEMwvJB9qFDK5D0Q",
     "expected": 378,
     "uploaded": 378,
     "verified_files": 378,
-    "verified_bytes": 5050075831,
+    "verified_bytes": 5050555626,
     "missing": [],
     "problems": [],
     "duplicate_names": 0,
     "passed": true,
     "verification": "Public folder listing, exact file sizes, original SHA-256 and MEGA file MAC commitments; complete remote bytes are not all downloaded."
   },
+  "google_drive": {
+    "checked_at": "2026-11-08T03:46:54.478323+00:00",
+    "provider": "Google Drive",
+    "passed": true,
+    "files": 378,
+    "bytes": 5050555634,
+    "verification": "Exact remote file count and sizes; all source/remote MD5 checksums match.",
+    "url": "https://drive.google.com/open?id=1EZFyEhEZdlRQxXqkIMDFyNPYaC2Tm3GR"
+  },
   "sample_downloads": {
     "mediafire": {
+      "checked_at": "2026-11-08T03:40:10.078756+00:00",
       "passed": true,
+      "all_files_public": true,
       "checks": [
         {
-          "name": "July-1999-level-066-fixed-full-resolution.png",
-          "bytes": 653080,
-          "sha256": "95bd74375543b78eebe299644fc3e3078d10c8cb2fe89affcd913b9e2b5b06cb",
+          "name": "Retail-1.22L-level-058-fixed-full-resolution.png",
+          "bytes": 1586365,
+          "sha256": "76dfc899ef67f109d39d12bd42d9f17a85f81d396bff8872eaea9be36c1dcc22",
           "passed": true
         },
         {
-          "name": "July-1999-level-047-fixed-full-resolution.tif",
-          "bytes": 625870,
-          "sha256": "4e1ebeb0fe7b996ca064f529fab28dfc68906ca87c9be3bbcd5b13777e9daa80",
+          "name": "Retail-1.22L-level-058-fixed-full-resolution.tif",
+          "bytes": 1481840,
+          "sha256": "7f31f5653b1f1d30ef5cb926d9f6b420a9895b58621360899d536d0e97884db1",
           "passed": true
         }
       ]
     },
     "mega": {
-      "checked_at": "2026-11-08T00:14:05.731Z",
+      "checked_at": "2026-11-08T03:40:11.029Z",
       "passed": true,
       "checks": [
         {
-          "name": "July-1999-level-066-fixed-full-resolution.png",
-          "bytes": 653080,
-          "sha256": "95bd74375543b78eebe299644fc3e3078d10c8cb2fe89affcd913b9e2b5b06cb",
+          "name": "Retail-1.22L-level-058-fixed-full-resolution.png",
+          "bytes": 1586365,
+          "sha256": "76dfc899ef67f109d39d12bd42d9f17a85f81d396bff8872eaea9be36c1dcc22",
           "passed": true
         },
         {
-          "name": "July-1999-level-047-fixed-full-resolution.tif",
-          "bytes": 625870,
-          "sha256": "4e1ebeb0fe7b996ca064f529fab28dfc68906ca87c9be3bbcd5b13777e9daa80",
+          "name": "Retail-1.22L-level-058-fixed-full-resolution.tif",
+          "bytes": 1481840,
+          "sha256": "7f31f5653b1f1d30ef5cb926d9f6b420a9895b58621360899d536d0e97884db1",
           "passed": true
         }
       ]
     }
   },
-  "restored_viewer": {
-    "checked_at": "2026-11-08T00:14:26.117493+00:00",
-    "counts": {
-      "july": {
-        "locations": 33,
-        "images": 33
-      },
-      "retail": {
-        "locations": 37,
-        "images": 41
-      }
-    },
-    "requests": 296,
+  "restore_viewer_check": {
+    "checked_at": "2026-11-08T03:40:57.708197+00:00",
     "passed": true,
-    "failures": []
-  }
+    "checked_requests": 296,
+    "failures": [],
+    "method": "All backup hashes verified; canonical immutable paths restored with links; both catalogs and every PNG, TIFF, overview and representative tile served successfully.",
+    "backup_files": 378,
+    "manifest_listed_files_verified": 376,
+    "restored_native_assets": 370,
+    "restored_catalogs": 2
+  },
+  "checked_at": "2026-11-08T03:47:03.972647+00:00",
+  "presentation_correction": "speaker_mesh_hidden_v1"
 }

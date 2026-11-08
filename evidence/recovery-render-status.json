@@ -8,9 +8,10 @@
       "raster_acceptance": "native_pixels_verified; remaining joins are measured animation changes",
       "static_edges": 0,
       "png_crc": "verified",
-      "png_sha256": "d7f1a9298779a0bac9c2f2b32c5cd28db284d2ce7a6d141669348774eab70efc",
-      "tiff_sha256": "74d54212cc2858fce0c194ed74c444d5dfa04d8e79cdeaf511044f8975e2ac81",
-      "png_bytes": 17651049
+      "png_sha256": "a94c336fdc65f1313893d3ac71cfd94e6a648fd198642ba5fcbd63766ae4e8dd",
+      "tiff_sha256": "a6b335f0625cb03ad13638d51ae2a355bb8078c274c3b85a97233aacedf4e1fe",
+      "png_bytes": 17649362,
+      "sound_marker_profile": "speaker_mesh_hidden_v1"
     },
     {
       "level": 42,
@@ -34,5 +35,6 @@
     }
   ],
   "published_as_labeled_recovery": true,
-  "missing_source_assets_recovered": false
+  "missing_source_assets_recovered": false,
+  "checked_at": "2026-11-08T03:47:03.972647+00:00"
 }

@@ -1,0 +1,438 @@
+{
+  "checked_at": "2026-11-08T03:47:03.972647+00:00",
+  "profile": "speaker_mesh_hidden_v1",
+  "speaker_type": "0xad92bc10",
+  "asset": "Misc/Speaker.I3D",
+  "levels": 22,
+  "lighting_images": 26,
+  "fish_speaker_position": [
+    6399,
+    25041,
+    0
+  ],
+  "level_0_placements": 44,
+  "method": "Exact native EFFECT/speaker draw suppression; sound objects and data retained; complete native frame recapture, no RGB painting or colour synthesis.",
+  "normal_retail_gameplay_visibility": "Not established by a valid same-camera non-editor comparison.",
+  "fresh_native_comparisons": [
+    {
+      "scene": "fish-day",
+      "report": {
+        "reference": "fish-day/original-game.png",
+        "candidate": "fish-day/export.png",
+        "reference_sha256": "5e12b5c5efa23dc64342f02c9a03bb8f3081bef6cbae3c635bac5d61e0a6bc58",
+        "candidate_sha256": "2c12d307435a257c2c2e7594700387905307ef89f4c45494266a6ba92ae16d5b",
+        "size": [
+          640,
+          340
+        ],
+        "mask": "fish-day/static-foreground-mask.png",
+        "tolerance_per_channel": 0,
+        "compared_pixels": 148763,
+        "exact_pixel_fraction": 0.9998117811552604,
+        "within_tolerance_fraction": 0.9998117811552604,
+        "mean_absolute_channel_error": 0.002068166591603199,
+        "maximum_channel_error": 49,
+        "mismatch_bounds": [
+          4,
+          88,
+          101,
+          137
+        ],
+        "resampled": false
+      }
+    },
+    {
+      "scene": "fish-night",
+      "report": {
+        "reference": "fish-night/original-game.png",
+        "candidate": "fish-night/export.png",
+        "reference_sha256": "d1ed2f59ac952684bbd5876f3b9d501188ae72216a33a92e40abd48ba8d6d57c",
+        "candidate_sha256": "f20a038301315fc6d4633c4f8089dfc5dd0e4cc8ee14c96f40f1df007d0df9ac",
+        "size": [
+          640,
+          340
+        ],
+        "mask": "fish-night/static-foreground-mask.png",
+        "tolerance_per_channel": 0,
+        "compared_pixels": 138339,
+        "exact_pixel_fraction": 0.9998120558916863,
+        "within_tolerance_fraction": 0.9998120558916863,
+        "mean_absolute_channel_error": 0.0011854936062860076,
+        "maximum_channel_error": 33,
+        "mismatch_bounds": [
+          4,
+          88,
+          101,
+          137
+        ],
+        "resampled": false
+      }
+    },
+    {
+      "scene": "cavern-30",
+      "report": {
+        "reference": "cavern-30/original-game.png",
+        "candidate": "cavern-30/export.png",
+        "reference_sha256": "31aac9df55166a105fd774a5a0221f23cba5b39101da9e39ebf50246cfbb03c0",
+        "candidate_sha256": "f40cf82cdb43dbe4419d721174d22f1141fbc62a60b81d5d1cb971252cf613b9",
+        "size": [
+          640,
+          340
+        ],
+        "mask": "cavern-30/static-foreground-mask.png",
+        "tolerance_per_channel": 0,
+        "compared_pixels": 88059,
+        "exact_pixel_fraction": 1.0,
+        "within_tolerance_fraction": 1.0,
+        "mean_absolute_channel_error": 0.0,
+        "maximum_channel_error": 0,
+        "mismatch_bounds": null,
+        "resampled": false
+      }
+    }
+  ],
+  "public_fish_crops": {
+    "checked_at": "2026-11-08T03:36:06.321315+00:00",
+    "passed": true,
+    "checks": [
+      {
+        "variant": "day",
+        "revision": "r-0-s1-day-8b75cda8b899b25f2148",
+        "pixels_equal_local_native_tiles": 217600,
+        "passed": true
+      },
+      {
+        "variant": "night",
+        "revision": "r-0-s1-night-46da77253981575d2214",
+        "pixels_equal_local_native_tiles": 217600,
+        "passed": true
+      },
+      {
+        "variant": "twilight",
+        "revision": "r-0-s1-twilight-d9b8dce1d8b67ee6958e",
+        "pixels_equal_local_native_tiles": 217600,
+        "passed": true
+      }
+    ]
+  },
+  "recovery_omissions_retained": 16,
+  "display": "private Xvfb :96",
+  "audio": "dedicated muted sink",
+  "renderer_stopped_after_review": true,
+  "python_regression_tests": 64,
+  "viewer_regression_tests": 9,
+  "maps": [
+    {
+      "level": 32,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 1,
+      "previous_png_sha256": "9c8e91859dab8908a07166ce3794893f547f18ea332d3162445b2c1949372b7c",
+      "png_sha256": "491d445cee09c80b69625fe3ae5d0717bfdf4ad0a86fd4601c3564e4bfbbe371",
+      "tiff_sha256": "a5a7363f01216a5f841eee9d88565a7f3812e248aec14c16e728164e43d9003c",
+      "all_tiff_rgb_pixels_verified": 73531392,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 53,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 2,
+      "previous_png_sha256": "28441fcc20667df4cd02af4ed3e46a16b4752d019619c78a3b4a994a73b9adb9",
+      "png_sha256": "ae6e853ab43153c8ef01232cb9daf8495fc5efaf7304d732a9ae756abad7678b",
+      "tiff_sha256": "00df8758fbef8d3790e22dde6f73f884f1c0d2a4b68c9ec931e6166a095bebe4",
+      "all_tiff_rgb_pixels_verified": 61341696,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 1,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 1,
+      "previous_png_sha256": "c2a97dd57d65b7177be1a835bf4e019ab4cd307aa88b48282ba3f8bb2897aff5",
+      "png_sha256": "42d08f69af8e60d27e3faedf12bbbc2d1bd582c13e6c27b54b5caabbcdd3f2bf",
+      "tiff_sha256": "33a4149e0c819b86194e7b6dffc23017f19389dca25b1f2b469cfdd846d7ead8",
+      "all_tiff_rgb_pixels_verified": 173015040,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 56,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 3,
+      "previous_png_sha256": "2c84100a0c5d82a3901dee9c6ad4db60ba2338a1e99667966ce242380bcc9195",
+      "png_sha256": "6b21ca7897e1b1cb4559ed88b227f1e61df9f5b6d3cf379c13e7ecfd1dfa5545",
+      "tiff_sha256": "316e8d6d35654919cbaa0f509a0577ab5010e7267224de2d34a4fa159f70b902",
+      "all_tiff_rgb_pixels_verified": 71565312,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 58,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 1,
+      "previous_png_sha256": "aed644cf990cdbf76c7bc0eec75b49463ba5d0c2a88a1ec4896e29c927b9624c",
+      "png_sha256": "76dfc899ef67f109d39d12bd42d9f17a85f81d396bff8872eaea9be36c1dcc22",
+      "tiff_sha256": "7f31f5653b1f1d30ef5cb926d9f6b420a9895b58621360899d536d0e97884db1",
+      "all_tiff_rgb_pixels_verified": 17694720,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 46,
+      "variant": "fixed",
+      "placements": 7,
+      "clean_native_source_owners": 9,
+      "previous_png_sha256": "6aa051ec87a15c15c2911810098be5684e2de57d253ba8ea3d4af562e4492619",
+      "png_sha256": "b6e1fac730e9a321353bf114e72b8abfed8bcca0a299937d36dc2ed3ac9d6437",
+      "tiff_sha256": "20da12daf80d7ba18e88c3f65fea411e5feff406d775993cd6d4139ddfbfe4e7",
+      "all_tiff_rgb_pixels_verified": 381681664,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 45,
+      "variant": "fixed",
+      "placements": 2,
+      "clean_native_source_owners": 5,
+      "previous_png_sha256": "6d8561cb8eafb3fd778b319e8be8d20fb9ae76645147200918cf16c1dff6eb5d",
+      "png_sha256": "30e442012beb2ec07cab4aaf07d89d16343815106be4d312911cd51ca9901fa1",
+      "tiff_sha256": "3b495de0976aea9d3f06eeefd3aee726e60d2bcfa5a4d0adf8ce26ca31f7927b",
+      "all_tiff_rgb_pixels_verified": 72351744,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 30,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 2,
+      "previous_png_sha256": "602309bb8afc3591ceadfeff37d077fb20f6414b95053e7a0fa064eec0e96ebc",
+      "png_sha256": "a2049f8b2ff684e4169a273cbed47423784635a6ad67a34a69863fa1d0327f9d",
+      "tiff_sha256": "586c037c23975f9c2f42ed054efe3837f8b2aa4ba43a5feebe12f3c6ffb74f59",
+      "all_tiff_rgb_pixels_verified": 215351296,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 2,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 1,
+      "previous_png_sha256": "2d535636cf144dc4486f6d03fc813d6abb3769882abdfadf5b6838d4b627d75b",
+      "png_sha256": "5274a90325daf69998ed2fac5c4d8c772de04069f0c6a229432bde2f574adf20",
+      "tiff_sha256": "a679a023402930f734820cc763bc724c8d6f2728289583b4348c5d7e12e0f7f5",
+      "all_tiff_rgb_pixels_verified": 113246208,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 36,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 2,
+      "previous_png_sha256": "0970c6698815f57adc19b5016bbf8e4d476044a7f6f42952a172fcedf4c80d0b",
+      "png_sha256": "a3016c8ca3e013b58b7b490bf1bd2be2d7be76bad97ed2f8a56bae7ad7d9faa3",
+      "tiff_sha256": "d21e1db362673980a8961e9bfbfff9f37223158de72dd295308dabcd7c00418b",
+      "all_tiff_rgb_pixels_verified": 121634816,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 49,
+      "variant": "fixed",
+      "placements": 5,
+      "clean_native_source_owners": 13,
+      "previous_png_sha256": "f0b7a1acc4582dfae595ce6416937ca95d8fa381a41629d985dcc5894e40f66c",
+      "png_sha256": "2373a3b84b90168bd416332f261df7725cb761de0ac2afb9cbe1ca8c1086dcdd",
+      "tiff_sha256": "d9b3ca8e6184f5f4c0a90b218a67d614e89ddd8214477493344ec3f83dd7f95e",
+      "all_tiff_rgb_pixels_verified": 54788096,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 4,
+      "variant": "fixed",
+      "placements": 16,
+      "clean_native_source_owners": 24,
+      "previous_png_sha256": "1765d6c1f89cb928dd79aca5f5d5b4295ece393c25deeb350d43938e9418c132",
+      "png_sha256": "30f4520e335d3816608374fd8b532e2ecc9328f48ae3d7704a7713f48e0b9d63",
+      "tiff_sha256": "fe7482e0d9ec10e31927074a383712a202ab20af6539314620604948532d8c48",
+      "all_tiff_rgb_pixels_verified": 54788096,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 48,
+      "variant": "fixed",
+      "placements": 8,
+      "clean_native_source_owners": 15,
+      "previous_png_sha256": "ade3746a5c6c7609dd783c20ef3f4ccbb37bf7c112e021c98ffa4906ff798938",
+      "png_sha256": "ea1f914bb1ab256e345cdbedd96562ab68ef868806d9db84ff23a64b075f087a",
+      "tiff_sha256": "d90f15652574a2b28823c1bc749518c770d8c16a72f85aec078a92c003058084",
+      "all_tiff_rgb_pixels_verified": 207618048,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 31,
+      "variant": "fixed",
+      "placements": 3,
+      "clean_native_source_owners": 5,
+      "previous_png_sha256": "9a47b4a0698daf8e32a304ec13e6e428acfe8d3dd5f0cab0dac735a0efa4b2ff",
+      "png_sha256": "3d4b756aaec93e64e1b1b86232a422ddcde3d9b523b2e9a8d5729bf0fe438e36",
+      "tiff_sha256": "89ed1fe128578a9dc7c8e2233aeae51ae2af98d567814cd566ef215043e81472",
+      "all_tiff_rgb_pixels_verified": 128450560,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 37,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 2,
+      "previous_png_sha256": "5dbcbeb33c34c43a6dffde2896868393cdba7418e839bb116a29134f32067453",
+      "png_sha256": "90389f88e7d5f5c49192179240cfed119625cb66636be8881da9a6f4655683f6",
+      "tiff_sha256": "77dd02a5800095ab0ca86bb61cdf8a89353a3e891a106a52a7d99ce14c62049e",
+      "all_tiff_rgb_pixels_verified": 11534336,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 44,
+      "variant": "fixed",
+      "placements": 16,
+      "clean_native_source_owners": 32,
+      "previous_png_sha256": "a4d7a13289bf547dd6f4c837fc759e8a85b476c07e1299b35cfaa32bf2883ede",
+      "png_sha256": "5cf5d3a4846971d486d2c07ebc90e70a3bdfc47fb5a78b4762fbeb8ae56ea8d4",
+      "tiff_sha256": "228a6bb5496da794403ee225bd9133eb87ebf3ee4517879019f13545ca3e5348",
+      "all_tiff_rgb_pixels_verified": 190316544,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 51,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 2,
+      "previous_png_sha256": "c32f12d132a158598f0ea866f9e3afecdcd50ea3895702875c77996de45c1a3b",
+      "png_sha256": "256447b9e2fc3096a6f60b5f5ab69ab6170e51dc5c089d1130ab63370f5befba",
+      "tiff_sha256": "17d56ef858d86be5ebbf85d7fd1724356b44246142a308e55de80cec09ad50be",
+      "all_tiff_rgb_pixels_verified": 23855104,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 54,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 4,
+      "previous_png_sha256": "bf347439cb4eadc9a6ec9b713443542a20eaf636a7e59a5f1695e07f52942659",
+      "png_sha256": "6eb7dc45e1f906e90709a70419ac623c6ecec9ba37e8745d2adb31efc63429db",
+      "tiff_sha256": "5966834aaf2055d602eea5f936a4b359b357e54ebee5f967ed71b615120bfb20",
+      "all_tiff_rgb_pixels_verified": 57933824,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 3,
+      "variant": "fixed",
+      "placements": 1,
+      "clean_native_source_owners": 2,
+      "previous_png_sha256": "faddb1f38ae00ea2fa73a912383ba099823e6b1d3842147332c0fb440a5f82f9",
+      "png_sha256": "97e4bc682d56edf15d4fe4a65ef1a1fcfafdf4354fa0e437fd80872a5ef93e0c",
+      "tiff_sha256": "8f131b7c0a393c3fff02e7e7d37e5f8f645e1c5bca4e73b09654a9a0c5815c9b",
+      "all_tiff_rgb_pixels_verified": 31457280,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 5,
+      "variant": "day",
+      "placements": 21,
+      "clean_native_source_owners": 39,
+      "previous_png_sha256": "bf7d94bf020e468e30f63591c15543ee6d49bb6a1a9735bf3c33e71a4fc6b613",
+      "png_sha256": "d3e6e1ad6e731bebe09c5b774e713fbed576beafb63c673599e8d80484864d1a",
+      "tiff_sha256": "2e8d0612511b518e61ffc0fe4e524b83f2df28ce7714c7f0b45fccd87eb98680",
+      "all_tiff_rgb_pixels_verified": 155713536,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 0,
+      "variant": "day",
+      "placements": 44,
+      "clean_native_source_owners": 77,
+      "previous_png_sha256": "a4db04d8343e0394276db8744cd0e763aaa3271cdd1ba9c1d19916d0805fd462",
+      "png_sha256": "8b75cda8b899b25f2148a97123224fd544c9aee6b9d806e0cc1259c284d36dbc",
+      "tiff_sha256": "e7043f7e610014c2f369c9da6459697470b5963674d8cf3fa75f68c80e2925c8",
+      "all_tiff_rgb_pixels_verified": 585105408,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 5,
+      "variant": "night",
+      "placements": 21,
+      "clean_native_source_owners": 40,
+      "previous_png_sha256": "bedc8678f1470d44f6065a03670c312ddd9cb5bd7a09c85e1b01f874ed82bd0a",
+      "png_sha256": "51f21542cb28cf1c73a1e97625e4442a3068fc68f4ec21a4dc1fa16c200edcfa",
+      "tiff_sha256": "648b691708c7f120226e7b2a4e2abe79fbd97f539bc3defae33e9d3a521b2885",
+      "all_tiff_rgb_pixels_verified": 155713536,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 0,
+      "variant": "night",
+      "placements": 44,
+      "clean_native_source_owners": 76,
+      "previous_png_sha256": "a10ff2736763308f9bbd401ea762ca4d937c4653026457aa53e7235492b15c73",
+      "png_sha256": "46da77253981575d2214ede308ad4a641a4623b052e6ca675bf486df09347d28",
+      "tiff_sha256": "5b3d77ac06b7fdb904194257f7f81420474f5824b5f4efff61b8159e30468b5b",
+      "all_tiff_rgb_pixels_verified": 585105408,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 5,
+      "variant": "twilight",
+      "placements": 21,
+      "clean_native_source_owners": 39,
+      "previous_png_sha256": "7c8766dfedcf2b3e794c2505073a6ceeb4a2cf1715a478336c958c68c7127033",
+      "png_sha256": "7100d0729e983fdeeb83a6639147f67a0816486ff1542388026a9427806c9a10",
+      "tiff_sha256": "aa11ab174b7d6d101622e4507d7286ae31325a5f520a5bd9fbf40ee8559be3ba",
+      "all_tiff_rgb_pixels_verified": 155713536,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 0,
+      "variant": "twilight",
+      "placements": 44,
+      "clean_native_source_owners": 76,
+      "previous_png_sha256": "eee3e584722a9830b284de6909f210aea4f5fce5573d0bf926376bdf1f7db5a0",
+      "png_sha256": "d9b8dce1d8b67ee6958efba692a16ae1922f7a65d9649c5a3146939ca4c619e3",
+      "tiff_sha256": "04b6aaf50f0cc8f34cafe7e0328c77847334b478a07dbf9a308a68a227d54f74",
+      "all_tiff_rgb_pixels_verified": 585105408,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 0
+    },
+    {
+      "level": 41,
+      "variant": "fixed",
+      "placements": 6,
+      "clean_native_source_owners": 11,
+      "previous_png_sha256": "d7f1a9298779a0bac9c2f2b32c5cd28db284d2ce7a6d141669348774eab70efc",
+      "png_sha256": "a94c336fdc65f1313893d3ac71cfd94e6a648fd198642ba5fcbd63766ae4e8dd",
+      "tiff_sha256": "a6b335f0625cb03ad13638d51ae2a355bb8078c274c3b85a97233aacedf4e1fe",
+      "all_tiff_rgb_pixels_verified": 452198400,
+      "unexplained_static_edges": 0,
+      "omitted_source_placements": 10
+    }
+  ]
+}

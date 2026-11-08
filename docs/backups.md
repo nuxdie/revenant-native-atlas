@@ -4,6 +4,7 @@ Verified public mirrors:
 
 - [MediaFire](https://www.mediafire.com/folder/8cb21hsx5s9aj/Revenant_Native_Atlas_-_2026-11-08)
 - [MEGA](https://mega.nz/folder/LpwxGRTZ#Qr7J9HzEMwvJB9qFDK5D0Q)
+- [Google Drive](https://drive.google.com/open?id=1EZFyEhEZdlRQxXqkIMDFyNPYaC2Tm3GR)
 
 Each mirror contains 378 files, approximately 5.05 GB, without game executables
 or original resource archives.
@@ -46,5 +47,11 @@ All MediaFire file sizes and server SHA-256 hashes match the originals. All
 MEGA public file sizes and MAC commitments match the locally hashed originals;
 this does not mean every remote encrypted byte has been downloaded again.
 Anonymous PNG and BigTIFF sample downloads from both mirrors also match their
-original SHA-256 hashes. A restored local viewer passed all 296 image, overview
-and tile availability requests across both editions.
+original SHA-256 hashes. Google Drive's exact file count, byte count and every
+source/remote MD5 checksum also match. A restored local viewer passed all 296
+image, overview and tile availability requests across both editions.
+
+The current bundle includes the native sound-marker presentation correction
+for 26 retail lighting images. Existing public folder links are retained;
+the earlier local export snapshots remain unchanged. See
+[rendering details](rendering.md) and [current mirror receipts](../evidence/external-backups.json).
